@@ -1,0 +1,19 @@
+quiet: True
+with-expecter: True 
+outPkg: "test"
+filename: "Mock{{.InterfaceName}}.go"
+mockname: "Mock{{.InterfaceName}}"
+packages:
+  github.com/eduardonunesp/cleanarchgo/pkg/infra/repository:
+    config: 
+      dir: ../../test/
+    interfaces:
+      AccountRepository:
+      RideRepository:
+      AccountRepositoryRO:
+      RideRepositoryRO:
+  github.com/eduardonunesp/cleanarchgo/pkg/infra/gateway:
+    config: 
+      dir: ../../test/
+    interfaces:
+      MailerGW:
