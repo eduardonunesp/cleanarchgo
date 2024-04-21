@@ -18,6 +18,14 @@ type Account struct {
 	IsDriver    bool
 }
 
+type Position struct {
+	PositionID pgtype.UUID
+	RideID     pgtype.UUID
+	Lat        pgtype.Numeric
+	Long       pgtype.Numeric
+	Date       pgtype.Timestamp
+}
+
 type Ride struct {
 	ID          pgtype.UUID
 	PassengerID pgtype.UUID

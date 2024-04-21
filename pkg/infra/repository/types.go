@@ -6,6 +6,7 @@ import "github.com/eduardonunesp/cleanarchgo/pkg/domain"
 type AccountRepositoryRO interface {
 	HasAccountByEmail(email string) (bool, error)
 	GetAccountByID(id string) (*domain.Account, error)
+	IsDriverFreeByDriverID(driverID string) (bool, error)
 }
 
 //go:generate mockery
@@ -24,4 +25,14 @@ type RideRepositoryRO interface {
 type RideRepository interface {
 	RideRepositoryRO
 	SaveRide(ride *domain.Ride) error
+}
+
+//go:generate mockery
+type PositionRepositoryRO interface {
+}
+
+//go:generate mockery
+type PositionRepository interface {
+	PositionRepositoryRO
+	SavePosition(position *domain.Position) error
 }

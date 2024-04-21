@@ -69,6 +69,28 @@ func (q *Queries) HasAccountByEmail(ctx context.Context, email string) (bool, er
 	return column_1, err
 }
 
+const isDriverFree = `-- name: IsDriverFree :one
+SELECT 
+    CASE 
+        WHEN count(id) > 0 THEN FALSE
+        ELSE TRUE
+    END
+FROM
+    account
+JOIN 
+    ride ON account.id = ride.driver_id
+WHERE 
+    account.id = $1
+    AND ride.status IN('accepted', 'in_progress')
+`
+
+func (q *Queries) IsDriverFree(ctx context.Context, id pgtype.UUID) (bool, error) {
+	row := q.db.QueryRow(ctx, isDriverFree, id)
+	var column_1 bool
+	err := row.Scan(&column_1)
+	return column_1, err
+}
+
 const saveAccount = `-- name: SaveAccount :exec
 INSERT INTO account (
     id,

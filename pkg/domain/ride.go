@@ -104,13 +104,13 @@ func RideWithDate(timeNow time.Time) RideOption {
 	}
 }
 
-func BuildRide(accOpts ...RideOption) (*Ride, error) {
+func BuildRide(rideOpts ...RideOption) (*Ride, error) {
 	var newRide Ride
-	for _, accOpt := range accOpts {
-		if accOpt == nil {
+	for _, opt := range rideOpts {
+		if opt == nil {
 			continue
 		}
-		if err := accOpt(&newRide); err != nil {
+		if err := opt(&newRide); err != nil {
 			return nil, RaiseDomainError(fmt.Errorf("failed to build account: %w", err))
 		}
 	}

@@ -8,6 +8,7 @@ help:
 	@echo " run_api             - Run API web server"
 	@echo " generate            - Generate SQL Models and Interface Mocks"
 	@echo " migrate             - Migrate database all migrations"
+	@echo " create_migration    - Create new migration"
 	@echo " install_tools       - Install golang tools for the project"
 	@echo ""
 
@@ -55,6 +56,11 @@ migrate_all_down:
 migrate_one_down:
 	@echo "Migrate one migration down"
 	@migrate -path ./pkg/infra/db/migrations -database "postgresql://$(PG_CONN_STR)" down 1
+
+.PHONY: create_migration
+create_migration:
+	@echo "Creating new migration"
+	@migrate create -ext sql -dir ./pkg/infra/db/migrations -seq $(name)
 
 .PHONY: install_tools
 install_tools:
