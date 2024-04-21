@@ -8,9 +8,6 @@ import (
 )
 
 func mapDBRideToDomainRide(ride *db.Ride) (*domain.Ride, error) {
-	if ride == nil {
-		return nil, errors.New("db ride cannot be nil")
-	}
 	rideStatus, err := domain.BuildRideStatusFromString(ride.Status)
 	if err != nil {
 		return nil, err

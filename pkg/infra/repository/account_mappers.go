@@ -8,9 +8,6 @@ import (
 )
 
 func mapDBAccountToDomainAccount(account *db.Account) (*domain.Account, error) {
-	if account == nil {
-		return nil, fmt.Errorf("db account cannot be nil")
-	}
 	domainAcc, err := domain.BuildAccount(
 		domain.AccountWithID(fromPgTypeUUIDToString(account.ID)),
 		domain.AccountWithName(account.Name),

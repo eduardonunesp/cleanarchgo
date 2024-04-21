@@ -35,7 +35,7 @@ func (a AccountRepositoryPG) GetAccountByID(id string) (*domain.Account, error) 
 	queries := db.New(a.conn)
 	uuid, err := mapStringToPgTypeUUID(id)
 	if err != nil {
-		return nil, err
+		return nil, RaiseRepositoryError(err)
 	}
 	account, err := queries.GetAccount(context.Background(), uuid)
 	if err != nil {
