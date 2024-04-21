@@ -79,7 +79,7 @@ func (_c *MockRideRepositoryRO_GetRideByID_Call) RunAndReturn(run func(string) (
 }
 
 // HasActiveRideByPassengerID provides a mock function with given fields: passengerID
-func (_m *MockRideRepositoryRO) HasActiveRideByPassengerID(passengerID string) bool {
+func (_m *MockRideRepositoryRO) HasActiveRideByPassengerID(passengerID string) (bool, error) {
 	ret := _m.Called(passengerID)
 
 	if len(ret) == 0 {
@@ -87,13 +87,23 @@ func (_m *MockRideRepositoryRO) HasActiveRideByPassengerID(passengerID string) b
 	}
 
 	var r0 bool
+	var r1 error
+	if rf, ok := ret.Get(0).(func(string) (bool, error)); ok {
+		return rf(passengerID)
+	}
 	if rf, ok := ret.Get(0).(func(string) bool); ok {
 		r0 = rf(passengerID)
 	} else {
 		r0 = ret.Get(0).(bool)
 	}
 
-	return r0
+	if rf, ok := ret.Get(1).(func(string) error); ok {
+		r1 = rf(passengerID)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
 }
 
 // MockRideRepositoryRO_HasActiveRideByPassengerID_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'HasActiveRideByPassengerID'
@@ -114,12 +124,12 @@ func (_c *MockRideRepositoryRO_HasActiveRideByPassengerID_Call) Run(run func(pas
 	return _c
 }
 
-func (_c *MockRideRepositoryRO_HasActiveRideByPassengerID_Call) Return(_a0 bool) *MockRideRepositoryRO_HasActiveRideByPassengerID_Call {
-	_c.Call.Return(_a0)
+func (_c *MockRideRepositoryRO_HasActiveRideByPassengerID_Call) Return(_a0 bool, _a1 error) *MockRideRepositoryRO_HasActiveRideByPassengerID_Call {
+	_c.Call.Return(_a0, _a1)
 	return _c
 }
 
-func (_c *MockRideRepositoryRO_HasActiveRideByPassengerID_Call) RunAndReturn(run func(string) bool) *MockRideRepositoryRO_HasActiveRideByPassengerID_Call {
+func (_c *MockRideRepositoryRO_HasActiveRideByPassengerID_Call) RunAndReturn(run func(string) (bool, error)) *MockRideRepositoryRO_HasActiveRideByPassengerID_Call {
 	_c.Call.Return(run)
 	return _c
 }

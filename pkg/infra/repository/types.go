@@ -16,12 +16,12 @@ type AccountRepository interface {
 
 //go:generate mockery
 type RideRepositoryRO interface {
-	HasActiveRideByPassengerID(passengerID string) bool
+	HasActiveRideByPassengerID(passengerID string) (bool, error)
 	GetRideByID(rideID string) (*domain.Ride, error)
 }
 
 //go:generate mockery
 type RideRepository interface {
 	RideRepositoryRO
-	SaveRide(ride domain.Ride)
+	SaveRide(ride *domain.Ride) error
 }

@@ -79,7 +79,7 @@ func (_c *MockRideRepository_GetRideByID_Call) RunAndReturn(run func(string) (*d
 }
 
 // HasActiveRideByPassengerID provides a mock function with given fields: passengerID
-func (_m *MockRideRepository) HasActiveRideByPassengerID(passengerID string) bool {
+func (_m *MockRideRepository) HasActiveRideByPassengerID(passengerID string) (bool, error) {
 	ret := _m.Called(passengerID)
 
 	if len(ret) == 0 {
@@ -87,13 +87,23 @@ func (_m *MockRideRepository) HasActiveRideByPassengerID(passengerID string) boo
 	}
 
 	var r0 bool
+	var r1 error
+	if rf, ok := ret.Get(0).(func(string) (bool, error)); ok {
+		return rf(passengerID)
+	}
 	if rf, ok := ret.Get(0).(func(string) bool); ok {
 		r0 = rf(passengerID)
 	} else {
 		r0 = ret.Get(0).(bool)
 	}
 
-	return r0
+	if rf, ok := ret.Get(1).(func(string) error); ok {
+		r1 = rf(passengerID)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
 }
 
 // MockRideRepository_HasActiveRideByPassengerID_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'HasActiveRideByPassengerID'
@@ -114,19 +124,32 @@ func (_c *MockRideRepository_HasActiveRideByPassengerID_Call) Run(run func(passe
 	return _c
 }
 
-func (_c *MockRideRepository_HasActiveRideByPassengerID_Call) Return(_a0 bool) *MockRideRepository_HasActiveRideByPassengerID_Call {
-	_c.Call.Return(_a0)
+func (_c *MockRideRepository_HasActiveRideByPassengerID_Call) Return(_a0 bool, _a1 error) *MockRideRepository_HasActiveRideByPassengerID_Call {
+	_c.Call.Return(_a0, _a1)
 	return _c
 }
 
-func (_c *MockRideRepository_HasActiveRideByPassengerID_Call) RunAndReturn(run func(string) bool) *MockRideRepository_HasActiveRideByPassengerID_Call {
+func (_c *MockRideRepository_HasActiveRideByPassengerID_Call) RunAndReturn(run func(string) (bool, error)) *MockRideRepository_HasActiveRideByPassengerID_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // SaveRide provides a mock function with given fields: ride
-func (_m *MockRideRepository) SaveRide(ride domain.Ride) {
-	_m.Called(ride)
+func (_m *MockRideRepository) SaveRide(ride *domain.Ride) error {
+	ret := _m.Called(ride)
+
+	if len(ret) == 0 {
+		panic("no return value specified for SaveRide")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(*domain.Ride) error); ok {
+		r0 = rf(ride)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
 }
 
 // MockRideRepository_SaveRide_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'SaveRide'
@@ -135,24 +158,24 @@ type MockRideRepository_SaveRide_Call struct {
 }
 
 // SaveRide is a helper method to define mock.On call
-//   - ride domain.Ride
+//   - ride *domain.Ride
 func (_e *MockRideRepository_Expecter) SaveRide(ride interface{}) *MockRideRepository_SaveRide_Call {
 	return &MockRideRepository_SaveRide_Call{Call: _e.mock.On("SaveRide", ride)}
 }
 
-func (_c *MockRideRepository_SaveRide_Call) Run(run func(ride domain.Ride)) *MockRideRepository_SaveRide_Call {
+func (_c *MockRideRepository_SaveRide_Call) Run(run func(ride *domain.Ride)) *MockRideRepository_SaveRide_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(domain.Ride))
+		run(args[0].(*domain.Ride))
 	})
 	return _c
 }
 
-func (_c *MockRideRepository_SaveRide_Call) Return() *MockRideRepository_SaveRide_Call {
-	_c.Call.Return()
+func (_c *MockRideRepository_SaveRide_Call) Return(_a0 error) *MockRideRepository_SaveRide_Call {
+	_c.Call.Return(_a0)
 	return _c
 }
 
-func (_c *MockRideRepository_SaveRide_Call) RunAndReturn(run func(domain.Ride)) *MockRideRepository_SaveRide_Call {
+func (_c *MockRideRepository_SaveRide_Call) RunAndReturn(run func(*domain.Ride) error) *MockRideRepository_SaveRide_Call {
 	_c.Call.Return(run)
 	return _c
 }
