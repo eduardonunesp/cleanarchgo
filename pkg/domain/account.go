@@ -9,10 +9,10 @@ import (
 )
 
 var (
-	ErrAccountInvalidEmail    = errors.New("invalid email")
-	ErrAccountInvalidName     = errors.New("invalid name")
-	ErrAccountInvalidCPF      = errors.New("invalid CPF")
-	ErrAccountInvalidCarPlate = errors.New("invalid car plate")
+	errAccountInvalidEmail    = errors.New("invalid email")
+	errAccountInvalidName     = errors.New("invalid name")
+	errAccountInvalidCPF      = errors.New("invalid CPF")
+	errAccountInvalidCarPlate = errors.New("invalid car plate")
 )
 
 var (
@@ -43,7 +43,7 @@ func AccountWithID(id string) AccountOption {
 func AccountWithName(name string) AccountOption {
 	return func(acc *Account) error {
 		if !checkNameRE.MatchString(name) {
-			return ErrAccountInvalidName
+			return errAccountInvalidName
 		}
 		acc.Name = name
 		return nil
@@ -53,7 +53,7 @@ func AccountWithName(name string) AccountOption {
 func AccountWithEmail(email string) AccountOption {
 	return func(acc *Account) error {
 		if !checkEmailRE.MatchString(email) {
-			return ErrAccountInvalidEmail
+			return errAccountInvalidEmail
 		}
 		acc.Email = email
 		return nil
@@ -63,7 +63,7 @@ func AccountWithEmail(email string) AccountOption {
 func AccountWithCarPlate(carPlate string) AccountOption {
 	return func(acc *Account) error {
 		if acc.IsDriver && !checkCarPlateRE.MatchString(carPlate) {
-			return ErrAccountInvalidCarPlate
+			return errAccountInvalidCarPlate
 		}
 		acc.CarPlate = carPlate
 		return nil
@@ -73,7 +73,7 @@ func AccountWithCarPlate(carPlate string) AccountOption {
 func AccountWithCPF(cpf string) AccountOption {
 	return func(acc *Account) error {
 		if !validate(cpf) {
-			return ErrAccountInvalidCPF
+			return errAccountInvalidCPF
 		}
 		acc.CPF = cpf
 		return nil

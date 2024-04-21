@@ -1,8 +1,20 @@
 package domain
 
-import "testing"
+import (
+	"testing"
 
-func TestRemoveNonDigits(t *testing.T) {
+	"github.com/stretchr/testify/suite"
+)
+
+func TestCPF(t *testing.T) {
+	suite.Run(t, new(testCPFSuite))
+}
+
+type testCPFSuite struct {
+	suite.Suite
+}
+
+func (s *testCPFSuite) TestRemoveNonDigits() {
 	tests := map[string]struct {
 		input    string
 		expected string
@@ -24,9 +36,8 @@ func TestRemoveNonDigits(t *testing.T) {
 			expected: "12345678",
 		},
 	}
-
 	for name, tt := range tests {
-		t.Run(name, func(t *testing.T) {
+		s.T().Run(name, func(t *testing.T) {
 			result := removeNonDigits(tt.input)
 			if result != tt.expected {
 				t.Fatalf("Result is %s not equal to %s", result, tt.expected)
@@ -35,7 +46,7 @@ func TestRemoveNonDigits(t *testing.T) {
 	}
 }
 
-func TestAllDigitsEqual(t *testing.T) {
+func (s *testCPFSuite) TestAllDigitsEqual() {
 	tests := map[string]struct {
 		input    string
 		expected bool
@@ -53,9 +64,8 @@ func TestAllDigitsEqual(t *testing.T) {
 			expected: true,
 		},
 	}
-
 	for name, tt := range tests {
-		t.Run(name, func(t *testing.T) {
+		s.T().Run(name, func(t *testing.T) {
 			result := allDigitsEqual(tt.input)
 			if result != tt.expected {
 				t.Fatalf("Result is %s not valid", tt.input)
@@ -64,7 +74,7 @@ func TestAllDigitsEqual(t *testing.T) {
 	}
 }
 
-func TestCalculateDigit(t *testing.T) {
+func (s *testCPFSuite) TestCalculateDigit() {
 	tests := map[string]struct {
 		input    string
 		factor   int
@@ -81,9 +91,8 @@ func TestCalculateDigit(t *testing.T) {
 			expected: "0",
 		},
 	}
-
 	for name, tt := range tests {
-		t.Run(name, func(t *testing.T) {
+		s.T().Run(name, func(t *testing.T) {
 			result := calculateDigit(tt.input, tt.factor)
 			if result != tt.expected {
 				t.Fatalf("Result is %s not valid, expected %s", tt.expected, result)
@@ -92,7 +101,7 @@ func TestCalculateDigit(t *testing.T) {
 	}
 }
 
-func TestValidateCPF(t *testing.T) {
+func (s *testCPFSuite) TestValidateCPF() {
 	tests := map[string]struct {
 		input    string
 		expected bool
@@ -130,9 +139,8 @@ func TestValidateCPF(t *testing.T) {
 			expected: false,
 		},
 	}
-
 	for name, tt := range tests {
-		t.Run(name, func(t *testing.T) {
+		s.T().Run(name, func(t *testing.T) {
 			result := validate(tt.input)
 			if result != tt.expected {
 				t.Fatalf("Result is %s not valid", tt.input)

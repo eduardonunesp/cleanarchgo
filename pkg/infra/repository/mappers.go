@@ -23,17 +23,20 @@ func fromStringToPgTypeText(str string) pgtype.Text {
 	return pgtype.Text{String: str, Valid: true}
 }
 
-func fromPgTypeNumericToInt64(numeric pgtype.Numeric) int64 {
-	return numeric.Int.Int64()
+func fromPgTypeNumericToString(numeric pgtype.Numeric) string {
+	if !numeric.Valid {
+		return ""
+	}
+	v, _ := numeric.MarshalJSON()
+	return string(v)
 }
 
-func mapInt64ToPgTypeNumeric(i64 int64) (pgtype.Numeric, error) {
-	numeric := pgtype.Numeric{}
-	pgInt8 := pgtype.Int8{}
-	if err := pgInt8.Scan(i64); err != nil {
-		return numeric, err
+func mapStringToPgTypeNumeric(strNumeric string) (pgtype.Numeric, error) {
+	if strNumeric == "" {
+		return pgtype.Numeric{}, nil
 	}
-	if err := numeric.ScanInt64(pgInt8); err != nil {
+	numeric := pgtype.Numeric{}
+	if err := numeric.Scan(strNumeric); err != nil {
 		return numeric, err
 	}
 	return numeric, nil

@@ -9,8 +9,9 @@ import (
 )
 
 var (
-	ErrRideEmptyID          = errors.New("ride id cannot be empty")
-	ErrRideEmptyPassengerID = errors.New("passenger id cannot by empty")
+	errRideEmptyID          = errors.New("ride id cannot be empty")
+	errRideEmptyPassengerID = errors.New("passenger id cannot by empty")
+	errRideEmptyDriverID    = errors.New("driver id cannot be empty")
 )
 
 type RideOption func(ride *Ride) error
@@ -20,24 +21,21 @@ type Ride struct {
 	PassengerID string
 	DriverID    string
 	Status      RideStatus
-	Fare        int64
-	FromLat     int64
-	FromLong    int64
-	ToLat       int64
-	ToLong      int64
+	Fare        string
+	Distance    string
+	FromLat     string
+	FromLong    string
+	ToLat       string
+	ToLong      string
 	Date        time.Time
 }
 
-func RideWithIDAndPassengerID(rideID, passengerID string) RideOption {
+func RideWithID(id string) RideOption {
 	return func(ride *Ride) error {
-		if rideID == "" {
-			return ErrRideEmptyID
+		if id == "" {
+			return errRideEmptyID
 		}
-		if passengerID == "" {
-			return ErrRideEmptyPassengerID
-		}
-		ride.ID = rideID
-		ride.PassengerID = passengerID
+		ride.ID = id
 		return nil
 	}
 }
@@ -45,14 +43,38 @@ func RideWithIDAndPassengerID(rideID, passengerID string) RideOption {
 func RideWithPassengerID(passengerID string) RideOption {
 	return func(ride *Ride) error {
 		if passengerID == "" {
-			return ErrRideEmptyPassengerID
+			return errRideEmptyPassengerID
 		}
 		ride.PassengerID = passengerID
 		return nil
 	}
 }
 
-func RideWithFromLatLong(lat, long int64) RideOption {
+func RideWithDriverID(driverID string) RideOption {
+	return func(ride *Ride) error {
+		if driverID == "" {
+			return errRideEmptyDriverID
+		}
+		ride.DriverID = driverID
+		return nil
+	}
+}
+
+func RideWithFare(fare string) RideOption {
+	return func(ride *Ride) error {
+		ride.Fare = fare
+		return nil
+	}
+}
+
+func RideWithDistance(distance string) RideOption {
+	return func(ride *Ride) error {
+		ride.Distance = distance
+		return nil
+	}
+}
+
+func RideWithFromLatLong(lat, long string) RideOption {
 	return func(ride *Ride) error {
 		ride.FromLat = lat
 		ride.FromLong = long
@@ -60,7 +82,7 @@ func RideWithFromLatLong(lat, long int64) RideOption {
 	}
 }
 
-func RideWithToLatLong(lat, long int64) RideOption {
+func RideWithToLatLong(lat, long string) RideOption {
 	return func(ride *Ride) error {
 		ride.ToLat = lat
 		ride.ToLong = long

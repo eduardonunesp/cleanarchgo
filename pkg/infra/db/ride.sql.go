@@ -62,6 +62,9 @@ const saveRide = `-- name: SaveRide :exec
 INSERT INTO ride (
     id,
     passenger_id,
+    driver_id,
+    fare,
+    distance,
     from_lat,
     from_long,
     to_lat,
@@ -70,13 +73,16 @@ INSERT INTO ride (
     date
 )
 VALUES (
-    $1, $2, $3, $4, $5, $6, $7, $8
+    $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11
 )
 `
 
 type SaveRideParams struct {
 	ID          pgtype.UUID
 	PassengerID pgtype.UUID
+	DriverID    pgtype.UUID
+	Fare        pgtype.Numeric
+	Distance    pgtype.Numeric
 	FromLat     pgtype.Numeric
 	FromLong    pgtype.Numeric
 	ToLat       pgtype.Numeric
@@ -89,6 +95,9 @@ func (q *Queries) SaveRide(ctx context.Context, arg SaveRideParams) error {
 	_, err := q.db.Exec(ctx, saveRide,
 		arg.ID,
 		arg.PassengerID,
+		arg.DriverID,
+		arg.Fare,
+		arg.Distance,
 		arg.FromLat,
 		arg.FromLong,
 		arg.ToLat,

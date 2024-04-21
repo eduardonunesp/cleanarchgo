@@ -21,6 +21,9 @@ WHERE
 INSERT INTO ride (
     id,
     passenger_id,
+    driver_id,
+    fare,
+    distance,
     from_lat,
     from_long,
     to_lat,
@@ -29,5 +32,5 @@ INSERT INTO ride (
     date
 )
 VALUES (
-    $1, $2, $3, $4, $5, $6, $7, $8
+    $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11
 );

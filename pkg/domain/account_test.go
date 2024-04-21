@@ -34,7 +34,7 @@ func (s *testAccountSuite) TestBuildAccountFailedInvalidName() {
 	)
 	domainErr := new(DomainError)
 	s.ErrorAs(err, &domainErr)
-	s.ErrorIs(domainErr.Err, ErrAccountInvalidName)
+	s.ErrorIs(domainErr.Err, errAccountInvalidName)
 }
 
 func (s *testAccountSuite) TestBuildAccountFailedInvalidEmail() {
@@ -43,7 +43,7 @@ func (s *testAccountSuite) TestBuildAccountFailedInvalidEmail() {
 	)
 	domainErr := new(DomainError)
 	s.ErrorAs(err, &domainErr)
-	s.ErrorIs(domainErr.Err, ErrAccountInvalidEmail)
+	s.ErrorIs(domainErr.Err, errAccountInvalidEmail)
 }
 
 func (s *testAccountSuite) TestBuildAccountFailedInvalidCPF() {
@@ -52,7 +52,7 @@ func (s *testAccountSuite) TestBuildAccountFailedInvalidCPF() {
 	)
 	domainErr := new(DomainError)
 	s.ErrorAs(err, &domainErr)
-	s.ErrorIs(domainErr.Err, ErrAccountInvalidCPF)
+	s.ErrorIs(domainErr.Err, errAccountInvalidCPF)
 }
 
 func (s *testAccountSuite) TestBuildAccountFailedInvalidCarPlate() {
@@ -62,5 +62,5 @@ func (s *testAccountSuite) TestBuildAccountFailedInvalidCarPlate() {
 	)
 	domainErr := new(DomainError)
 	s.ErrorAs(err, &domainErr)
-	s.ErrorIs(domainErr.Err, ErrAccountInvalidCarPlate)
+	s.ErrorIs(domainErr.Err, errAccountInvalidCarPlate)
 }

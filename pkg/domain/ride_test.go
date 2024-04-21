@@ -20,7 +20,8 @@ func (s *testRideSuite) TestBuildRideWithSuccess() {
 	rideStatus, err := BuildRideStatusFromString("requested")
 	s.NoError(err)
 	ride, err := BuildRide(
-		RideWithIDAndPassengerID("1", "2"),
+		RideWithID("1"),
+		RideWithPassengerID("2"),
 		RideWithDate(tNow),
 	)
 	s.NoError(err)
@@ -34,20 +35,22 @@ func (s *testRideSuite) TestBuildRideWithSuccess() {
 
 func (s *testRideSuite) TestBuildRideFailedInvalidID() {
 	ride, err := BuildRide(
-		RideWithIDAndPassengerID("", "2"),
+		RideWithID(""),
+		RideWithPassengerID("2"),
 	)
 	domainErr := new(DomainError)
 	s.ErrorAs(err, &domainErr)
-	s.ErrorIs(domainErr.Err, ErrRideEmptyID)
+	s.ErrorIs(domainErr.Err, errRideEmptyID)
 	s.Nil(ride)
 }
 
 func (s *testRideSuite) TestBuildRideFailedInvalidPassengerID() {
 	ride, err := BuildRide(
-		RideWithIDAndPassengerID("1", ""),
+		RideWithID("1"),
+		RideWithPassengerID(""),
 	)
 	domainErr := new(DomainError)
 	s.ErrorAs(err, &domainErr)
-	s.ErrorIs(domainErr.Err, ErrRideEmptyPassengerID)
+	s.ErrorIs(domainErr.Err, errRideEmptyPassengerID)
 	s.Nil(ride)
 }
