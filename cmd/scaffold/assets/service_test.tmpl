@@ -12,14 +12,14 @@ func Test{{.ServiceName}}(t *testing.T) {
 
 type test{{.ServiceName}}Suite struct {
 	suite.Suite
-	useCase     *{{.ServiceName}}
+	useCase *{{.ServiceName}}
 }
 
 func (s *test{{.ServiceName}}Suite) SetupTest() {
-    // Mocks goes here
+	// Mocks goes here
 	s.useCase = New{{.ServiceName}}()
 }
 
 func (s *test{{.ServiceName}}Suite) Test{{.ServiceName}}Success() {
-    // Test goes here
+	// Test goes here
 }

@@ -1,0 +1,25 @@
+package domain
+
+import (
+	"testing"
+
+	"github.com/stretchr/testify/suite"
+)
+
+func Test{{.EntityName}}(t *testing.T) {
+	suite.Run(t, new(test{{.EntityName}}Suite))
+}
+
+type test{{.EntityName}}Suite struct {
+	suite.Suite
+}
+
+func (s *test{{.EntityName}}Suite) TestBuild{{.EntityName}}WithSuccess() {
+	newEnt, err := Build{{.EntityName}}(
+		{{.EntityName}}WithID("1"),
+	)
+	s.NoError(err)
+	s.Equal(&{{.EntityName}}{
+		ID: "1",
+	}, newEnt)
+}

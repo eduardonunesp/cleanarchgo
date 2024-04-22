@@ -1,19 +1,19 @@
 package service
 
 type {{.ServiceName}}Params struct {
-    // Params goes here
+	// Params goes here
 }
 
 type {{.ServiceName}}Result struct {
-    // Result goes here
+	// Result goes here
 }
 
 type {{.ServiceName}} struct {
-    // Dependencies goes here
+	// Dependencies goes here
 }
 
 func New{{.ServiceName}}() *{{.ServiceName}} {
-    return &{{.ServiceName}}{}
+	return &{{.ServiceName}}{}
 }
 
 func (s {{.ServiceName}}) Execute(input *{{.ServiceName}}Params) (*{{.ServiceName}}Result, error) {

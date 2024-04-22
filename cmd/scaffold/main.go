@@ -1,12 +1,59 @@
 package main
 
 import (
+	"bytes"
+	"embed"
 	"fmt"
 	"os"
 	"strings"
+	"text/template"
 
 	"github.com/urfave/cli/v2"
 )
+
+var (
+	//go:embed assets
+	res embed.FS
+)
+
+func main() {
+	app := &cli.App{
+		Name: "scaffold",
+		Commands: []*cli.Command{
+			{
+				Name:        "create",
+				Description: "Create a new service, entity, or repository",
+				Subcommands: []*cli.Command{
+					createService(),
+					createEntity(),
+				},
+			},
+		},
+	}
+
+	if err := app.Run(os.Args); err != nil {
+		fmt.Println(err)
+	}
+}
+
+func createTemplateFile(filename string, tmpl *template.Template, params interface{}) error {
+	buf := new(bytes.Buffer)
+	if err := tmpl.Execute(buf, params); err != nil {
+		return err
+	}
+	if fileExists(filename) {
+		return fmt.Errorf("file %s already exists", filename)
+	}
+	file, err := os.Create(filename)
+	if err != nil {
+		return err
+	}
+	_, err = file.Write(buf.Bytes())
+	if err != nil {
+		return err
+	}
+	return nil
+}
 
 func toSnakeCase(s string) string {
 	var result string
@@ -28,17 +75,4 @@ func fileExists(filename string) bool {
 		return false
 	}
 	return !info.IsDir()
-}
-
-func main() {
-	app := &cli.App{
-		Name: "scaffold",
-		Commands: []*cli.Command{
-			createService(),
-		},
-	}
-
-	if err := app.Run(os.Args); err != nil {
-		fmt.Println(err)
-	}
 }
