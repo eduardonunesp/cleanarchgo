@@ -56,3 +56,16 @@ func (a AccountRepositoryPG) SaveAccount(account *domain.Account) error {
 	}
 	return nil
 }
+
+func (a AccountRepositoryPG) IsDriverFreeByDriverID(driverID string) (bool, error) {
+	queries := db.New(a.conn)
+	uuid, err := mapStringToPgTypeUUID(driverID)
+	if err != nil {
+		return false, RaiseRepositoryError(err)
+	}
+	result, err := queries.IsDriverFree(context.Background(), uuid)
+	if err != nil {
+		return false, RaiseRepositoryError(err)
+	}
+	return result, nil
+}

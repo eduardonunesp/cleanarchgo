@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	errRideNotAccepted = errors.New("ride status is not accepted")
+	errStartRideInvalidStatus = errors.New("ride status is not accepted")
 )
 
 type StartRideParams struct {
@@ -29,10 +29,10 @@ func (s StartRide) Execute(params *StartRideParams) error {
 		return err
 	}
 	if ride == nil {
-		return RaiseServiceError(errRideNotFound)
+		return RaiseServiceError(errAcceptRideNotFound)
 	}
 	if ride.Status != domain.RideStatusAccepted {
-		return RaiseServiceError(errRideNotAccepted)
+		return RaiseServiceError(errStartRideInvalidStatus)
 	}
 	ride.Status = domain.RideStatusInProgres
 	if err := s.rideRepo.SaveRide(ride); err != nil {

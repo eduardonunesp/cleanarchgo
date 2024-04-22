@@ -8,9 +8,9 @@ import (
 )
 
 var (
-	errPassengerNotFound     = errors.New("passenger not found")
-	errAccountIsNotPassenger = errors.New("account is not a passenger")
-	errActiveRideExists      = errors.New("passenger has an active ride")
+	errRequestRideNotFound     = errors.New("passenger not found")
+	errRequestRideNotPassenger = errors.New("account is not a passenger")
+	errRequestRideActiveFound  = errors.New("passenger has an active ride")
 )
 
 type RequestRideParams struct {
@@ -40,17 +40,17 @@ func (r *RequestRide) Execute(params *RequestRideParams) (*RequestRideResult, er
 		return nil, err
 	}
 	if account == nil {
-		return nil, RaiseServiceError(errPassengerNotFound)
+		return nil, RaiseServiceError(errRequestRideNotFound)
 	}
 	if !account.IsPassenger {
-		return nil, RaiseServiceError(errAccountIsNotPassenger)
+		return nil, RaiseServiceError(errRequestRideNotPassenger)
 	}
 	hasActiveRide, err := r.rideRepo.HasActiveRideByPassengerID(params.PassengerID)
 	if err != nil {
 		return nil, err
 	}
 	if hasActiveRide {
-		return nil, RaiseServiceError(errActiveRideExists)
+		return nil, RaiseServiceError(errRequestRideActiveFound)
 	}
 	ride, err := domain.BuildRide(
 		domain.RideWithPassengerID(params.PassengerID),

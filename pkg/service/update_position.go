@@ -32,7 +32,7 @@ func (s UpdatePosition) Execute(params *UpdatePositionParams) error {
 		return err
 	}
 	if ride == nil {
-		return RaiseServiceError(errRideNotFound)
+		return RaiseServiceError(errAcceptRideNotFound)
 	}
 	if ride.Status != domain.RideStatusInProgres {
 		return RaiseServiceError(errRideNotInProgress)

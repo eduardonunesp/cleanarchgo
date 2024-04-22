@@ -7,7 +7,7 @@ import (
 )
 
 var (
-	errGetRideErrorNotFound = errors.New("ride not found for given id")
+	errGetRideNotFound = errors.New("ride not found for given id")
 )
 
 type GetRideParams struct {
@@ -41,14 +41,14 @@ func (g GetRide) Execute(input *GetRideParams) (*GetRideResult, error) {
 		return nil, err
 	}
 	if ride == nil {
-		return nil, RaiseServiceError(errGetRideErrorNotFound)
+		return nil, RaiseServiceError(errGetRideNotFound)
 	}
 	acc, err := g.accountRepo.GetAccountByID(ride.PassengerID)
 	if err != nil {
 		return nil, err
 	}
 	if acc == nil {
-		return nil, RaiseServiceError(errGetRideErrorNotFound)
+		return nil, RaiseServiceError(errGetRideNotFound)
 	}
 	return &GetRideResult{
 		ID:             ride.ID,

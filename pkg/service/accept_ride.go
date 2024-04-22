@@ -8,10 +8,10 @@ import (
 )
 
 var (
-	errRideNotFound         = errors.New("ride not found")
-	errRideNotRequested     = errors.New("ride not in requested status")
-	errAccountNotIsDriver   = errors.New("account isn't a driver")
-	errDriverIsNotAvailable = errors.New("driver is not available")
+	errAcceptRideNotFound           = errors.New("ride not found")
+	errAcceptRideNotRequested       = errors.New("ride not in requested status")
+	errAcceptRideNotDriver          = errors.New("account isn't a driver")
+	errAcceptRideDriverNotAvailable = errors.New("driver is not available")
 )
 
 type AcceptRideRequest struct {
@@ -34,27 +34,27 @@ func (s AcceptRide) Execute(req AcceptRideRequest) error {
 		return err
 	}
 	if ride == nil {
-		return RaiseServiceError(errRideNotFound)
+		return RaiseServiceError(errAcceptRideNotFound)
 	}
 	driverAcc, err := s.accRepo.GetAccountByID(ride.DriverID)
 	if err != nil {
 		return err
 	}
 	if driverAcc == nil {
-		return RaiseServiceError(errRideNotFound)
+		return RaiseServiceError(errAcceptRideNotFound)
 	}
-	if driverAcc.IsDriver == false {
-		return RaiseServiceError(errAccountNotIsDriver)
+	if !driverAcc.IsDriver {
+		return RaiseServiceError(errAcceptRideNotDriver)
 	}
 	if ride.Status != domain.RideStatusRequested {
-		return RaiseServiceError(errRideNotRequested)
+		return RaiseServiceError(errAcceptRideNotRequested)
 	}
 	driverFree, err := s.accRepo.IsDriverFreeByDriverID(req.DriverID)
 	if err != nil {
 		return err
 	}
 	if !driverFree {
-		return RaiseServiceError(errDriverIsNotAvailable)
+		return RaiseServiceError(errAcceptRideDriverNotAvailable)
 	}
 	ride.DriverID = req.DriverID
 	ride.Status = domain.RideStatusAccepted
