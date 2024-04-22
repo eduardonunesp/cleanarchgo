@@ -1,0 +1,9 @@
+
+//go:generate mockery
+type {{.RepositoryName}}RepositoryRO interface {
+}
+
+//go:generate mockery
+type {{.RepositoryName}}Repository interface {
+	{{.RepositoryName}}RepositoryRO
+}

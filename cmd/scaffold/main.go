@@ -26,6 +26,7 @@ func main() {
 				Subcommands: []*cli.Command{
 					createService(),
 					createEntity(),
+					createRepository(),
 				},
 			},
 		},
@@ -45,6 +46,22 @@ func createTemplateFile(filename string, tmpl *template.Template, params interfa
 		return fmt.Errorf("file %s already exists", filename)
 	}
 	file, err := os.Create(filename)
+	if err != nil {
+		return err
+	}
+	_, err = file.Write(buf.Bytes())
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func appendTemplateFile(filename string, tmpl *template.Template, params interface{}) error {
+	buf := new(bytes.Buffer)
+	if err := tmpl.Execute(buf, params); err != nil {
+		return err
+	}
+	file, err := os.OpenFile(filename, os.O_APPEND|os.O_WRONLY, 0644)
 	if err != nil {
 		return err
 	}

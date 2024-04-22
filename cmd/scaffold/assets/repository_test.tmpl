@@ -1,0 +1,22 @@
+//go:build db_integration
+
+package repository
+
+import (
+	"testing"
+
+	"github.com/stretchr/testify/suite"
+)
+
+func Test{{.RepositoryName}}RepositoryPG(t *testing.T) {
+	suite.Run(t, new(test{{.RepositoryName}}RepoPGSuite))
+}
+
+type test{{.RepositoryName}}RepoPGSuite struct {
+	suite.Suite
+	repoDB *{{.RepositoryName}}RepositoryPG
+}
+
+func (s *test{{.RepositoryName}}RepoPGSuite) SetupTest() {
+	s.repoDB = New{{.RepositoryName}}RepositoryPG("postgres://postgres:123456@localhost:5432/postgres?sslmode=disable")
+}

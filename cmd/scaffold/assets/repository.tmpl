@@ -1,0 +1,20 @@
+package repository
+
+import (
+	"context"
+
+	"github.com/jackc/pgx/v5"
+	_ "github.com/lib/pq"
+)
+
+type {{.RepositoryName}}RepositoryPG struct {
+	conn *pgx.Conn
+}
+
+func New{{.RepositoryName}}RepositoryPG(connStr string) *{{.RepositoryName}}RepositoryPG {
+	conn, err := pgx.Connect(context.Background(), connStr)
+	if err != nil {
+		panic(err)
+	}
+	return &{{.RepositoryName}}RepositoryPG{conn}
+}

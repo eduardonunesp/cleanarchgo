@@ -21,6 +21,21 @@ ORDER BY
 	date DESC
 LIMIT 1;
 
+-- name: HasActiveRideByDriverID :one
+SELECT
+	CASE WHEN status IN('accepted', 'in_progress') THEN
+		TRUE
+	ELSE
+		FALSE
+	END
+FROM
+	ride
+WHERE
+	driver_id = $1
+ORDER BY
+	date DESC
+LIMIT 1;
+
 -- name: SaveRide :exec
 INSERT INTO ride (
     id,
@@ -38,18 +53,3 @@ INSERT INTO ride (
 VALUES (
     $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11
 );
-
--- name: HasActiveRideByDriverID :one
-SELECT
-	CASE WHEN status IN('accepted', 'in_progress') THEN
-		TRUE
-	ELSE
-		FALSE
-	END
-FROM
-	ride
-WHERE
-	driver_id = $1
-ORDER BY
-	date DESC
-LIMIT 1;
