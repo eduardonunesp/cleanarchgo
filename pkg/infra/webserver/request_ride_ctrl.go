@@ -24,39 +24,41 @@ type (
 	}
 )
 
-func (s apiServer) requestRideRequest(c echo.Context) error {
-	reqBody := new(requestRideRequest)
-	if err := c.Bind(reqBody); err != nil {
-		return c.JSON(
-			http.StatusBadRequest,
-			raiseWebserverError(errors.New("invalid input, malformed json")),
-		)
-	}
-	result, err := s.reqRide.Execute(&service.RequestRideParams{
-		PassengerID: reqBody.PassengerID,
-		FromLat:     reqBody.FromLat,
-		FromLong:    reqBody.FromLong,
-		ToLat:       reqBody.ToLat,
-		ToLong:      reqBody.ToLong,
-	})
-	serviceErr := new(service.ServiceError)
-	if errors.As(err, &serviceErr) {
-		return c.JSON(
-			http.StatusBadRequest,
-			raiseWebserverError(serviceErr),
-		)
-	}
-	domainErr := new(domain.DomainError)
-	if errors.As(err, &domainErr) {
-		return c.JSON(
-			http.StatusBadRequest,
-			raiseWebserverError(domainErr),
-		)
-	}
-	if err != nil {
-		return c.NoContent(http.StatusInternalServerError)
-	}
-	return c.JSON(http.StatusOK, requestRideResponse{
-		RideID: result.RideID,
+func (s apiServer) RequestRide(e *echo.Echo) {
+	e.GET("/rides/:rideID", func(c echo.Context) error {
+		reqBody := new(requestRideRequest)
+		if err := c.Bind(reqBody); err != nil {
+			return c.JSON(
+				http.StatusBadRequest,
+				raiseWebserverError(errors.New("invalid input, malformed json")),
+			)
+		}
+		result, err := s.reqRide.Execute(&service.RequestRideParams{
+			PassengerID: reqBody.PassengerID,
+			FromLat:     reqBody.FromLat,
+			FromLong:    reqBody.FromLong,
+			ToLat:       reqBody.ToLat,
+			ToLong:      reqBody.ToLong,
+		})
+		serviceErr := new(service.ServiceError)
+		if errors.As(err, &serviceErr) {
+			return c.JSON(
+				http.StatusBadRequest,
+				raiseWebserverError(serviceErr),
+			)
+		}
+		domainErr := new(domain.DomainError)
+		if errors.As(err, &domainErr) {
+			return c.JSON(
+				http.StatusBadRequest,
+				raiseWebserverError(domainErr),
+			)
+		}
+		if err != nil {
+			return c.NoContent(http.StatusInternalServerError)
+		}
+		return c.JSON(http.StatusOK, requestRideResponse{
+			RideID: result.RideID,
+		})
 	})
 }

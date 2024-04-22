@@ -49,7 +49,7 @@ func (s AcceptRide) Execute(req AcceptRideRequest) error {
 	if ride.Status != domain.RideStatusRequested {
 		return RaiseServiceError(errAcceptRideNotRequested)
 	}
-	driverFree, err := s.accRepo.IsDriverFreeByDriverID(req.DriverID)
+	driverFree, err := s.rideRepo.HasActiveRideByDriverID(req.DriverID)
 	if err != nil {
 		return err
 	}

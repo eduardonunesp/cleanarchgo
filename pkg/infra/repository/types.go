@@ -34,4 +34,5 @@ type PositionRepositoryRO interface {
 //go:generate mockery
 type PositionRepository interface {
 	PositionRepositoryRO
+	SavePosition(position *domain.Position) error
 }

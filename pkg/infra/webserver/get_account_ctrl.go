@@ -21,34 +21,36 @@ type (
 	}
 )
 
-func (s apiServer) getAccountRequest(c echo.Context) error {
-	accountID := c.Param("accountID")
-	if accountID == "" {
-		return c.JSON(
-			http.StatusBadRequest,
-			raiseWebserverError(errors.New("accountID cannot be empty")),
-		)
-	}
-	result, err := s.getAccount.Execute(&service.GetAccountParams{
-		ID: accountID,
-	})
-	serviceErr := new(service.ServiceError)
-	if errors.As(err, &serviceErr) {
-		return c.NoContent(http.StatusNotFound)
-	}
-	if err != nil {
-		return c.NoContent(http.StatusInternalServerError)
-	}
-	if result == nil {
-		return c.NoContent(http.StatusNotFound)
-	}
-	return c.JSON(http.StatusOK, accountResponse{
-		ID:          result.ID,
-		Name:        result.Name,
-		CPF:         result.CPF,
-		Email:       result.Email,
-		CarPlate:    result.CarPlate,
-		IsPassenger: result.IsPassenger,
-		IsDriver:    result.IsDriver,
+func (s apiServer) GetAccount(e *echo.Echo) {
+	e.POST("/request_ride", func(c echo.Context) error {
+		accountID := c.Param("accountID")
+		if accountID == "" {
+			return c.JSON(
+				http.StatusBadRequest,
+				raiseWebserverError(errors.New("accountID cannot be empty")),
+			)
+		}
+		result, err := s.getAccount.Execute(&service.GetAccountParams{
+			ID: accountID,
+		})
+		serviceErr := new(service.ServiceError)
+		if errors.As(err, &serviceErr) {
+			return c.NoContent(http.StatusNotFound)
+		}
+		if err != nil {
+			return c.NoContent(http.StatusInternalServerError)
+		}
+		if result == nil {
+			return c.NoContent(http.StatusNotFound)
+		}
+		return c.JSON(http.StatusOK, accountResponse{
+			ID:          result.ID,
+			Name:        result.Name,
+			CPF:         result.CPF,
+			Email:       result.Email,
+			CarPlate:    result.CarPlate,
+			IsPassenger: result.IsPassenger,
+			IsDriver:    result.IsDriver,
+		})
 	})
 }

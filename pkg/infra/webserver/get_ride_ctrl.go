@@ -23,36 +23,38 @@ type (
 	}
 )
 
-func (s apiServer) getRideRequest(c echo.Context) error {
-	rideID := c.Param("rideID")
-	if rideID == "" {
-		return c.JSON(
-			http.StatusBadRequest,
-			raiseWebserverError(errors.New("accountID cannot be empty")),
-		)
-	}
-	result, err := s.getRide.Execute(&service.GetRideParams{
-		RideID: rideID,
-	})
-	serviceErr := new(service.ServiceError)
-	if errors.As(err, &serviceErr) {
-		return c.NoContent(http.StatusNotFound)
-	}
-	if err != nil {
-		return c.NoContent(http.StatusInternalServerError)
-	}
-	if result == nil {
-		return c.NoContent(http.StatusNotFound)
-	}
-	return c.JSON(http.StatusOK, rideResponse{
-		ID:             result.ID,
-		PassengerID:    result.PassengerID,
-		FromLat:        result.FromLat,
-		FromLong:       result.FromLong,
-		ToLat:          result.ToLat,
-		ToLong:         result.ToLong,
-		Status:         result.Status,
-		PassengerName:  result.PassengerName,
-		PassengerEmail: result.PassengerEmail,
+func (s apiServer) GetRide(e *echo.Echo) {
+	e.GET("/rides/:rideID", func(c echo.Context) error {
+		rideID := c.Param("rideID")
+		if rideID == "" {
+			return c.JSON(
+				http.StatusBadRequest,
+				raiseWebserverError(errors.New("accountID cannot be empty")),
+			)
+		}
+		result, err := s.getRide.Execute(&service.GetRideParams{
+			RideID: rideID,
+		})
+		serviceErr := new(service.ServiceError)
+		if errors.As(err, &serviceErr) {
+			return c.NoContent(http.StatusNotFound)
+		}
+		if err != nil {
+			return c.NoContent(http.StatusInternalServerError)
+		}
+		if result == nil {
+			return c.NoContent(http.StatusNotFound)
+		}
+		return c.JSON(http.StatusOK, rideResponse{
+			ID:             result.ID,
+			PassengerID:    result.PassengerID,
+			FromLat:        result.FromLat,
+			FromLong:       result.FromLong,
+			ToLat:          result.ToLat,
+			ToLong:         result.ToLong,
+			Status:         result.Status,
+			PassengerName:  result.PassengerName,
+			PassengerEmail: result.PassengerEmail,
+		})
 	})
 }

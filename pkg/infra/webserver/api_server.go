@@ -26,10 +26,10 @@ func NewAPIServer(
 
 func (s apiServer) Listen(host string) {
 	e := echo.New()
-	e.POST("/signup", s.signupRequest)
-	e.POST("/request_ride", s.requestRideRequest)
-	e.GET("/rides/:rideID", s.getRideRequest)
-	e.GET("/accounts/:accountID", s.getAccountRequest)
+	s.Signup(e)
+	s.GetAccount(e)
+	s.RequestRide(e)
+	s.GetRide(e)
 	log.Printf("Server listen at %s", host)
 	e.Start(host)
 }
