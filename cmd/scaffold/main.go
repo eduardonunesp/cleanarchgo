@@ -27,6 +27,7 @@ func main() {
 					createService(),
 					createEntity(),
 					createRepository(),
+					createGateway(),
 				},
 			},
 		},

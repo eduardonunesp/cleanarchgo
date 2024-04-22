@@ -78,6 +78,62 @@ func (_c *MockRideRepositoryRO_GetRideByID_Call) RunAndReturn(run func(string) (
 	return _c
 }
 
+// HasActiveRideByDriverID provides a mock function with given fields: driverID
+func (_m *MockRideRepositoryRO) HasActiveRideByDriverID(driverID string) (bool, error) {
+	ret := _m.Called(driverID)
+
+	if len(ret) == 0 {
+		panic("no return value specified for HasActiveRideByDriverID")
+	}
+
+	var r0 bool
+	var r1 error
+	if rf, ok := ret.Get(0).(func(string) (bool, error)); ok {
+		return rf(driverID)
+	}
+	if rf, ok := ret.Get(0).(func(string) bool); ok {
+		r0 = rf(driverID)
+	} else {
+		r0 = ret.Get(0).(bool)
+	}
+
+	if rf, ok := ret.Get(1).(func(string) error); ok {
+		r1 = rf(driverID)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// MockRideRepositoryRO_HasActiveRideByDriverID_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'HasActiveRideByDriverID'
+type MockRideRepositoryRO_HasActiveRideByDriverID_Call struct {
+	*mock.Call
+}
+
+// HasActiveRideByDriverID is a helper method to define mock.On call
+//   - driverID string
+func (_e *MockRideRepositoryRO_Expecter) HasActiveRideByDriverID(driverID interface{}) *MockRideRepositoryRO_HasActiveRideByDriverID_Call {
+	return &MockRideRepositoryRO_HasActiveRideByDriverID_Call{Call: _e.mock.On("HasActiveRideByDriverID", driverID)}
+}
+
+func (_c *MockRideRepositoryRO_HasActiveRideByDriverID_Call) Run(run func(driverID string)) *MockRideRepositoryRO_HasActiveRideByDriverID_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(string))
+	})
+	return _c
+}
+
+func (_c *MockRideRepositoryRO_HasActiveRideByDriverID_Call) Return(_a0 bool, _a1 error) *MockRideRepositoryRO_HasActiveRideByDriverID_Call {
+	_c.Call.Return(_a0, _a1)
+	return _c
+}
+
+func (_c *MockRideRepositoryRO_HasActiveRideByDriverID_Call) RunAndReturn(run func(string) (bool, error)) *MockRideRepositoryRO_HasActiveRideByDriverID_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // HasActiveRideByPassengerID provides a mock function with given fields: passengerID
 func (_m *MockRideRepositoryRO) HasActiveRideByPassengerID(passengerID string) (bool, error) {
 	ret := _m.Called(passengerID)

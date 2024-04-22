@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bytes"
 	"fmt"
 	"text/template"
 
@@ -30,19 +29,10 @@ func createEntity() *cli.Command {
 			},
 		},
 		Action: func(c *cli.Context) error {
-			tmpl, err := template.ParseFS(res, entityTemplate)
-			if err != nil {
-				return err
-			}
-			buf := new(bytes.Buffer)
-			if err := tmpl.Execute(buf, entityParams{
-				EntityName: c.String("name"),
-			}); err != nil {
-				return err
-			}
 			if err := createTemplateFile(
 				fmt.Sprintf("%s/%s.go", domainPath, toSnakeCase(c.String("name"))),
-				tmpl, entityParams{
+				template.Must(template.ParseFS(res, entityTemplate)),
+				entityParams{
 					EntityName: c.String("name"),
 				},
 			); err != nil {

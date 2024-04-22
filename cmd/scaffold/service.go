@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bytes"
 	"fmt"
 	"text/template"
 
@@ -30,19 +29,10 @@ func createService() *cli.Command {
 			},
 		},
 		Action: func(c *cli.Context) error {
-			tmpl, err := template.ParseFS(res, serviceTemplate)
-			if err != nil {
-				return err
-			}
-			buf := new(bytes.Buffer)
-			if err := tmpl.Execute(buf, ServiceParams{
-				ServiceName: c.String("name"),
-			}); err != nil {
-				return err
-			}
 			if err := createTemplateFile(
 				fmt.Sprintf("%s/%s.go", servicePath, toSnakeCase(c.String("name"))),
-				tmpl, ServiceParams{
+				template.Must(template.ParseFS(res, serviceTemplate)),
+				ServiceParams{
 					ServiceName: c.String("name"),
 				},
 			); err != nil {
