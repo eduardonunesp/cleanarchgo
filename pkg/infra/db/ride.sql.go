@@ -39,16 +39,43 @@ func (q *Queries) GetRide(ctx context.Context, id pgtype.UUID) (Ride, error) {
 	return i, err
 }
 
+const hasActiveRideByDriverID = `-- name: HasActiveRideByDriverID :one
+SELECT
+	CASE WHEN status IN('accepted', 'in_progress') THEN
+		TRUE
+	ELSE
+		FALSE
+	END
+FROM
+	ride
+WHERE
+	driver_id = $1
+ORDER BY
+	date DESC
+LIMIT 1
+`
+
+func (q *Queries) HasActiveRideByDriverID(ctx context.Context, driverID pgtype.UUID) (bool, error) {
+	row := q.db.QueryRow(ctx, hasActiveRideByDriverID, driverID)
+	var column_1 bool
+	err := row.Scan(&column_1)
+	return column_1, err
+}
+
 const hasActiveRideByPassengerID = `-- name: HasActiveRideByPassengerID :one
-SELECT 
-    CASE 
-        WHEN status <> 'completed' THEN TRUE
-        ELSE FALSE
-    END
-FROM ride
-WHERE 
-    passenger_id = $1 
-    AND status <> 'completed'
+SELECT
+	CASE WHEN status <> 'completed' THEN
+		TRUE
+	ELSE
+		FALSE
+	END
+FROM
+	ride
+WHERE
+	passenger_id = $1
+ORDER BY
+	date DESC
+LIMIT 1
 `
 
 func (q *Queries) HasActiveRideByPassengerID(ctx context.Context, passengerID pgtype.UUID) (bool, error) {

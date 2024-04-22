@@ -63,7 +63,7 @@ func (a AccountRepositoryPG) IsDriverFreeByDriverID(driverID string) (bool, erro
 	if err != nil {
 		return false, RaiseRepositoryError(err)
 	}
-	result, err := queries.IsDriverFree(context.Background(), uuid)
+	result, err := queries.HasActiveRideByDriverID(context.Background(), uuid)
 	if err != nil {
 		return false, RaiseRepositoryError(err)
 	}

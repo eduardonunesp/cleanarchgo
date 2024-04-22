@@ -19,7 +19,7 @@ WHERE
 	passenger_id = $1
 ORDER BY
 	date DESC
-LIMIT 1
+LIMIT 1;
 
 -- name: SaveRide :exec
 INSERT INTO ride (
@@ -52,4 +52,4 @@ WHERE
 	driver_id = $1
 ORDER BY
 	date DESC
-LIMIT 1
+LIMIT 1;

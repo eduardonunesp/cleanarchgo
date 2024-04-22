@@ -10,6 +10,7 @@ help:
 	@echo " migrate             - Migrate database all migrations"
 	@echo " create_migration    - Create new migration"
 	@echo " install_tools       - Install golang tools for the project"
+	@echo " build_scaffold      - Build project scaffold tool"
 	@echo ""
 
 .PHONY: test
@@ -67,4 +68,10 @@ install_tools:
 	@go install github.com/vektra/mockery/v2@latest
 	@go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
 	@echo ""
+	@echo "Don't forget to add GOPATH/bin env var to PATH"
+
+.PHONY: build_scaffold
+build_scaffold:
+	@go build -o bin/scaffold cmd/scaffold/*.go
+	@echo "Scaffold tool builded at ./scaffold"
 	@echo "Don't forget to add GOPATH/bin env var to PATH"
