@@ -25,14 +25,14 @@ func (s *testGetAccountSuite) SetupTest() {
 }
 
 func (s *testGetAccountSuite) TestGetAccountSuccess() {
-	s.accountRepo.EXPECT().GetAccountByID("1").Return(&domain.Account{
-		ID:       "1",
-		Name:     "Foo Bar",
-		Email:    "foo@bar.com.br",
-		CPF:      "11144477735",
-		CarPlate: "AAA9999",
-		IsDriver: true,
-	}, nil)
+	s.accountRepo.EXPECT().GetAccountByID("1").Return(domain.MustBuildAccount(
+		domain.AccountWithID("1"),
+		domain.AccountWithName("Foo Bar"),
+		domain.AccountWithEmail("foo@bar.com.br"),
+		domain.AccountWithCPF("11144477735"),
+		domain.AccountIsDriver(),
+		domain.AccountWithCarPlate("AAA9999", true),
+	), nil)
 	result, err := s.useCase.Execute(&GetAccountInput{
 		ID: "1",
 	})

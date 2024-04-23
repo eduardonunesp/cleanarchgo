@@ -15,28 +15,25 @@ type testRideStatusSuite struct {
 }
 
 func (s *testRideStatusSuite) TestRideStatusesSuccess() {
-	// rsRequested, err := BuildRideStatus("requested")
-	// s.NoError(err)
-	// s.Equal(rsRequested, RideStatusRequested)
-	// rsCompleted, err := RideStatusFromString("completed")
-	// s.NoError(err)
-	// s.Equal(rsCompleted, RideStatusCompleted)
-	// rsAccepted, err := RideStatusFromString("accepted")
-	// s.NoError(err)
-	// s.Equal(rsAccepted, RideStatusAccepted)
-	// rsInProgress, err := RideStatusFromString("in_progress")
-	// s.NoError(err)
-	// s.Equal(rsInProgress, RideStatusInProgres)
+	rsRequested, err := BuildRideStatus("requested")
+	s.NoError(err)
+	s.Equal(rsRequested.String(), "requested")
+	rsAccepted, err := BuildRideStatus("accepted")
+	s.NoError(err)
+	s.Equal(rsAccepted.String(), "accepted")
+	rsInProgress, err := BuildRideStatus("in_progress")
+	s.NoError(err)
+	s.Equal(rsInProgress.String(), "in_progress")
 }
 
 func (s *testRideStatusSuite) TestRideStatusesFailed() {
-	// _, err := RideStatusFromString("non_sense_string")
-	// s.Error(err)
-	// _, noErr := RideStatusFromString("completed")
-	// s.NoError(noErr)
+	_, err := BuildRideStatus("non_sense_string")
+	s.Error(err)
+	_, noErr := BuildRideStatus("accepted")
+	s.NoError(noErr)
 }
 
 func (s *testRideStatusSuite) TestRideStatusesFailedWithDomainError() {
-	_, err := RideStatusFromString("non_sense_string")
+	_, err := BuildRideStatus("non_sense_string")
 	s.Error(err)
 }

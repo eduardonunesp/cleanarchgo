@@ -50,9 +50,9 @@ func AccountWithEmail(email string) AccountOption {
 	}
 }
 
-func AccountWithCarPlate(carPlate string) AccountOption {
+func AccountWithCarPlate(carPlate string, isDriver bool) AccountOption {
 	return func(acc *Account) error {
-		if !acc.IsDriver {
+		if !isDriver {
 			return nil
 		}
 		var err error

@@ -59,7 +59,7 @@ func (s *testAccountSuite) TestBuildAccountFailedInvalidCPF() {
 func (s *testAccountSuite) TestBuildAccountFailedInvalidCarPlate() {
 	_, err := BuildAccount(
 		AccountIsDriver(),
-		AccountWithCarPlate("AAA"),
+		AccountWithCarPlate("AAA", true),
 	)
 	domainErr := new(Error)
 	s.ErrorAs(err, &domainErr)

@@ -46,7 +46,7 @@ func (s Signup) Execute(input *SignupParams) (*SignupResult, error) {
 		domain.AccountWithName(input.Name),
 		domain.AccountWithEmail(input.Email),
 		domain.AccountWithCPF(input.CPF),
-		domain.AccountWithCarPlate(input.CarPlate),
+		domain.AccountWithCarPlate(input.CarPlate, input.IsDriver),
 		domain.AccountSetDriver(input.IsDriver),
 		domain.AccountSetPassenger(input.IsPassenger),
 	)

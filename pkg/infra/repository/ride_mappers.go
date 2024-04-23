@@ -21,11 +21,9 @@ func mapDBRideToDomainRide(ride *db.Ride) (*domain.Ride, error) {
 		domain.RideWithFare(
 			fromPgTypeNumericToString(ride.Fare),
 		),
-		domain.RideWithFromLatLong(
+		domain.RideWithFromLatLongToLatLong(
 			fromPgTypeNumericToString(ride.FromLat),
 			fromPgTypeNumericToString(ride.FromLong),
-		),
-		domain.RideWithToLatLong(
 			fromPgTypeNumericToString(ride.ToLat),
 			fromPgTypeNumericToString(ride.ToLong),
 		),
@@ -58,19 +56,19 @@ func mapDomainRideToSaveRideParams(ride *domain.Ride) (*db.SaveRideParams, error
 	// if err != nil {
 	// 	return nil, err
 	// }
-	fromLatNumeric, err := mapStringToPgTypeNumeric(ride.FromCoord.Lat())
+	fromLatNumeric, err := mapStringToPgTypeNumeric(ride.Segment.From().Lat())
 	if err != nil {
 		return nil, err
 	}
-	fromLongNumeric, err := mapStringToPgTypeNumeric(ride.FromCoord.Lat())
+	fromLongNumeric, err := mapStringToPgTypeNumeric(ride.Segment.From().Lat())
 	if err != nil {
 		return nil, err
 	}
-	toLatNumeric, err := mapStringToPgTypeNumeric(ride.ToCoord.Lat())
+	toLatNumeric, err := mapStringToPgTypeNumeric(ride.Segment.To().Lat())
 	if err != nil {
 		return nil, err
 	}
-	toLongNumeric, err := mapStringToPgTypeNumeric(ride.ToCoord.Long())
+	toLongNumeric, err := mapStringToPgTypeNumeric(ride.Segment.To().Long())
 	if err != nil {
 		return nil, err
 	}

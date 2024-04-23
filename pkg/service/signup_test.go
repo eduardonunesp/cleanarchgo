@@ -29,16 +29,16 @@ func (s *testSignupSuite) SetupTest() {
 func (s *testSignupSuite) TestSignupSuccess() {
 	s.accountRepo.EXPECT().HasAccountByEmail("foobar@gmail.com").Return(false, nil)
 	s.accountRepo.EXPECT().SaveAccount(mock.MatchedBy(func(acc *domain.Account) bool {
-		if acc.Name != "Foo Bar" {
+		if acc.Name.String() != "Foo Bar" {
 			return false
 		}
-		if acc.Email != "foobar@gmail.com" {
+		if acc.Email.String() != "foobar@gmail.com" {
 			return false
 		}
-		if acc.CPF != "11144477735" {
+		if acc.CPF.String() != "11144477735" {
 			return false
 		}
-		if acc.ID == "" {
+		if acc.ID.String() == "" {
 			return false
 		}
 		return true

@@ -13,7 +13,7 @@ func mapDBAccountToDomainAccount(account *db.Account) (*domain.Account, error) {
 		domain.AccountWithName(account.Name),
 		domain.AccountWithEmail(account.Email),
 		domain.AccountWithCPF(account.Cpf),
-		domain.AccountWithCarPlate(account.CarPlate.String),
+		domain.AccountWithCarPlate(account.CarPlate.String, account.IsDriver),
 		domain.AccountSetDriver(account.IsDriver),
 		domain.AccountSetPassenger(account.IsPassenger),
 	)

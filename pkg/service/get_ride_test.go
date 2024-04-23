@@ -26,20 +26,17 @@ func (s *testRideSuite) SetupTest() {
 }
 
 func (s *testRideSuite) TestGetRide() {
-	s.rideRepo.EXPECT().GetRideByID("1").Return(&domain.Ride{
-		ID:          "1",
-		PassengerID: "2",
-		Status:      domain.RideStatusRequested,
-		FromLat:     "123",
-		FromLong:    "321",
-		ToLat:       "789",
-		ToLong:      "987",
-	}, nil)
-	s.accRepo.EXPECT().GetAccountByID("2").Return(&domain.Account{
-		ID:    "2",
-		Name:  "Foo Bar",
-		Email: "foobar@gmail.com",
-	}, nil)
+	s.rideRepo.EXPECT().GetRideByID("1").Return(domain.MustBuildRide(
+		domain.RideWithID("1"),
+		domain.RideWithPassengerID("2"),
+		domain.RideWithStatus("requested"),
+		domain.RideWithFromLatLongToLatLong("123", "321", "789", "987"),
+	), nil)
+	s.accRepo.EXPECT().GetAccountByID("2").Return(domain.MustBuildAccount(
+		domain.AccountWithID("2"),
+		domain.AccountWithName("Foo Bar"),
+		domain.AccountWithEmail("foobar@gmail.com"),
+	), nil)
 	result, err := s.useCase.Execute(&GetRideParams{
 		RideID: "1",
 	})

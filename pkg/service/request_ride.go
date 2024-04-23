@@ -54,8 +54,10 @@ func (r *RequestRide) Execute(params *RequestRideParams) (*RequestRideResult, er
 	}
 	ride, err := domain.BuildRide(
 		domain.RideWithPassengerID(params.PassengerID),
-		domain.RideWithFromLatLong(params.FromLat, params.FromLong),
-		domain.RideWithToLatLong(params.ToLat, params.ToLong),
+		domain.RideWithFromLatLongToLatLong(
+			params.FromLat, params.FromLong,
+			params.ToLat, params.ToLong,
+		),
 	)
 	if err != nil {
 		return nil, err

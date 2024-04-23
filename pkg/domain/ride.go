@@ -113,6 +113,9 @@ func rideApplyDefaultParams(newRide *Ride) {
 	if newRide.ID.String() == "" {
 		newRide.ID = valueobject.MustUUID()
 	}
+	if newRide.Status == nil {
+		newRide.Status, _ = valueobject.BuildRideStatus("requested")
+	}
 	if newRide.Date.IsZero() {
 		newRide.Date = valueobject.DateFromNow()
 	}
