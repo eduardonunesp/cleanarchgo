@@ -30,7 +30,7 @@ func (s apiServer) GetAccount(e *echo.Echo) {
 				raiseWebserverError(errors.New("accountID cannot be empty")),
 			)
 		}
-		result, err := s.getAccount.Execute(&service.GetAccountParams{
+		result, err := s.getAccount.Execute(&service.GetAccountInput{
 			ID: accountID,
 		})
 		serviceErr := new(service.ServiceError)

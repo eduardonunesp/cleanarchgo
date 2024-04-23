@@ -4,6 +4,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/eduardonunesp/cleanarchgo/pkg/domain/valueobject"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -16,8 +17,8 @@ type testRideSuite struct {
 }
 
 func (s *testRideSuite) TestBuildRideWithSuccess() {
-	tNow := time.Now()
-	rideStatus, err := BuildRideStatusFromString("requested")
+	tNow := time.Now().Unix()
+	rideStatus, err := valueobject.RideStatusFromString("requested")
 	s.NoError(err)
 	ride, err := BuildRide(
 		RideWithID("1"),
@@ -28,7 +29,7 @@ func (s *testRideSuite) TestBuildRideWithSuccess() {
 	s.Equal(&Ride{
 		ID:          "1",
 		PassengerID: "2",
-		Date:        tNow,
+		Date:        valueobject.DateFromInt64(tNow),
 		Status:      rideStatus,
 	}, ride)
 }
@@ -38,9 +39,7 @@ func (s *testRideSuite) TestBuildRideFailedInvalidID() {
 		RideWithID(""),
 		RideWithPassengerID("2"),
 	)
-	domainErr := new(DomainError)
-	s.ErrorAs(err, &domainErr)
-	s.ErrorIs(domainErr.Err, errRideEmptyID)
+	s.Error(err)
 	s.Nil(ride)
 }
 
@@ -49,8 +48,6 @@ func (s *testRideSuite) TestBuildRideFailedInvalidPassengerID() {
 		RideWithID("1"),
 		RideWithPassengerID(""),
 	)
-	domainErr := new(DomainError)
-	s.ErrorAs(err, &domainErr)
-	s.ErrorIs(domainErr.Err, errRideEmptyPassengerID)
+	s.Error(err)
 	s.Nil(ride)
 }

@@ -1,61 +1,50 @@
 package domain
 
 import (
-	"errors"
 	"fmt"
-	"time"
 
-	"github.com/google/uuid"
-)
-
-var (
-	errRideEmptyID          = errors.New("ride id cannot be empty")
-	errRideEmptyPassengerID = errors.New("passenger id cannot by empty")
-	errRideEmptyDriverID    = errors.New("driver id cannot be empty")
+	"github.com/eduardonunesp/cleanarchgo/pkg/domain/valueobject"
 )
 
 type RideOption func(ride *Ride) error
 
 type Ride struct {
-	ID          string
-	PassengerID string
-	DriverID    string
-	Status      RideStatus
+	ID          valueobject.UUID
+	PassengerID valueobject.UUID
+	DriverID    valueobject.UUID
+	Status      valueobject.RideStatus
 	Fare        string
-	Distance    string
-	FromLat     string
-	FromLong    string
-	ToLat       string
-	ToLong      string
-	Date        time.Time
+	FromCoord   valueobject.Coord
+	ToCoord     valueobject.Coord
+	Date        valueobject.Date
 }
 
 func RideWithID(id string) RideOption {
 	return func(ride *Ride) error {
-		if id == "" {
-			return errRideEmptyID
+		var err error
+		if ride.ID, err = valueobject.UUIDFromString(id); err != nil {
+			return err
 		}
-		ride.ID = id
 		return nil
 	}
 }
 
 func RideWithPassengerID(passengerID string) RideOption {
 	return func(ride *Ride) error {
-		if passengerID == "" {
-			return errRideEmptyPassengerID
+		var err error
+		if ride.PassengerID, err = valueobject.UUIDFromString(passengerID); err != nil {
+			return err
 		}
-		ride.PassengerID = passengerID
 		return nil
 	}
 }
 
 func RideWithDriverID(driverID string) RideOption {
 	return func(ride *Ride) error {
-		if driverID == "" {
-			return errRideEmptyDriverID
+		var err error
+		if ride.DriverID, err = valueobject.UUIDFromString(driverID); err != nil {
+			return err
 		}
-		ride.DriverID = driverID
 		return nil
 	}
 }
@@ -67,39 +56,39 @@ func RideWithFare(fare string) RideOption {
 	}
 }
 
-func RideWithDistance(distance string) RideOption {
-	return func(ride *Ride) error {
-		ride.Distance = distance
-		return nil
-	}
-}
-
 func RideWithFromLatLong(lat, long string) RideOption {
 	return func(ride *Ride) error {
-		ride.FromLat = lat
-		ride.FromLong = long
+		var err error
+		if ride.FromCoord, err = valueobject.NewCoord(lat, long); err != nil {
+			return err
+		}
 		return nil
 	}
 }
 
 func RideWithToLatLong(lat, long string) RideOption {
 	return func(ride *Ride) error {
-		ride.ToLat = lat
-		ride.ToLong = long
+		var err error
+		if ride.ToCoord, err = valueobject.NewCoord(lat, long); err != nil {
+			return err
+		}
 		return nil
 	}
 }
 
-func RideWithStatus(rideStatus RideStatus) RideOption {
+func RideWithStatus(rideStatus string) RideOption {
 	return func(ride *Ride) error {
-		ride.Status = rideStatus
+		var err error
+		if ride.Status, err = valueobject.RideStatusFromString(rideStatus); err != nil {
+			return err
+		}
 		return nil
 	}
 }
 
-func RideWithDate(timeNow time.Time) RideOption {
+func RideWithDate(timeNow int64) RideOption {
 	return func(ride *Ride) error {
-		ride.Date = timeNow
+		ride.Date = valueobject.DateFromInt64(timeNow)
 		return nil
 	}
 }
@@ -120,12 +109,21 @@ func BuildRide(rideOpts ...RideOption) (*Ride, error) {
 
 func rideApplyDefaultParams(newRide *Ride) {
 	if newRide.ID == "" {
-		newRide.ID = uuid.Must(uuid.NewRandom()).String()
+		newRide.ID = valueobject.MustUUID()
 	}
 	if newRide.Status == "" {
-		newRide.Status = RideStatusRequested
+		newRide.Status = valueobject.RideStatusRequested
 	}
 	if newRide.Date.IsZero() {
-		newRide.Date = time.Now()
+		newRide.Date = valueobject.DateFromNow()
 	}
+}
+
+func (r *Ride) Accept(driverID valueobject.UUID) error {
+	if r.Status != valueobject.RideStatusRequested {
+		return RaiseDomainError(fmt.Errorf("ride %s not in requested status", r.ID))
+	}
+	r.DriverID = driverID
+	r.Status = valueobject.RideStatusAccepted
+	return nil
 }

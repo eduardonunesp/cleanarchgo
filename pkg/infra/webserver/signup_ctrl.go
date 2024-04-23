@@ -50,7 +50,7 @@ func (s apiServer) Signup(e *echo.Echo) {
 				raiseWebserverError(signupErr),
 			)
 		}
-		domainErr := new(domain.DomainError)
+		domainErr := new(domain.Error)
 		if errors.As(err, &domainErr) {
 			return c.JSON(
 				http.StatusBadRequest,

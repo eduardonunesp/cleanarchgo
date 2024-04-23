@@ -29,7 +29,7 @@ func (s StartRide) Execute(params *StartRideParams) error {
 		return err
 	}
 	if ride == nil {
-		return RaiseServiceError(errAcceptRideNotFound)
+		return RaiseServiceError(errAcceptRideRideNotFound)
 	}
 	if ride.Status != domain.RideStatusAccepted {
 		return RaiseServiceError(errStartRideInvalidStatus)

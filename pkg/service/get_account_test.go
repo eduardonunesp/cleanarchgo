@@ -33,12 +33,12 @@ func (s *testGetAccountSuite) TestGetAccountSuccess() {
 		CarPlate: "AAA9999",
 		IsDriver: true,
 	}, nil)
-	result, err := s.useCase.Execute(&GetAccountParams{
+	result, err := s.useCase.Execute(&GetAccountInput{
 		ID: "1",
 	})
 	s.NoError(err)
 	s.NotNil(result)
-	s.Equal(&GetAccountResult{
+	s.Equal(&GetAccountOuput{
 		ID:       "1",
 		Name:     "Foo Bar",
 		Email:    "foo@bar.com.br",
@@ -50,7 +50,7 @@ func (s *testGetAccountSuite) TestGetAccountSuccess() {
 
 func (s *testGetAccountSuite) TestGetAccountFailedUserNotFound() {
 	s.accountRepo.EXPECT().GetAccountByID("2").Return(nil, nil)
-	result, err := s.useCase.Execute(&GetAccountParams{
+	result, err := s.useCase.Execute(&GetAccountInput{
 		ID: "2",
 	})
 	s.Error(err)

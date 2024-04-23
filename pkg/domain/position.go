@@ -17,14 +17,20 @@ type Position struct {
 
 func WithPositionID(positionID string) PositionOption {
 	return func(position *Position) error {
-		position.PositionID = valueobject.UUIDFromString(positionID)
+		var err error
+		if position.PositionID, err = valueobject.UUIDFromString(positionID); err != nil {
+			return err
+		}
 		return nil
 	}
 }
 
 func WithRideID(rideID string) PositionOption {
 	return func(position *Position) error {
-		position.RideID = valueobject.UUIDFromString(rideID)
+		var err error
+		if position.RideID, err = valueobject.UUIDFromString(rideID); err != nil {
+			return err
+		}
 		return nil
 	}
 }
@@ -53,7 +59,7 @@ func BuildPosition(posOpts ...PositionOption) (*Position, error) {
 			continue
 		}
 		if err := opt(&newPosition); err != nil {
-			return nil, RaiseDomainError(fmt.Errorf("failed to build account: %w", err))
+			return nil, RaiseDomainError(fmt.Errorf("failed to build Position: %w", err))
 		}
 	}
 	positionApplyDefaultParams(&newPosition)

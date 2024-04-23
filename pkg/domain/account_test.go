@@ -33,7 +33,7 @@ func (s *testAccountSuite) TestBuildAccountFailedInvalidName() {
 	_, err := BuildAccount(
 		AccountWithName("Foo"),
 	)
-	domainErr := new(DomainError)
+	domainErr := new(Error)
 	s.ErrorAs(err, &domainErr)
 	s.ErrorIs(domainErr.Err, valueobject.ErrInvalidName)
 }
@@ -42,7 +42,7 @@ func (s *testAccountSuite) TestBuildAccountFailedInvalidEmail() {
 	_, err := BuildAccount(
 		AccountWithEmail("foo.com"),
 	)
-	domainErr := new(DomainError)
+	domainErr := new(Error)
 	s.ErrorAs(err, &domainErr)
 	s.ErrorIs(domainErr.Err, valueobject.ErrInvalidEmail)
 }
@@ -51,7 +51,7 @@ func (s *testAccountSuite) TestBuildAccountFailedInvalidCPF() {
 	_, err := BuildAccount(
 		AccountWithCPF("11144477700"),
 	)
-	domainErr := new(DomainError)
+	domainErr := new(Error)
 	s.ErrorAs(err, &domainErr)
 	s.ErrorIs(domainErr.Err, valueobject.ErrInvalidCPF)
 }
@@ -61,7 +61,7 @@ func (s *testAccountSuite) TestBuildAccountFailedInvalidCarPlate() {
 		AccountIsDriver(),
 		AccountWithCarPlate("AAA"),
 	)
-	domainErr := new(DomainError)
+	domainErr := new(Error)
 	s.ErrorAs(err, &domainErr)
 	s.ErrorIs(domainErr.Err, valueobject.ErrInvalidCarPlate)
 }

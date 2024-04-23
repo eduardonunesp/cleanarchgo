@@ -10,11 +10,11 @@ var (
 	errGetAccountNotFound = errors.New("account not found for given id")
 )
 
-type GetAccountParams struct {
+type GetAccountInput struct {
 	ID string
 }
 
-type GetAccountResult struct {
+type GetAccountOuput struct {
 	ID          string
 	Name        string
 	Email       string
@@ -32,7 +32,7 @@ func NewGetAccount(accountRepo repository.AccountRepository) *GetAccount {
 	return &GetAccount{accountRepo}
 }
 
-func (g GetAccount) Execute(input *GetAccountParams) (*GetAccountResult, error) {
+func (g GetAccount) Execute(input *GetAccountInput) (*GetAccountOuput, error) {
 	account, err := g.accountRepo.GetAccountByID(input.ID)
 	if err != nil {
 		return nil, err
@@ -40,12 +40,12 @@ func (g GetAccount) Execute(input *GetAccountParams) (*GetAccountResult, error) 
 	if account == nil {
 		return nil, RaiseServiceError(errGetAccountNotFound)
 	}
-	return &GetAccountResult{
-		ID:          account.ID,
-		Name:        account.Name,
-		Email:       account.Email,
-		CPF:         account.CPF,
-		CarPlate:    account.CarPlate,
+	return &GetAccountOuput{
+		ID:          string(account.ID),
+		Name:        string(account.Name),
+		Email:       string(account.Email),
+		CPF:         string(account.CPF),
+		CarPlate:    string(account.CarPlate),
 		IsPassenger: account.IsPassenger,
 		IsDriver:    account.IsDriver,
 	}, nil

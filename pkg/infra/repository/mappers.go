@@ -42,9 +42,9 @@ func mapStringToPgTypeNumeric(strNumeric string) (pgtype.Numeric, error) {
 	return numeric, nil
 }
 
-func fromTimeToPgTypeTimestamp(d time.Time) pgtype.Timestamp {
+func fromTimeToPgTypeTimestamp(d int64) pgtype.Timestamp {
 	return pgtype.Timestamp{
-		Time:  d,
+		Time:  time.Unix(d, 0),
 		Valid: true,
 	}
 }

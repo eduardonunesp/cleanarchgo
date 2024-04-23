@@ -1,6 +1,7 @@
 package domain
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/eduardonunesp/cleanarchgo/pkg/domain/valueobject"
@@ -14,13 +15,17 @@ type Account struct {
 	Email       valueobject.Email
 	CPF         valueobject.Cpf
 	CarPlate    valueobject.CarPlate
+	Available   bool
 	IsDriver    bool
 	IsPassenger bool
 }
 
 func AccountWithID(id string) AccountOption {
 	return func(acc *Account) error {
-		acc.ID = valueobject.UUIDFromString(id)
+		var err error
+		if acc.ID, err = valueobject.UUIDFromString(id); err != nil {
+			return err
+		}
 		return nil
 	}
 }
@@ -96,6 +101,23 @@ func AccountIsPassenger() AccountOption {
 	}
 }
 
+func AccountIsDriverAvailable() AccountOption {
+	return func(acc *Account) error {
+		acc.Available = true
+		return nil
+	}
+}
+
+func AccountSetAvailable(value bool) AccountOption {
+	return func(acc *Account) error {
+		if !acc.IsDriver {
+			return errors.New("only drivers can be available for rides")
+		}
+		acc.Available = value
+		return nil
+	}
+}
+
 func BuildAccount(accOpts ...AccountOption) (*Account, error) {
 	var newAcc Account
 	for _, accOpt := range accOpts {
@@ -103,11 +125,21 @@ func BuildAccount(accOpts ...AccountOption) (*Account, error) {
 			continue
 		}
 		if err := accOpt(&newAcc); err != nil {
-			return nil, RaiseDomainError(fmt.Errorf("failed to build account: %w", err))
+			return nil, RaiseDomainError(fmt.Errorf("failed to build Account: %w", err))
 		}
 	}
 	if newAcc.ID.String() == "" {
 		newAcc.ID = valueobject.MustUUID()
 	}
 	return &newAcc, nil
+}
+
+func (a Account) AuthorizeDriver() error {
+	if !a.IsDriver {
+		return RaiseDomainError(fmt.Errorf("account %s is not a driver", a.ID))
+	}
+	if !a.Available {
+		return RaiseDomainError(fmt.Errorf("driver %s is not available", a.ID))
+	}
+	return nil
 }

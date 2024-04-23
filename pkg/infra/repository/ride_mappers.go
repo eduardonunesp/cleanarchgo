@@ -8,10 +8,6 @@ import (
 )
 
 func mapDBRideToDomainRide(ride *db.Ride) (*domain.Ride, error) {
-	rideStatus, err := domain.BuildRideStatusFromString(ride.Status)
-	if err != nil {
-		return nil, err
-	}
 	return domain.BuildRide(
 		domain.RideWithID(
 			fromPgTypeUUIDToString(ride.ID),
@@ -25,9 +21,6 @@ func mapDBRideToDomainRide(ride *db.Ride) (*domain.Ride, error) {
 		domain.RideWithFare(
 			fromPgTypeNumericToString(ride.Fare),
 		),
-		domain.RideWithDistance(
-			fromPgTypeNumericToString(ride.Distance),
-		),
 		domain.RideWithFromLatLong(
 			fromPgTypeNumericToString(ride.FromLat),
 			fromPgTypeNumericToString(ride.FromLong),
@@ -36,8 +29,8 @@ func mapDBRideToDomainRide(ride *db.Ride) (*domain.Ride, error) {
 			fromPgTypeNumericToString(ride.ToLat),
 			fromPgTypeNumericToString(ride.ToLong),
 		),
-		domain.RideWithStatus(rideStatus),
-		domain.RideWithDate(ride.Date.Time),
+		domain.RideWithStatus(ride.Status),
+		domain.RideWithDate(ride.Date.Time.Unix()),
 	)
 }
 
@@ -45,15 +38,15 @@ func mapDomainRideToSaveRideParams(ride *domain.Ride) (*db.SaveRideParams, error
 	if ride == nil {
 		return nil, errors.New("domain ride cannot be nil")
 	}
-	rideUUID, err := mapStringToPgTypeUUID(ride.ID)
+	rideUUID, err := mapStringToPgTypeUUID(string(ride.ID))
 	if err != nil {
 		return nil, err
 	}
-	passengerUUID, err := mapStringToPgTypeUUID(ride.PassengerID)
+	passengerUUID, err := mapStringToPgTypeUUID(string(ride.PassengerID))
 	if err != nil {
 		return nil, err
 	}
-	driverUUID, err := mapStringToPgTypeUUID(ride.DriverID)
+	driverUUID, err := mapStringToPgTypeUUID(string(ride.DriverID))
 	if err != nil {
 		return nil, err
 	}
@@ -61,37 +54,37 @@ func mapDomainRideToSaveRideParams(ride *domain.Ride) (*db.SaveRideParams, error
 	if err != nil {
 		return nil, err
 	}
-	distance, err := mapStringToPgTypeNumeric(ride.Distance)
+	// distance, err := mapStringToPgTypeNumeric(ride.Distance)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	fromLatNumeric, err := mapStringToPgTypeNumeric(ride.FromCoord.Lat)
 	if err != nil {
 		return nil, err
 	}
-	fromLatNumeric, err := mapStringToPgTypeNumeric(ride.FromLat)
+	fromLongNumeric, err := mapStringToPgTypeNumeric(ride.FromCoord.Long)
 	if err != nil {
 		return nil, err
 	}
-	fromLongNumeric, err := mapStringToPgTypeNumeric(ride.FromLong)
+	toLatNumeric, err := mapStringToPgTypeNumeric(ride.ToCoord.Lat)
 	if err != nil {
 		return nil, err
 	}
-	toLatNumeric, err := mapStringToPgTypeNumeric(ride.ToLat)
-	if err != nil {
-		return nil, err
-	}
-	toLongNumeric, err := mapStringToPgTypeNumeric(ride.ToLong)
+	toLongNumeric, err := mapStringToPgTypeNumeric(ride.ToCoord.Long)
 	if err != nil {
 		return nil, err
 	}
 	return &db.SaveRideParams{
-		ID:          rideUUID,
-		DriverID:    driverUUID,
-		Fare:        fare,
-		Distance:    distance,
+		ID:       rideUUID,
+		DriverID: driverUUID,
+		Fare:     fare,
+		// Distance:    distance,
 		PassengerID: passengerUUID,
 		FromLat:     fromLatNumeric,
 		FromLong:    fromLongNumeric,
 		ToLat:       toLatNumeric,
 		ToLong:      toLongNumeric,
 		Status:      string(ride.Status),
-		Date:        fromTimeToPgTypeTimestamp(ride.Date),
+		Date:        fromTimeToPgTypeTimestamp(ride.Date.Int64()),
 	}, nil
 }

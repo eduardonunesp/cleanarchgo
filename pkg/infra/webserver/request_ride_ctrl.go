@@ -47,7 +47,7 @@ func (s apiServer) RequestRide(e *echo.Echo) {
 				raiseWebserverError(serviceErr),
 			)
 		}
-		domainErr := new(domain.DomainError)
+		domainErr := new(domain.Error)
 		if errors.As(err, &domainErr) {
 			return c.JSON(
 				http.StatusBadRequest,

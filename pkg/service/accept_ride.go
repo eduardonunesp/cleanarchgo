@@ -3,15 +3,12 @@ package service
 import (
 	"errors"
 
-	"github.com/eduardonunesp/cleanarchgo/pkg/domain"
 	"github.com/eduardonunesp/cleanarchgo/pkg/infra/repository"
 )
 
 var (
-	errAcceptRideNotFound           = errors.New("ride not found")
-	errAcceptRideNotRequested       = errors.New("ride not in requested status")
-	errAcceptRideNotDriver          = errors.New("account isn't a driver")
-	errAcceptRideDriverNotAvailable = errors.New("driver is not available")
+	errAcceptRideRideNotFound   = errors.New("ride not found")
+	errAcceptRideDriverNotFound = errors.New("driver not found")
 )
 
 type AcceptRideRequest struct {
@@ -34,30 +31,21 @@ func (s AcceptRide) Execute(req AcceptRideRequest) error {
 		return err
 	}
 	if ride == nil {
-		return RaiseServiceError(errAcceptRideNotFound)
+		return RaiseServiceError(errAcceptRideRideNotFound)
 	}
-	driverAcc, err := s.accRepo.GetAccountByID(ride.DriverID)
+	account, err := s.accRepo.GetAccountByID(string(ride.DriverID))
 	if err != nil {
 		return err
 	}
-	if driverAcc == nil {
-		return RaiseServiceError(errAcceptRideNotFound)
+	if account == nil {
+		return RaiseServiceError(errAcceptRideDriverNotFound)
 	}
-	if !driverAcc.IsDriver {
-		return RaiseServiceError(errAcceptRideNotDriver)
-	}
-	if ride.Status != domain.RideStatusRequested {
-		return RaiseServiceError(errAcceptRideNotRequested)
-	}
-	driverFree, err := s.rideRepo.HasActiveRideByDriverID(req.DriverID)
-	if err != nil {
+	if err := account.AuthorizeDriver(); err != nil {
 		return err
 	}
-	if !driverFree {
-		return RaiseServiceError(errAcceptRideDriverNotAvailable)
+	if err := ride.Accept(account.ID); err != nil {
+		return err
 	}
-	ride.DriverID = req.DriverID
-	ride.Status = domain.RideStatusAccepted
 	if err := s.rideRepo.SaveRide(ride); err != nil {
 		return err
 	}
