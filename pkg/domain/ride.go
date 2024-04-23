@@ -14,8 +14,7 @@ type Ride struct {
 	DriverID    valueobject.UUID
 	Status      valueobject.RideStatus
 	Fare        string
-	FromCoord   valueobject.Coord
-	ToCoord     valueobject.Coord
+	Segment     valueobject.Segment
 	Date        valueobject.Date
 }
 
@@ -56,22 +55,17 @@ func RideWithFare(fare string) RideOption {
 	}
 }
 
-func RideWithFromLatLong(lat, long string) RideOption {
+func RideWithFromLatLongToLatLong(fLat, fLong, tLat, tLong string) RideOption {
 	return func(ride *Ride) error {
 		var err error
-		if ride.FromCoord, err = valueobject.NewCoord(lat, long); err != nil {
+		var fCoord, tCoord valueobject.Coord
+		if fCoord, err = valueobject.BuildCoord(fLat, fLong); err != nil {
 			return err
 		}
-		return nil
-	}
-}
-
-func RideWithToLatLong(lat, long string) RideOption {
-	return func(ride *Ride) error {
-		var err error
-		if ride.ToCoord, err = valueobject.NewCoord(lat, long); err != nil {
+		if tCoord, err = valueobject.BuildCoord(tLat, tLong); err != nil {
 			return err
 		}
+		ride.Segment = valueobject.BuildSegment(fCoord, tCoord)
 		return nil
 	}
 }
@@ -105,6 +99,14 @@ func BuildRide(rideOpts ...RideOption) (*Ride, error) {
 	}
 	rideApplyDefaultParams(&newRide)
 	return &newRide, nil
+}
+
+func MustBuildRide(rideOpts ...RideOption) *Ride {
+	ride, err := BuildRide(rideOpts...)
+	if err != nil {
+		panic(err)
+	}
+	return ride
 }
 
 func rideApplyDefaultParams(newRide *Ride) {

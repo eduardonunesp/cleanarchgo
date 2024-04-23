@@ -25,9 +25,9 @@ func (s *positionTestSuite) TestBuildPosition() {
 		WithDate(testTime),
 	)
 	s.NoError(err)
-	s.Equal("1", string(position.PositionID))
-	s.Equal("2", string(position.RideID))
-	s.Equal("3", position.Coord.Lat)
-	s.Equal("4", position.Coord.Long)
+	s.Equal("1", position.PositionID.String())
+	s.Equal("2", position.RideID.String())
+	s.Equal("3", position.Coord.Lat())
+	s.Equal("4", position.Coord.Long())
 	s.Equal(valueobject.DateFromInt64(testTime), position.Date)
 }

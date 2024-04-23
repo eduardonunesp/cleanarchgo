@@ -38,7 +38,7 @@ func WithRideID(rideID string) PositionOption {
 func WithLatLong(lat, long string) PositionOption {
 	return func(position *Position) error {
 		var err error
-		if position.Coord, err = valueobject.NewCoord(lat, long); err != nil {
+		if position.Coord, err = valueobject.BuildCoord(lat, long); err != nil {
 			return err
 		}
 		return nil

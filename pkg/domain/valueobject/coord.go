@@ -5,7 +5,7 @@ type Coord struct {
 	long string
 }
 
-func NewCoord(lat, long string) (Coord, error) {
+func BuildCoord(lat, long string) (Coord, error) {
 	return Coord{lat, long}, nil
 }
 
@@ -15,6 +15,10 @@ func (c Coord) Lat() string {
 
 func (c Coord) Long() string {
 	return c.long
+}
+
+func (c Coord) Distance(other Coord) float64 {
+	return 0
 }
 
 func (c *Coord) String() string {

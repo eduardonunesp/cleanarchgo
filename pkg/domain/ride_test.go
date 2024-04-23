@@ -4,7 +4,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/eduardonunesp/cleanarchgo/pkg/domain/valueobject"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -18,20 +17,19 @@ type testRideSuite struct {
 
 func (s *testRideSuite) TestBuildRideWithSuccess() {
 	tNow := time.Now().Unix()
-	rideStatus, err := valueobject.RideStatusFromString("requested")
-	s.NoError(err)
 	ride, err := BuildRide(
 		RideWithID("1"),
 		RideWithPassengerID("2"),
 		RideWithDate(tNow),
+		RideWithStatus("requested"),
 	)
 	s.NoError(err)
-	s.Equal(&Ride{
-		ID:          "1",
-		PassengerID: "2",
-		Date:        valueobject.DateFromInt64(tNow),
-		Status:      rideStatus,
-	}, ride)
+	s.Equal(MustBuildRide(
+		RideWithID("1"),
+		RideWithPassengerID("2"),
+		RideWithDate(tNow),
+		RideWithStatus("requested"),
+	), ride)
 }
 
 func (s *testRideSuite) TestBuildRideFailedInvalidID() {
