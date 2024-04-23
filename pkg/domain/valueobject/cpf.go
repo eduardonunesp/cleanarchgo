@@ -1,9 +1,27 @@
-package domain
+package valueobject
 
 import (
+	"errors"
 	"regexp"
 	"strconv"
 )
+
+var (
+	ErrInvalidCPF = errors.New("invalid CPF")
+)
+
+type Cpf string
+
+func CpfFromString(s string) (Cpf, error) {
+	if !validate(s) {
+		return "", ErrInvalidCPF
+	}
+	return Cpf(s), nil
+}
+
+func (c Cpf) String() string {
+	return string(c)
+}
 
 const (
 	cpf_valid_length    = 11

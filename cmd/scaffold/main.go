@@ -32,7 +32,6 @@ func main() {
 			},
 		},
 	}
-
 	if err := app.Run(os.Args); err != nil {
 		fmt.Println(err)
 	}
@@ -75,7 +74,6 @@ func appendTemplateFile(filename string, tmpl *template.Template, params interfa
 
 func toSnakeCase(s string) string {
 	var result string
-
 	for i, v := range s {
 		if i > 0 && v >= 'A' && v <= 'Z' {
 			result += "_"
@@ -83,7 +81,6 @@ func toSnakeCase(s string) string {
 
 		result += string(v)
 	}
-
 	return strings.ToLower(result)
 }
 

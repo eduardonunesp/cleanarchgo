@@ -3,6 +3,7 @@ package domain
 import (
 	"testing"
 
+	"github.com/eduardonunesp/cleanarchgo/pkg/domain/valueobject"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -34,7 +35,7 @@ func (s *testAccountSuite) TestBuildAccountFailedInvalidName() {
 	)
 	domainErr := new(DomainError)
 	s.ErrorAs(err, &domainErr)
-	s.ErrorIs(domainErr.Err, errAccountInvalidName)
+	s.ErrorIs(domainErr.Err, valueobject.ErrInvalidName)
 }
 
 func (s *testAccountSuite) TestBuildAccountFailedInvalidEmail() {
@@ -43,7 +44,7 @@ func (s *testAccountSuite) TestBuildAccountFailedInvalidEmail() {
 	)
 	domainErr := new(DomainError)
 	s.ErrorAs(err, &domainErr)
-	s.ErrorIs(domainErr.Err, errAccountInvalidEmail)
+	s.ErrorIs(domainErr.Err, valueobject.ErrInvalidEmail)
 }
 
 func (s *testAccountSuite) TestBuildAccountFailedInvalidCPF() {
@@ -52,7 +53,7 @@ func (s *testAccountSuite) TestBuildAccountFailedInvalidCPF() {
 	)
 	domainErr := new(DomainError)
 	s.ErrorAs(err, &domainErr)
-	s.ErrorIs(domainErr.Err, errAccountInvalidCPF)
+	s.ErrorIs(domainErr.Err, valueobject.ErrInvalidCPF)
 }
 
 func (s *testAccountSuite) TestBuildAccountFailedInvalidCarPlate() {
@@ -62,5 +63,5 @@ func (s *testAccountSuite) TestBuildAccountFailedInvalidCarPlate() {
 	)
 	domainErr := new(DomainError)
 	s.ErrorAs(err, &domainErr)
-	s.ErrorIs(domainErr.Err, errAccountInvalidCarPlate)
+	s.ErrorIs(domainErr.Err, valueobject.ErrInvalidCarPlate)
 }

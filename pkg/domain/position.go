@@ -2,52 +2,46 @@ package domain
 
 import (
 	"fmt"
-	"time"
 
-	"github.com/google/uuid"
+	"github.com/eduardonunesp/cleanarchgo/pkg/domain/valueobject"
 )
 
 type PositionOption func(position *Position) error
 
 type Position struct {
-	PositionID string
-	RideID     string
-	Lat        string
-	Long       string
-	Date       time.Time
+	PositionID valueobject.UUID
+	RideID     valueobject.UUID
+	Coord      valueobject.Coord
+	Date       valueobject.Date
 }
 
 func WithPositionID(positionID string) PositionOption {
 	return func(position *Position) error {
-		position.PositionID = positionID
+		position.PositionID = valueobject.UUIDFromString(positionID)
 		return nil
 	}
 }
 
 func WithRideID(rideID string) PositionOption {
 	return func(position *Position) error {
-		position.RideID = rideID
+		position.RideID = valueobject.UUIDFromString(rideID)
 		return nil
 	}
 }
 
-func WithLat(lat string) PositionOption {
+func WithLatLong(lat, long string) PositionOption {
 	return func(position *Position) error {
-		position.Lat = lat
+		var err error
+		if position.Coord, err = valueobject.NewCoord(lat, long); err != nil {
+			return err
+		}
 		return nil
 	}
 }
 
-func WithLong(long string) PositionOption {
+func WithDate(date int64) PositionOption {
 	return func(position *Position) error {
-		position.Long = long
-		return nil
-	}
-}
-
-func WithDate(date time.Time) PositionOption {
-	return func(position *Position) error {
-		position.Date = date
+		position.Date = valueobject.DateFromInt64(date)
 		return nil
 	}
 }
@@ -68,9 +62,9 @@ func BuildPosition(posOpts ...PositionOption) (*Position, error) {
 
 func positionApplyDefaultParams(newPosition *Position) {
 	if newPosition.PositionID == "" {
-		newPosition.PositionID = uuid.Must(uuid.NewRandom()).String()
+		newPosition.PositionID = valueobject.MustUUID()
 	}
 	if newPosition.Date.IsZero() {
-		newPosition.Date = time.Now()
+		newPosition.Date = valueobject.DateFromNow()
 	}
 }

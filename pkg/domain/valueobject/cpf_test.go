@@ -1,4 +1,4 @@
-package domain
+package valueobject
 
 import (
 	"testing"

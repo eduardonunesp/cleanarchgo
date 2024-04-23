@@ -1,81 +1,69 @@
 package domain
 
 import (
-	"errors"
 	"fmt"
-	"regexp"
 
-	"github.com/google/uuid"
-)
-
-var (
-	errAccountInvalidEmail    = errors.New("invalid email")
-	errAccountInvalidName     = errors.New("invalid name")
-	errAccountInvalidCPF      = errors.New("invalid CPF")
-	errAccountInvalidCarPlate = errors.New("invalid car plate")
-)
-
-var (
-	checkNameRE     = regexp.MustCompile(`[a-zA-Z] [a-zA-Z]+`)
-	checkEmailRE    = regexp.MustCompile(`^(.+)@(.+)$`)
-	checkCarPlateRE = regexp.MustCompile(`[A-Z]{3}[0-9]{4}`)
+	"github.com/eduardonunesp/cleanarchgo/pkg/domain/valueobject"
 )
 
 type AccountOption func(acc *Account) error
 
 type Account struct {
-	ID          string
-	Name        string
-	Email       string
-	CPF         string
-	CarPlate    string
+	ID          valueobject.UUID
+	Name        valueobject.Name
+	Email       valueobject.Email
+	CPF         valueobject.Cpf
+	CarPlate    valueobject.CarPlate
 	IsDriver    bool
 	IsPassenger bool
 }
 
 func AccountWithID(id string) AccountOption {
 	return func(acc *Account) error {
-		acc.ID = id
+		acc.ID = valueobject.UUIDFromString(id)
 		return nil
 	}
 }
 
 func AccountWithName(name string) AccountOption {
 	return func(acc *Account) error {
-		if !checkNameRE.MatchString(name) {
-			return errAccountInvalidName
+		var err error
+		if acc.Name, err = valueobject.NameFromString(name); err != nil {
+			return err
 		}
-		acc.Name = name
 		return nil
 	}
 }
 
 func AccountWithEmail(email string) AccountOption {
 	return func(acc *Account) error {
-		if !checkEmailRE.MatchString(email) {
-			return errAccountInvalidEmail
+		var err error
+		if acc.Email, err = valueobject.EmailFromString(email); err != nil {
+			return err
 		}
-		acc.Email = email
 		return nil
 	}
 }
 
 func AccountWithCarPlate(carPlate string) AccountOption {
 	return func(acc *Account) error {
-		if acc.IsDriver && !checkCarPlateRE.MatchString(carPlate) {
-			return errAccountInvalidCarPlate
+		if !acc.IsDriver {
+			return nil
 		}
-		acc.CarPlate = carPlate
+		var err error
+		if acc.CarPlate, err = valueobject.CarPlateFromString(carPlate); err != nil {
+			return err
+		}
 		return nil
 	}
 }
 
 func AccountWithCPF(cpf string) AccountOption {
 	return func(acc *Account) error {
-		if !validate(cpf) {
-			return errAccountInvalidCPF
+		var err error
+		if acc.CPF, err = valueobject.CpfFromString(cpf); err != nil {
+			return err
 		}
-		acc.CPF = cpf
 		return nil
 	}
 }
@@ -118,8 +106,8 @@ func BuildAccount(accOpts ...AccountOption) (*Account, error) {
 			return nil, RaiseDomainError(fmt.Errorf("failed to build account: %w", err))
 		}
 	}
-	if newAcc.ID == "" {
-		newAcc.ID = uuid.Must(uuid.NewRandom()).String()
+	if newAcc.ID.String() == "" {
+		newAcc.ID = valueobject.MustUUID()
 	}
 	return &newAcc, nil
 }

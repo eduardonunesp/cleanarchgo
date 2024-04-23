@@ -4,6 +4,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/eduardonunesp/cleanarchgo/pkg/domain/valueobject"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -16,18 +17,17 @@ type positionTestSuite struct {
 }
 
 func (s *positionTestSuite) TestBuildPosition() {
-	testTime := time.Now()
+	testTime := time.Now().Unix()
 	position, err := BuildPosition(
 		WithPositionID("1"),
 		WithRideID("2"),
-		WithLat("3"),
-		WithLong("4"),
+		WithLatLong("3", "4"),
 		WithDate(testTime),
 	)
 	s.NoError(err)
-	s.Equal("1", position.PositionID)
-	s.Equal("2", position.RideID)
-	s.Equal("3", position.Lat)
-	s.Equal("4", position.Long)
-	s.Equal(testTime, position.Date)
+	s.Equal("1", string(position.PositionID))
+	s.Equal("2", string(position.RideID))
+	s.Equal("3", position.Coord.Lat)
+	s.Equal("4", position.Coord.Long)
+	s.Equal(valueobject.DateFromInt64(testTime), position.Date)
 }
