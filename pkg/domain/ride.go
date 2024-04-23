@@ -117,7 +117,7 @@ func rideApplyDefaultParams(newRide *Ride) {
 }
 
 func (r *Ride) Accept(driverID valueobject.UUID) error {
-	newStatus, err := r.Status.Accepted(r.Status)
+	newStatus, err := r.Status.Accept()
 	if err != nil {
 		return RaiseDomainError(err)
 	}
