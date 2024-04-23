@@ -3,7 +3,6 @@ package service
 import (
 	"errors"
 
-	"github.com/eduardonunesp/cleanarchgo/pkg/domain"
 	"github.com/eduardonunesp/cleanarchgo/pkg/infra/repository"
 )
 
@@ -24,19 +23,19 @@ func NewStartRide(rideRepo repository.RideRepository) *StartRide {
 }
 
 func (s StartRide) Execute(params *StartRideParams) error {
-	ride, err := s.rideRepo.GetRideByID(params.RideID)
-	if err != nil {
-		return err
-	}
-	if ride == nil {
-		return RaiseServiceError(errAcceptRideRideNotFound)
-	}
-	if ride.Status != domain.RideStatusAccepted {
-		return RaiseServiceError(errStartRideInvalidStatus)
-	}
-	ride.Status = domain.RideStatusInProgres
-	if err := s.rideRepo.SaveRide(ride); err != nil {
-		return err
-	}
+	// ride, err := s.rideRepo.GetRideByID(params.RideID)
+	// if err != nil {
+	// 	return err
+	// }
+	// if ride == nil {
+	// 	return RaiseServiceError(errAcceptRideRideNotFound)
+	// }
+	// if ride.Status != domain.RideStatusAccepted {
+	// 	return RaiseServiceError(errStartRideInvalidStatus)
+	// }
+	// ride.Status = domain.RideStatusInProgres
+	// if err := s.rideRepo.SaveRide(ride); err != nil {
+	// 	return err
+	// }
 	return nil
 }

@@ -36,29 +36,30 @@ func NewGetRide(ridePepo repository.RideRepository, accountRepo repository.Accou
 }
 
 func (g GetRide) Execute(input *GetRideParams) (*GetRideResult, error) {
-	ride, err := g.rideRepo.GetRideByID(input.RideID)
-	if err != nil {
-		return nil, err
-	}
-	if ride == nil {
-		return nil, RaiseServiceError(errGetRideNotFound)
-	}
-	acc, err := g.accountRepo.GetAccountByID(ride.PassengerID)
-	if err != nil {
-		return nil, err
-	}
-	if acc == nil {
-		return nil, RaiseServiceError(errGetRideNotFound)
-	}
-	return &GetRideResult{
-		ID:             ride.ID,
-		PassengerID:    ride.PassengerID,
-		FromLat:        ride.FromLat,
-		FromLong:       ride.FromLong,
-		ToLat:          ride.ToLat,
-		ToLong:         ride.ToLong,
-		Status:         string(ride.Status),
-		PassengerName:  acc.Name,
-		PassengerEmail: acc.Email,
-	}, nil
+	// ride, err := g.rideRepo.GetRideByID(input.RideID)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	// if ride == nil {
+	// 	return nil, RaiseServiceError(errGetRideNotFound)
+	// }
+	// acc, err := g.accountRepo.GetAccountByID(ride.PassengerID)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	// if acc == nil {
+	// 	return nil, RaiseServiceError(errGetRideNotFound)
+	// }
+	// return &GetRideResult{
+	// 	ID:             ride.ID,
+	// 	PassengerID:    ride.PassengerID,
+	// 	FromLat:        ride.FromLat,
+	// 	FromLong:       ride.FromLong,
+	// 	ToLat:          ride.ToLat,
+	// 	ToLong:         ride.ToLong,
+	// 	Status:         string(ride.Status),
+	// 	PassengerName:  acc.Name,
+	// 	PassengerEmail: acc.Email,
+	// }, nil
+	return nil, nil
 }

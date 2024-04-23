@@ -134,6 +134,14 @@ func BuildAccount(accOpts ...AccountOption) (*Account, error) {
 	return &newAcc, nil
 }
 
+func MustBuildAccount(accOpts ...AccountOption) *Account {
+	acc, err := BuildAccount(accOpts...)
+	if err != nil {
+		panic(err)
+	}
+	return acc
+}
+
 func (a Account) AuthorizeDriver() error {
 	if !a.IsDriver {
 		return RaiseDomainError(fmt.Errorf("account %s is not a driver", a.ID))

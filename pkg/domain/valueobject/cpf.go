@@ -10,17 +10,21 @@ var (
 	ErrInvalidCPF = errors.New("invalid CPF")
 )
 
-type Cpf string
+type Cpf struct {
+	value string
+}
 
 func CpfFromString(s string) (Cpf, error) {
+	var cpf Cpf
 	if !validate(s) {
-		return "", ErrInvalidCPF
+		return cpf, ErrInvalidCPF
 	}
-	return Cpf(s), nil
+	cpf.value = s
+	return cpf, nil
 }
 
 func (c Cpf) String() string {
-	return string(c)
+	return c.value
 }
 
 const (

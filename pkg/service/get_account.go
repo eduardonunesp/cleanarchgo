@@ -33,20 +33,21 @@ func NewGetAccount(accountRepo repository.AccountRepository) *GetAccount {
 }
 
 func (g GetAccount) Execute(input *GetAccountInput) (*GetAccountOuput, error) {
-	account, err := g.accountRepo.GetAccountByID(input.ID)
-	if err != nil {
-		return nil, err
-	}
-	if account == nil {
-		return nil, RaiseServiceError(errGetAccountNotFound)
-	}
-	return &GetAccountOuput{
-		ID:          string(account.ID),
-		Name:        string(account.Name),
-		Email:       string(account.Email),
-		CPF:         string(account.CPF),
-		CarPlate:    string(account.CarPlate),
-		IsPassenger: account.IsPassenger,
-		IsDriver:    account.IsDriver,
-	}, nil
+	// account, err := g.accountRepo.GetAccountByID(input.ID)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	// if account == nil {
+	// 	return nil, RaiseServiceError(errGetAccountNotFound)
+	// }
+	// return &GetAccountOuput{
+	// 	ID:          string(account.ID),
+	// 	Name:        string(account.Name),
+	// 	Email:       string(account.Email),
+	// 	CPF:         string(account.CPF),
+	// 	CarPlate:    string(account.CarPlate),
+	// 	IsPassenger: account.IsPassenger,
+	// 	IsDriver:    account.IsDriver,
+	// }, nil
+	return nil, nil
 }

@@ -10,15 +10,19 @@ var (
 	checkCarPlateRE    = regexp.MustCompile(`[A-Z]{3}[0-9]{4}`)
 )
 
-type CarPlate string
+type CarPlate struct {
+	value string
+}
 
 func CarPlateFromString(s string) (CarPlate, error) {
+	var carPlate CarPlate
 	if !checkCarPlateRE.MatchString(s) {
-		return "", ErrInvalidCarPlate
+		return carPlate, ErrInvalidCarPlate
 	}
-	return CarPlate(s), nil
+	carPlate.value = s
+	return carPlate, nil
 }
 
 func (c CarPlate) String() string {
-	return string(c)
+	return string(c.value)
 }

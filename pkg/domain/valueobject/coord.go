@@ -1,17 +1,22 @@
 package valueobject
 
 type Coord struct {
-	Lat  string
-	Long string
+	lat  string
+	long string
 }
 
 func NewCoord(lat, long string) (Coord, error) {
-	return Coord{
-		Lat:  lat,
-		Long: long,
-	}, nil
+	return Coord{lat, long}, nil
+}
+
+func (c Coord) Lat() string {
+	return c.lat
+}
+
+func (c Coord) Long() string {
+	return c.long
 }
 
 func (c *Coord) String() string {
-	return c.Lat + ", " + c.Long
+	return c.lat + ", " + c.long
 }

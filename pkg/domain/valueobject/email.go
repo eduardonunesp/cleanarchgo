@@ -10,15 +10,19 @@ var (
 	checkEmailRE    = regexp.MustCompile(`^(.+)@(.+)$`)
 )
 
-type Email string
+type Email struct {
+	value string
+}
 
 func EmailFromString(s string) (Email, error) {
+	var email Email
 	if !checkEmailRE.MatchString(s) {
-		return "", ErrInvalidEmail
+		return email, ErrInvalidEmail
 	}
-	return Email(s), nil
+	email.value = s
+	return email, nil
 }
 
 func (e Email) String() string {
-	return string(e)
+	return string(e.value)
 }

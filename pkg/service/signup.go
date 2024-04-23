@@ -58,6 +58,6 @@ func (s Signup) Execute(input *SignupParams) (*SignupResult, error) {
 	}
 	s.mailerGW.Send(input.Email, "Welcome!", "")
 	return &SignupResult{
-		domainAccount.ID,
+		domainAccount.ID.String(),
 	}, nil
 }

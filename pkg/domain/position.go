@@ -67,7 +67,7 @@ func BuildPosition(posOpts ...PositionOption) (*Position, error) {
 }
 
 func positionApplyDefaultParams(newPosition *Position) {
-	if newPosition.PositionID == "" {
+	if newPosition.PositionID.String() == "" {
 		newPosition.PositionID = valueobject.MustUUID()
 	}
 	if newPosition.Date.IsZero() {

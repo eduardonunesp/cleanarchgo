@@ -79,7 +79,7 @@ func RideWithToLatLong(lat, long string) RideOption {
 func RideWithStatus(rideStatus string) RideOption {
 	return func(ride *Ride) error {
 		var err error
-		if ride.Status, err = valueobject.RideStatusFromString(rideStatus); err != nil {
+		if ride.Status, err = valueobject.BuildRideStatus(rideStatus); err != nil {
 			return err
 		}
 		return nil
@@ -108,11 +108,8 @@ func BuildRide(rideOpts ...RideOption) (*Ride, error) {
 }
 
 func rideApplyDefaultParams(newRide *Ride) {
-	if newRide.ID == "" {
+	if newRide.ID.String() == "" {
 		newRide.ID = valueobject.MustUUID()
-	}
-	if newRide.Status == "" {
-		newRide.Status = valueobject.RideStatusRequested
 	}
 	if newRide.Date.IsZero() {
 		newRide.Date = valueobject.DateFromNow()
@@ -120,10 +117,11 @@ func rideApplyDefaultParams(newRide *Ride) {
 }
 
 func (r *Ride) Accept(driverID valueobject.UUID) error {
-	if r.Status != valueobject.RideStatusRequested {
-		return RaiseDomainError(fmt.Errorf("ride %s not in requested status", r.ID))
+	newStatus, err := r.Status.Accepted(r.Status)
+	if err != nil {
+		return RaiseDomainError(err)
 	}
 	r.DriverID = driverID
-	r.Status = valueobject.RideStatusAccepted
+	r.Status = newStatus
 	return nil
 }

@@ -22,11 +22,11 @@ func (s *testAccountSuite) TestBuildAccountWithSuccess() {
 		AccountWithEmail("foo@bar.com"),
 	)
 	s.NoError(err)
-	s.Equal(&Account{
-		ID:    "1",
-		Name:  "Foo Bar",
-		Email: "foo@bar.com",
-	}, acc)
+	s.Equal(MustBuildAccount(
+		AccountWithID("1"),
+		AccountWithName("Foo Bar"),
+		AccountWithEmail("foo@bar.com"),
+	), acc)
 }
 
 func (s *testAccountSuite) TestBuildAccountFailedInvalidName() {
