@@ -1,0 +1,23 @@
+package service
+
+type {{.ServiceName}}Params struct {
+	// Params goes here
+}
+{{if .NoReturn}}{{else}}
+type {{.ServiceName}}Result struct {
+	// Result goes here
+}
+{{end}}
+type {{.ServiceName}} struct {
+	// Dependencies goes here
+}
+
+func New{{.ServiceName}}() *{{.ServiceName}} {
+	return &{{.ServiceName}}{}
+}
+{{if .NoReturn}}
+func (s {{.ServiceName}}) Execute(input *{{.ServiceName}}Params) error {
+	return nil
+}{{else}}func (s {{.ServiceName}}) Execute(input *{{.ServiceName}}Params) (*{{.ServiceName}}Result, error) {
+	return nil, nil
+}{{end}}

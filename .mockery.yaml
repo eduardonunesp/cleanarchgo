@@ -19,3 +19,4 @@ packages:
       dir: ../../test/
     interfaces:
       MailerGW:
+      CreditCardGW:
