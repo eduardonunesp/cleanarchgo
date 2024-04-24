@@ -1,39 +1,39 @@
 package service
 
 import (
+	"errors"
+
 	"github.com/eduardonunesp/cleanarchgo/pkg/infra/repository"
 )
 
-// var (
-// 	errStartRideInvalidStatus = errors.New("ride status is not accepted")
-// )
-
 type StartRideParams struct {
-	RideID string
+	RideID   string
+	DriverID string
 }
 
 type StartRide struct {
-	rideRepo repository.RideRepository
+	rideRepo   repository.RideRepository
+	accoutRepo repository.AccountRepository
 }
 
-func NewStartRide(rideRepo repository.RideRepository) *StartRide {
-	return &StartRide{rideRepo}
+func NewStartRide(rideRepo repository.RideRepository, accountRepo repository.AccountRepository) *StartRide {
+	return &StartRide{rideRepo, accountRepo}
 }
 
 func (s StartRide) Execute(params *StartRideParams) error {
-	// ride, err := s.rideRepo.GetRideByID(params.RideID)
-	// if err != nil {
-	// 	return err
-	// }
-	// if ride == nil {
-	// 	return RaiseServiceError(errAcceptRideRideNotFound)
-	// }
-	// if ride.Status != domain.RideStatusAccepted {
-	// 	return RaiseServiceError(errStartRideInvalidStatus)
-	// }
-	// ride.Status = domain.RideStatusInProgres
-	// if err := s.rideRepo.SaveRide(ride); err != nil {
-	// 	return err
-	// }
-	return nil
+	driverAcc, err := s.accoutRepo.GetAccountByID(params.DriverID)
+	if err != nil {
+		return err
+	}
+	if !driverAcc.IsDriver() {
+		return errors.New("account is not from a driver")
+	}
+	ride, err := s.rideRepo.GetRideByID(params.RideID)
+	if err != nil {
+		return err
+	}
+	if err := ride.Accept(ride.DriverID()); err != nil {
+		return err
+	}
+	return s.rideRepo.UpdateRide(ride)
 }

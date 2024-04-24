@@ -39,8 +39,5 @@ func (s AcceptRide) Execute(req AcceptRideRequest) error {
 	if err := ride.Accept(account.ID()); err != nil {
 		return err
 	}
-	if err := s.rideRepo.UpdateRide(ride); err != nil {
-		return err
-	}
-	return nil
+	return s.rideRepo.UpdateRide(ride)
 }

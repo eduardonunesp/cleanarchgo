@@ -8,8 +8,7 @@ import (
 )
 
 var (
-	errRequestRideNotFound     = errors.New("passenger not found")
-	errRequestRideNotPassenger = errors.New("account is not a passenger")
+	errRequestRideNotPassenger = errors.New("account is not from a passenger")
 	errRequestRideActiveFound  = errors.New("passenger has an active ride")
 )
 
@@ -35,14 +34,11 @@ func NewRequestRide(rideRepo repository.RideRepository, accRepo repository.Accou
 }
 
 func (r *RequestRide) Execute(params *RequestRideParams) (*RequestRideResult, error) {
-	account, err := r.accRepo.GetAccountByID(params.PassengerID)
+	passengerAcc, err := r.accRepo.GetAccountByID(params.PassengerID)
 	if err != nil {
 		return nil, err
 	}
-	if account == nil {
-		return nil, RaiseServiceError(errRequestRideNotFound)
-	}
-	if !account.IsPassenger() {
+	if !passengerAcc.IsPassenger() {
 		return nil, RaiseServiceError(errRequestRideNotPassenger)
 	}
 	hasActiveRide, err := r.rideRepo.HasActiveRideByPassengerID(params.PassengerID)
