@@ -37,7 +37,7 @@ func (s apiServer) GetRide(e *echo.Echo) {
 		})
 		serviceErr := new(service.ServiceError)
 		if errors.As(err, &serviceErr) {
-			return c.NoContent(http.StatusNotFound)
+			return c.NoContent(http.StatusInternalServerError)
 		}
 		if err != nil {
 			return c.NoContent(http.StatusInternalServerError)

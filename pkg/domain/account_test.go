@@ -7,13 +7,6 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-func mustBuildVO[T any](vo T, err error) T {
-	if err != nil {
-		panic(err)
-	}
-	return vo
-}
-
 func TestAccount(t *testing.T) {
 	suite.Run(t, new(testAccountSuite))
 }

@@ -24,5 +24,5 @@ func (s *positionTestSuite) TestBuildPosition() {
 	s.Equal("2", position.RideID.String())
 	s.Equal("3", position.Coord.Lat())
 	s.Equal("4", position.Coord.Long())
-	s.Equal(mustBuildVO(valueobject.DateFromUnix(testTime)), position.Date)
+	s.Equal(valueobject.MustBuild(valueobject.DateFromUnix(testTime)), position.Date)
 }
