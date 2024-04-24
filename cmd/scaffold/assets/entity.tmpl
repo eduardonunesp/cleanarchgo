@@ -1,36 +1,26 @@
 package domain
 
 import (
-	"fmt"
-
-	"github.com/google/uuid"
+	"github.com/eduardonunesp/cleanarchgo/pkg/domain/valueobject"
 )
-
-type {{.EntityName}}Option func(acc *{{.EntityName}}) error
 
 type {{.EntityName}} struct {
 	ID string
 }
 
-func {{.EntityName}}WithID(id string) {{.EntityName}}Option {
-	return func(ent *{{.EntityName}}) error {
-		ent.ID = id
-		return nil
-	}
+func Create{{.EntityName}}() (*{{.EntityName}}, error) {
+	var newEnt {{.EntityName}}
+	newEnt.ID = valueobject.MustUUID()
+	return acc, nil
 }
 
-func Build{{.EntityName}}(entOpts ...{{.EntityName}}Option) (*{{.EntityName}}, error) {
-	var newEnt {{.EntityName}}
-	for _, opt := range entOpts {
-		if opt == nil {
-			continue
-		}
-		if err := opt(&newEnt); err != nil {
-			return nil, RaiseDomainError(fmt.Errorf("failed to build {{.EntityName}}: %w", err))
-		}
-	}
-	if newEnt.ID == "" {
-		newEnt.ID = uuid.Must(uuid.NewRandom()).String()
+func Restore{{.EntityName}}(id string) (*{{.EntityName}}, error) {
+	var (
+		newEnt {{.EntityName}}
+		err    error
+	)
+	if newEnt.ID, err = valueobject.UUIDFromString(id); err != nil {
+		return nil, RaiseDomainError(err)
 	}
 	return &newEnt, nil
 }

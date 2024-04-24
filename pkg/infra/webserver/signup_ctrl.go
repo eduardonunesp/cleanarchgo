@@ -17,8 +17,7 @@ type (
 		Email       string `json:"email"`
 		CPF         string `json:"cpf"`
 		CarPlate    string `json:"carPlate"`
-		IsPassenger bool   `json:"isPassenger"`
-		IsDriver    bool   `json:"isDriver"`
+		AccountType string `json:"accountType"`
 	}
 
 	signupResponse struct {
@@ -40,8 +39,7 @@ func (s apiServer) Signup(e *echo.Echo) {
 			Email:       reqBody.Email,
 			CPF:         reqBody.CPF,
 			CarPlate:    reqBody.CarPlate,
-			IsPassenger: reqBody.IsPassenger,
-			IsDriver:    reqBody.IsDriver,
+			AccountType: reqBody.AccountType,
 		})
 		signupErr := new(service.ServiceError)
 		if errors.As(err, &signupErr) {

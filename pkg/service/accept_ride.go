@@ -7,8 +7,7 @@ import (
 )
 
 var (
-	errAcceptRideRideNotFound   = errors.New("ride not found")
-	errAcceptRideDriverNotFound = errors.New("driver not found")
+	ErrAcceptRideIsNotDriver = errors.New("account is not a driver")
 )
 
 type AcceptRideRequest struct {
@@ -30,23 +29,17 @@ func (s AcceptRide) Execute(req AcceptRideRequest) error {
 	if err != nil {
 		return err
 	}
-	if ride == nil {
-		return RaiseServiceError(errAcceptRideRideNotFound)
-	}
-	account, err := s.accRepo.GetAccountByID(ride.DriverID.String())
+	account, err := s.accRepo.GetAccountByID(ride.DriverID().String())
 	if err != nil {
 		return err
 	}
-	if account == nil {
-		return RaiseServiceError(errAcceptRideDriverNotFound)
+	if !account.IsDriver() {
+		return RaiseServiceError(ErrAcceptRideIsNotDriver)
 	}
-	if err := account.AuthorizeDriver(); err != nil {
+	if err := ride.Accept(account.ID()); err != nil {
 		return err
 	}
-	if err := ride.Accept(account.ID); err != nil {
-		return err
-	}
-	if err := s.rideRepo.SaveRide(ride); err != nil {
+	if err := s.rideRepo.UpdateRide(ride); err != nil {
 		return err
 	}
 	return nil

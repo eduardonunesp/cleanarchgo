@@ -25,6 +25,7 @@ type RideRepositoryRO interface {
 type RideRepository interface {
 	RideRepositoryRO
 	SaveRide(ride *domain.Ride) error
+	UpdateRide(ride *domain.Ride) error
 }
 
 //go:generate mockery

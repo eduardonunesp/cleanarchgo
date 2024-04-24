@@ -236,6 +236,52 @@ func (_c *MockRideRepository_SaveRide_Call) RunAndReturn(run func(*domain.Ride) 
 	return _c
 }
 
+// UpdateRide provides a mock function with given fields: ride
+func (_m *MockRideRepository) UpdateRide(ride *domain.Ride) error {
+	ret := _m.Called(ride)
+
+	if len(ret) == 0 {
+		panic("no return value specified for UpdateRide")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(*domain.Ride) error); ok {
+		r0 = rf(ride)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// MockRideRepository_UpdateRide_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'UpdateRide'
+type MockRideRepository_UpdateRide_Call struct {
+	*mock.Call
+}
+
+// UpdateRide is a helper method to define mock.On call
+//   - ride *domain.Ride
+func (_e *MockRideRepository_Expecter) UpdateRide(ride interface{}) *MockRideRepository_UpdateRide_Call {
+	return &MockRideRepository_UpdateRide_Call{Call: _e.mock.On("UpdateRide", ride)}
+}
+
+func (_c *MockRideRepository_UpdateRide_Call) Run(run func(ride *domain.Ride)) *MockRideRepository_UpdateRide_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(*domain.Ride))
+	})
+	return _c
+}
+
+func (_c *MockRideRepository_UpdateRide_Call) Return(_a0 error) *MockRideRepository_UpdateRide_Call {
+	_c.Call.Return(_a0)
+	return _c
+}
+
+func (_c *MockRideRepository_UpdateRide_Call) RunAndReturn(run func(*domain.Ride) error) *MockRideRepository_UpdateRide_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // NewMockRideRepository creates a new instance of MockRideRepository. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
 // The first argument is typically a *testing.T value.
 func NewMockRideRepository(t interface {

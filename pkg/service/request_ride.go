@@ -65,6 +65,6 @@ func (r *RequestRide) Execute(params *RequestRideParams) (*RequestRideResult, er
 		return nil, err
 	}
 	return &RequestRideResult{
-		RideID: ride.ID.String(),
+		RideID: ride.ID().String(),
 	}, nil
 }

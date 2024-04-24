@@ -25,13 +25,14 @@ type testAccountSuite struct {
 func (s *testAccountSuite) TestBuildAccountWithSuccess() {
 	acc, err := RestoreAccount("1", "Foo Bar", "foo@bar.com", "11144477735", "", valueobject.AccountTypePassenger.String())
 	s.NoError(err)
-	s.Equal(&Account{
-		ID:          mustBuildVO(valueobject.UUIDFromString("1")),
-		Name:        mustBuildVO(valueobject.NameFromString("Foo Bar")),
-		Email:       mustBuildVO(valueobject.EmailFromString("foo@bar.com")),
-		CPF:         mustBuildVO(valueobject.CpfFromString("11144477735")),
-		AccountType: mustBuildVO(valueobject.AccountTypeFromString("passenger")),
-	}, acc)
+	s.Equal(MustBuild(RestoreAccount(
+		"1",
+		"Foo Bar",
+		"foo@bar.com",
+		"11144477735",
+		"",
+		valueobject.AccountTypePassenger.String(),
+	)), acc)
 }
 
 func (s *testAccountSuite) TestBuildAccountFailedInvalidName() {

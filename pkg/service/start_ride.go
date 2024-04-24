@@ -1,14 +1,12 @@
 package service
 
 import (
-	"errors"
-
 	"github.com/eduardonunesp/cleanarchgo/pkg/infra/repository"
 )
 
-var (
-	errStartRideInvalidStatus = errors.New("ride status is not accepted")
-)
+// var (
+// 	errStartRideInvalidStatus = errors.New("ride status is not accepted")
+// )
 
 type StartRideParams struct {
 	RideID string

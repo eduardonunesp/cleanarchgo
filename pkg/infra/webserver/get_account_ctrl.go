@@ -16,8 +16,7 @@ type (
 		Email       string `json:"email" form:"email"`
 		CPF         string `json:"cpf" form:"cpf"`
 		CarPlate    string `json:"carPlate" form:"carPlate"`
-		IsPassenger bool   `json:"isPassenger" form:"isPassenger"`
-		IsDriver    bool   `json:"isDriver" form:"isDriver"`
+		AccountType string `json:"accountType" form:"accountType"`
 	}
 )
 
@@ -49,8 +48,7 @@ func (s apiServer) GetAccount(e *echo.Echo) {
 			CPF:         result.CPF,
 			Email:       result.Email,
 			CarPlate:    result.CarPlate,
-			IsPassenger: result.IsPassenger,
-			IsDriver:    result.IsDriver,
+			AccountType: result.AccountType,
 		})
 	})
 }

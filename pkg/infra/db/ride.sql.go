@@ -134,3 +134,24 @@ func (q *Queries) SaveRide(ctx context.Context, arg SaveRideParams) error {
 	)
 	return err
 }
+
+const updateRide = `-- name: UpdateRide :exec
+UPDATE
+	ride
+SET
+	driver_id = $3,
+	status = $2
+WHERE
+	id = $1
+`
+
+type UpdateRideParams struct {
+	ID       pgtype.UUID
+	Status   string
+	DriverID pgtype.UUID
+}
+
+func (q *Queries) UpdateRide(ctx context.Context, arg UpdateRideParams) error {
+	_, err := q.db.Exec(ctx, updateRide, arg.ID, arg.Status, arg.DriverID)
+	return err
+}

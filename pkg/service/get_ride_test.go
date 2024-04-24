@@ -2,6 +2,7 @@ package service
 
 import (
 	"testing"
+	"time"
 
 	"github.com/eduardonunesp/cleanarchgo/pkg/domain"
 	"github.com/eduardonunesp/cleanarchgo/pkg/test"
@@ -26,17 +27,22 @@ func (s *testRideSuite) SetupTest() {
 }
 
 func (s *testRideSuite) TestGetRide() {
-	s.rideRepo.EXPECT().GetRideByID("1").Return(domain.MustBuildRide(
-		domain.RideWithID("1"),
-		domain.RideWithPassengerID("2"),
-		domain.RideWithStatus("requested"),
-		domain.RideWithFromLatLongToLatLong("123", "321", "789", "987"),
-	), nil)
-	s.accRepo.EXPECT().GetAccountByID("2").Return(domain.MustBuildAccount(
-		domain.AccountWithID("2"),
-		domain.AccountWithName("Foo Bar"),
-		domain.AccountWithEmail("foobar@gmail.com"),
-	), nil)
+	tNow := time.Now().Unix()
+	s.rideRepo.EXPECT().GetRideByID("1").Return(domain.MustBuild(domain.RestoreRide(
+		"1",
+		"2",
+		"3",
+		"10.00",
+		"123", "321", "789", "987", "requested", tNow,
+	)), nil)
+	s.accRepo.EXPECT().GetAccountByID("2").Return(domain.MustBuild(domain.RestoreAccount(
+		"2",
+		"Foo Bar",
+		"foobar@gmail.com",
+		"11144477735",
+		"AAA9999",
+		"passenger",
+	)), nil)
 	result, err := s.useCase.Execute(&GetRideParams{
 		RideID: "1",
 	})

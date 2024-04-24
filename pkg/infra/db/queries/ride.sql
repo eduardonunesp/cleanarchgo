@@ -53,3 +53,12 @@ INSERT INTO ride (
 VALUES (
     $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11
 );
+
+-- name: UpdateRide :exec
+UPDATE
+	ride
+SET
+	driver_id = $3,
+	status = $2
+WHERE
+	id = $1;

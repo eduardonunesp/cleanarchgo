@@ -1,18 +1,16 @@
 package domain
 
 import (
-	"fmt"
-
 	"github.com/eduardonunesp/cleanarchgo/pkg/domain/valueobject"
 )
 
 type Account struct {
-	ID          valueobject.UUID
-	Name        valueobject.Name
-	Email       valueobject.Email
-	CPF         valueobject.Cpf
-	CarPlate    valueobject.CarPlate
-	AccountType valueobject.AccountType
+	id          valueobject.UUID
+	name        valueobject.Name
+	email       valueobject.Email
+	cpf         valueobject.Cpf
+	carPlate    valueobject.CarPlate
+	accountType valueobject.AccountType
 }
 
 func CreateAccount(name, email, cpf, carPlate, accountType string) (*Account, error) {
@@ -20,21 +18,21 @@ func CreateAccount(name, email, cpf, carPlate, accountType string) (*Account, er
 		newAcc Account
 		err    error
 	)
-	newAcc.ID = valueobject.MustUUID()
-	if newAcc.Name, err = valueobject.NameFromString(name); err != nil {
+	newAcc.id = valueobject.MustUUID()
+	if newAcc.name, err = valueobject.NameFromString(name); err != nil {
 		return nil, RaiseDomainError(err)
 	}
-	if newAcc.Email, err = valueobject.EmailFromString(email); err != nil {
+	if newAcc.email, err = valueobject.EmailFromString(email); err != nil {
 		return nil, RaiseDomainError(err)
 	}
-	if newAcc.CPF, err = valueobject.CpfFromString(cpf); err != nil {
+	if newAcc.cpf, err = valueobject.CpfFromString(cpf); err != nil {
 		return nil, RaiseDomainError(err)
 	}
-	if newAcc.AccountType, err = valueobject.AccountTypeFromString(accountType); err != nil {
+	if newAcc.accountType, err = valueobject.AccountTypeFromString(accountType); err != nil {
 		return nil, RaiseDomainError(err)
 	}
-	if newAcc.AccountType == valueobject.AccountTypeDriver {
-		if newAcc.CarPlate, err = valueobject.CarPlateFromString(carPlate); err != nil {
+	if newAcc.accountType == valueobject.AccountTypeDriver {
+		if newAcc.carPlate, err = valueobject.CarPlateFromString(carPlate); err != nil {
 			return nil, RaiseDomainError(err)
 		}
 	}
@@ -46,40 +44,57 @@ func RestoreAccount(id, name, email, cpf, carPlate, accountType string) (*Accoun
 		newAcc Account
 		err    error
 	)
-	if newAcc.ID, err = valueobject.UUIDFromString(id); err != nil {
+	if newAcc.id, err = valueobject.UUIDFromString(id); err != nil {
 		return nil, RaiseDomainError(err)
 	}
-	if newAcc.Name, err = valueobject.NameFromString(name); err != nil {
+	if newAcc.name, err = valueobject.NameFromString(name); err != nil {
 		return nil, RaiseDomainError(err)
 	}
-	if newAcc.Email, err = valueobject.EmailFromString(email); err != nil {
+	if newAcc.email, err = valueobject.EmailFromString(email); err != nil {
 		return nil, RaiseDomainError(err)
 	}
-	if newAcc.CPF, err = valueobject.CpfFromString(cpf); err != nil {
+	if newAcc.cpf, err = valueobject.CpfFromString(cpf); err != nil {
 		return nil, RaiseDomainError(err)
 	}
-	if newAcc.AccountType, err = valueobject.AccountTypeFromString(accountType); err != nil {
+	if newAcc.accountType, err = valueobject.AccountTypeFromString(accountType); err != nil {
 		return nil, RaiseDomainError(err)
 	}
-	if newAcc.AccountType == valueobject.AccountTypeDriver {
-		if newAcc.CarPlate, err = valueobject.CarPlateFromString(carPlate); err != nil {
+	if newAcc.accountType == valueobject.AccountTypeDriver {
+		if newAcc.carPlate, err = valueobject.CarPlateFromString(carPlate); err != nil {
 			return nil, RaiseDomainError(err)
 		}
 	}
 	return &newAcc, nil
 }
 
+func (a Account) ID() valueobject.UUID {
+	return a.id
+}
+
+func (a Account) Name() valueobject.Name {
+	return a.name
+}
+
+func (a Account) Email() valueobject.Email {
+	return a.email
+}
+
+func (a Account) Cpf() valueobject.Cpf {
+	return a.cpf
+}
+
+func (a Account) CarPlate() valueobject.CarPlate {
+	return a.carPlate
+}
+
+func (a Account) AccountType() valueobject.AccountType {
+	return a.accountType
+}
+
 func (a Account) IsPassenger() bool {
-	return a.AccountType == valueobject.AccountTypePassenger
+	return a.accountType == valueobject.AccountTypePassenger
 }
 
 func (a Account) IsDriver() bool {
-	return a.AccountType == valueobject.AccountTypeDriver
-}
-
-func (a Account) AuthorizeDriver() error {
-	if a.AccountType != valueobject.AccountTypeDriver {
-		return RaiseDomainError(fmt.Errorf("account %s is not a driver", a.ID))
-	}
-	return nil
+	return a.accountType == valueobject.AccountTypeDriver
 }

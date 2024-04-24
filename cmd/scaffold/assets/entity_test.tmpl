@@ -15,11 +15,7 @@ type test{{.EntityName}}Suite struct {
 }
 
 func (s *test{{.EntityName}}Suite) TestBuild{{.EntityName}}WithSuccess() {
-	newEnt, err := Build{{.EntityName}}(
-		{{.EntityName}}WithID("1"),
-	)
+	newEnt, err := Create{{.EntityName}}()
 	s.NoError(err)
-	s.Equal(&{{.EntityName}}{
-		ID: "1",
-	}, newEnt)
+	s.NotNil(newEnt)
 }

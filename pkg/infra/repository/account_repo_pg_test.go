@@ -50,7 +50,7 @@ func (s *testAccountRepoDBSuite) TestGetAccountWithSuccess() {
 	err := s.accDB.SaveAccount(domainAcc)
 	s.NoError(err)
 
-	acc, err := s.accDB.GetAccountByID(domainAcc.ID.String())
+	acc, err := s.accDB.GetAccountByID(domainAcc.ID().String())
 	s.NoError(err)
 	s.NotNil(acc)
 }

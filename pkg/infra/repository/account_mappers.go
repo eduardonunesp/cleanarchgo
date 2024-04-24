@@ -26,7 +26,7 @@ func mapDomainAccountToSaveAccountParams(account *domain.Account) (*db.SaveAccou
 	if account == nil {
 		return nil, fmt.Errorf("domain account cannot be nil")
 	}
-	pgTypeUUID, err := mapStringToPgTypeUUID(account.ID.String())
+	pgTypeUUID, err := mapStringToPgTypeUUID(account.ID().String())
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse account uuid")
 	}
@@ -36,10 +36,10 @@ func mapDomainAccountToSaveAccountParams(account *domain.Account) (*db.SaveAccou
 	}
 	return &db.SaveAccountParams{
 		ID:          pgTypeUUID,
-		Name:        account.Name.String(),
-		Email:       account.Email.String(),
-		Cpf:         account.CPF.String(),
-		CarPlate:    fromStringToPgTypeText(account.CarPlate.String()),
+		Name:        account.Name().String(),
+		Email:       account.Email().String(),
+		Cpf:         account.Cpf().String(),
+		CarPlate:    fromStringToPgTypeText(account.CarPlate().String()),
 		AccountType: accountType,
 	}, nil
 }

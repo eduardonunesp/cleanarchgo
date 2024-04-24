@@ -43,7 +43,7 @@ func (g GetRide) Execute(input *GetRideParams) (*GetRideResult, error) {
 	if ride == nil {
 		return nil, RaiseServiceError(errGetRideNotFound)
 	}
-	acc, err := g.accountRepo.GetAccountByID(ride.PassengerID.String())
+	acc, err := g.accountRepo.GetAccountByID(ride.PassengerID().String())
 	if err != nil {
 		return nil, err
 	}
@@ -51,14 +51,14 @@ func (g GetRide) Execute(input *GetRideParams) (*GetRideResult, error) {
 		return nil, RaiseServiceError(errGetRideNotFound)
 	}
 	return &GetRideResult{
-		ID:             ride.ID.String(),
-		PassengerID:    ride.PassengerID.String(),
-		FromLat:        ride.Segment.From().Lat(),
-		FromLong:       ride.Segment.From().Long(),
-		ToLat:          ride.Segment.To().Lat(),
-		ToLong:         ride.Segment.To().Long(),
-		Status:         ride.Status.String(),
-		PassengerName:  acc.Name.String(),
-		PassengerEmail: acc.Email.String(),
+		ID:             ride.ID().String(),
+		PassengerID:    ride.PassengerID().String(),
+		FromLat:        ride.Segment().From().Lat(),
+		FromLong:       ride.Segment().From().Long(),
+		ToLat:          ride.Segment().To().Lat(),
+		ToLong:         ride.Segment().To().Long(),
+		Status:         ride.Status().String(),
+		PassengerName:  acc.Name().String(),
+		PassengerEmail: acc.Email().String(),
 	}, nil
 }

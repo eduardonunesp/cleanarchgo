@@ -1,14 +1,12 @@
 package service
 
 import (
-	"errors"
-
 	"github.com/eduardonunesp/cleanarchgo/pkg/infra/repository"
 )
 
-var (
-	errRideNotInProgress = errors.New("ride status is not in progress")
-)
+// var (
+// 	errRideNotInProgress = errors.New("ride status is not in progress")
+// )
 
 type UpdatePositionParams struct {
 	RideID string

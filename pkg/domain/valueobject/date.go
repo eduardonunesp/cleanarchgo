@@ -26,7 +26,7 @@ func DateFromNow() Date {
 	return Date{time.Now().Unix()}
 }
 
-func (d Date) Int64() int64 {
+func (d Date) Unix() int64 {
 	return int64(d.value)
 }
 

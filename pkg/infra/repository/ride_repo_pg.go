@@ -71,3 +71,16 @@ func (r RideRepositoryPG) SaveRide(ride *domain.Ride) error {
 	}
 	return nil
 }
+
+func (r RideRepositoryPG) UpdateRide(ride *domain.Ride) error {
+	updateRideParams, err := mapDomainRideToUpdateRideParams(ride)
+	if err != nil {
+		return RaiseRepositoryError(err)
+	}
+	queries := db.New(r.conn)
+	err = queries.UpdateRide(context.Background(), *updateRideParams)
+	if err != nil {
+		return RaiseRepositoryError(err)
+	}
+	return nil
+}

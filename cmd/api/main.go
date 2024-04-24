@@ -1,6 +1,9 @@
 package main
 
 import (
+	"fmt"
+	"os"
+
 	"github.com/eduardonunesp/cleanarchgo/pkg/infra/gateway"
 	"github.com/eduardonunesp/cleanarchgo/pkg/infra/repository"
 	"github.com/eduardonunesp/cleanarchgo/pkg/infra/webserver"
@@ -8,7 +11,11 @@ import (
 )
 
 func main() {
-	connStr := "postgres://postgres:123456@localhost:5432/postgres?sslmode=disable"
+	var connStr string
+	if str, ok := os.LookupEnv("PG_CONN_STR"); !ok {
+		connStr = str
+	}
+	connStr = fmt.Sprintf("postgres://%s", connStr)
 	accountRepo := repository.NewAccountRepositoryPG(connStr)
 	rideRepo := repository.NewRideRepositoryPG(connStr)
 	mailerGW := gateway.NewMailerGatewayMemory()

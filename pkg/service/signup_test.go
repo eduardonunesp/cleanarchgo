@@ -29,16 +29,16 @@ func (s *testSignupSuite) SetupTest() {
 func (s *testSignupSuite) TestSignupSuccess() {
 	s.accountRepo.EXPECT().HasAccountByEmail("foobar@gmail.com").Return(false, nil)
 	s.accountRepo.EXPECT().SaveAccount(mock.MatchedBy(func(acc *domain.Account) bool {
-		if acc.Name.String() != "Foo Bar" {
+		if acc.Name().String() != "Foo Bar" {
 			return false
 		}
-		if acc.Email.String() != "foobar@gmail.com" {
+		if acc.Email().String() != "foobar@gmail.com" {
 			return false
 		}
-		if acc.CPF.String() != "11144477735" {
+		if acc.Cpf().String() != "11144477735" {
 			return false
 		}
-		if acc.ID.String() == "" {
+		if acc.ID().String() == "" {
 			return false
 		}
 		return true
@@ -47,7 +47,7 @@ func (s *testSignupSuite) TestSignupSuccess() {
 		Name:        "Foo Bar",
 		Email:       "foobar@gmail.com",
 		CPF:         "11144477735",
-		IsPassenger: true,
+		AccountType: "passenger",
 	})
 	s.NoError(err)
 	s.NotNil(result)
@@ -59,7 +59,7 @@ func (s *testSignupSuite) TestSignupFailedAccountExists() {
 		Name:        "Foo Bar",
 		Email:       "foobar@gmail.com",
 		CPF:         "11144477735",
-		IsPassenger: true,
+		AccountType: "passenger",
 	})
 	serviceErr := new(ServiceError)
 	s.ErrorAs(err, &serviceErr)

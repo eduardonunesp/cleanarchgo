@@ -55,13 +55,49 @@ func (s *testRideRepoPgSuite) TestGetRideWithSuccess() {
 	err = s.rideDB.SaveRide(domainRide)
 	s.NoError(err)
 
-	ride, err := s.rideDB.GetRideByID(domainRide.ID.String())
+	ride, err := s.rideDB.GetRideByID(domainRide.ID().String())
+	s.NoError(err)
+	s.Equal(domainRide.PassengerID, ride.PassengerID)
+	s.Equal("10.001", ride.Fare)
+	s.Equal("-27.594870", ride.Segment().From().Lat())
+	s.Equal("-48.548222", ride.Segment().From().Long())
+	s.Equal("-27.642040", ride.Segment().To().Lat())
+	s.Equal("-48.669239", ride.Segment().To().Long())
+}
+
+func (s *testRideRepoPgSuite) TestUpdateRideWithSuccess() {
+	domainAccount, _ := domain.CreateAccount(
+		"John Doe",
+		"foobar@gmail.com",
+		"11144477735",
+		"AAA9999",
+		"driver",
+	)
+	domainRide, err := domain.CreateRide(
+		s.passengerUUID,
+		"10.001",
+		"-27.594870",
+		"-48.548222",
+		"-27.642040",
+		"-48.669239",
+	)
+	s.NoError(err)
+	err = s.rideDB.SaveRide(domainRide)
+	s.NoError(err)
+
+	s.NoError(domainRide.Accept((domainAccount.ID())))
+
+	err = s.rideDB.UpdateRide(domainRide)
+	s.NoError(err)
+
+	ride, err := s.rideDB.GetRideByID(domainRide.ID().String())
 	s.NoError(err)
 	s.Equal(domainRide.PassengerID, ride.PassengerID)
 	s.Equal(domainRide.DriverID, ride.DriverID)
 	s.Equal("10.001", ride.Fare)
-	s.Equal("-27.594870", ride.Segment.From().Lat())
-	s.Equal("-48.548222", ride.Segment.From().Long())
-	s.Equal("-27.642040", ride.Segment.To().Lat())
-	s.Equal("-48.669239", ride.Segment.To().Long())
+	s.Equal(domainRide.Status().String(), "accepted")
+	s.Equal("-27.594870", ride.Segment().From().Lat())
+	s.Equal("-48.548222", ride.Segment().From().Long())
+	s.Equal("-27.642040", ride.Segment().To().Lat())
+	s.Equal("-48.669239", ride.Segment().To().Long())
 }

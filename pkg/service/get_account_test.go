@@ -9,13 +9,6 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-func mustBuildDomain[T any](v T, err error) T {
-	if err != nil {
-		panic(err)
-	}
-	return v
-}
-
 func TestGetAccount(t *testing.T) {
 	suite.Run(t, new(testGetAccountSuite))
 }
@@ -33,7 +26,7 @@ func (s *testGetAccountSuite) SetupTest() {
 
 func (s *testGetAccountSuite) TestGetAccountSuccess() {
 	s.accountRepo.EXPECT().GetAccountByID("1").Return(
-		mustBuildDomain(domain.RestoreAccount(
+		domain.MustBuild(domain.RestoreAccount(
 			"1",
 			"Foo Bar",
 			"foo@bar.com.br",
