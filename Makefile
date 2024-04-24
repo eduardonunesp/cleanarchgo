@@ -16,7 +16,7 @@ help:
 .PHONY: test
 test:
 	@echo "Testing everything"
-	@go test ./...
+	@go test ./... -v --count=1 --failfast
 
 .PHONY: run_api
 run_api:

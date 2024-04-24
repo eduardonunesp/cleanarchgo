@@ -15,6 +15,7 @@ const (
 
 type ServiceParams struct {
 	ServiceName string
+	NoReturn    bool
 }
 
 func createService() *cli.Command {
@@ -27,23 +28,26 @@ func createService() *cli.Command {
 				Required: true,
 				Aliases:  []string{"n"},
 			},
+			&cli.BoolFlag{
+				Name:    "noreturn",
+				Aliases: []string{"r"},
+				Value:   true,
+			},
 		},
 		Action: func(c *cli.Context) error {
+			params := ServiceParams{
+				ServiceName: c.String("name"),
+				NoReturn:    c.Bool("noreturn"),
+			}
 			if err := createTemplateFile(
 				fmt.Sprintf("%s/%s.go", servicePath, toSnakeCase(c.String("name"))),
-				template.Must(template.ParseFS(res, serviceTemplate)),
-				ServiceParams{
-					ServiceName: c.String("name"),
-				},
+				template.Must(template.ParseFS(res, serviceTemplate)), params,
 			); err != nil {
 				return err
 			}
 			return createTemplateFile(
 				fmt.Sprintf("%s/%s_test.go", servicePath, toSnakeCase(c.String("name"))),
-				template.Must(template.ParseFS(res, serviceTestTemplate)),
-				ServiceParams{
-					ServiceName: c.String("name"),
-				},
+				template.Must(template.ParseFS(res, serviceTestTemplate)), params,
 			)
 		},
 	}

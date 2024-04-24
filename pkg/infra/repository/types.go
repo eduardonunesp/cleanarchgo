@@ -30,6 +30,7 @@ type RideRepository interface {
 
 //go:generate mockery
 type PositionRepositoryRO interface {
+	GetPositionsByRideID(rideID string) ([]*domain.Position, error)
 }
 
 //go:generate mockery

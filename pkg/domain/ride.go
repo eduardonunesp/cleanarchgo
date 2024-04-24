@@ -98,6 +98,20 @@ func (r Ride) Date() valueobject.Date {
 	return r.date
 }
 
+func (r Ride) IsInProgress() bool {
+	return valueobject.RideStatusAs(r.status, valueobject.RideStatusInProgress{})
+}
+
+func (r *Ride) Finish(fare string) error {
+	newStatus, err := r.status.Finish()
+	if err != nil {
+		return RaiseDomainError(err)
+	}
+	r.fare = fare
+	r.status = newStatus
+	return nil
+}
+
 func (r *Ride) Accept(driverID valueobject.UUID) error {
 	newStatus, err := r.status.Accept()
 	if err != nil {

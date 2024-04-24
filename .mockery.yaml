@@ -8,10 +8,12 @@ packages:
     config: 
       dir: ../../test/
     interfaces:
-      AccountRepository:
-      RideRepository:
       AccountRepositoryRO:
       RideRepositoryRO:
+      PositionRepositoryRO:
+      AccountRepository:
+      RideRepository:
+      PositionRepository:
   github.com/eduardonunesp/cleanarchgo/pkg/infra/gateway:
     config: 
       dir: ../../test/

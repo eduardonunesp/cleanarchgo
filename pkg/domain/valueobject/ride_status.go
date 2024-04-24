@@ -12,6 +12,7 @@ func init() {
 		RideStatusRequested{},
 		RideStatusAccepted{},
 		RideStatusInProgress{},
+		RideStatusFinished{},
 	}
 	for _, status := range rideStatuses {
 		rideStatusStates[status.String()] = status
@@ -23,6 +24,7 @@ type RideStatus interface {
 	Request() (RideStatus, error)
 	Accept() (RideStatus, error)
 	Start() (RideStatus, error)
+	Finish() (RideStatus, error)
 }
 
 func BuildRideStatus(status string) (RideStatus, error) {
@@ -31,6 +33,18 @@ func BuildRideStatus(status string) (RideStatus, error) {
 		return nil, errors.New("invalid ride status")
 	}
 	return r, nil
+}
+
+func RideStatusAs(status RideStatus, target any) bool {
+	if target == nil {
+		return false
+	}
+	_, ok := target.(RideStatus)
+	if !ok {
+		return false
+	}
+	target = status
+	return true
 }
 
 type RideStatusRequested struct{}
@@ -48,6 +62,10 @@ func (r RideStatusRequested) Accept() (RideStatus, error) {
 }
 
 func (r RideStatusRequested) Start() (RideStatus, error) {
+	return nil, errors.New("invalid status")
+}
+
+func (r RideStatusRequested) Finish() (RideStatus, error) {
 	return nil, errors.New("invalid status")
 }
 
@@ -69,6 +87,10 @@ func (r RideStatusAccepted) Start() (RideStatus, error) {
 	return RideStatusInProgress{}, nil
 }
 
+func (r RideStatusAccepted) Finish() (RideStatus, error) {
+	return nil, errors.New("invalid status")
+}
+
 type RideStatusInProgress struct{}
 
 func (r RideStatusInProgress) String() string {
@@ -84,5 +106,31 @@ func (r RideStatusInProgress) Accept() (RideStatus, error) {
 }
 
 func (r RideStatusInProgress) Start() (RideStatus, error) {
+	return nil, errors.New("invalid status")
+}
+
+func (r RideStatusInProgress) Finish() (RideStatus, error) {
+	return RideStatusFinished{}, nil
+}
+
+type RideStatusFinished struct{}
+
+func (r RideStatusFinished) String() string {
+	return "completed"
+}
+
+func (r RideStatusFinished) Request() (RideStatus, error) {
+	return nil, errors.New("invalid status")
+}
+
+func (r RideStatusFinished) Accept() (RideStatus, error) {
+	return nil, errors.New("invalid status")
+}
+
+func (r RideStatusFinished) Start() (RideStatus, error) {
+	return nil, errors.New("invalid status")
+}
+
+func (r RideStatusFinished) Finish() (RideStatus, error) {
 	return nil, errors.New("invalid status")
 }
