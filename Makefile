@@ -32,7 +32,7 @@ integration_test:
 generate: sqlc_generate go_generate
 sqlc_generate:
 	@echo "Generating SQL queries and models at /pkg/infra/db"
-	@sqlc generate
+	@sqlc generate -f ./pkg/infra/db/sqlc.yaml
 go_generate:
 	@echo "Generating mock for interfaces at /pkg/test"
 	@go generate ./...
