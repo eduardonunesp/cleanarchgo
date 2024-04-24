@@ -20,8 +20,7 @@ type GetAccountOuput struct {
 	Email       string
 	CPF         string
 	CarPlate    string
-	IsPassenger bool
-	IsDriver    bool
+	AccountType string
 }
 
 type GetAccount struct {
@@ -46,7 +45,6 @@ func (g GetAccount) Execute(input *GetAccountInput) (*GetAccountOuput, error) {
 		Email:       account.Email.String(),
 		CPF:         account.CPF.String(),
 		CarPlate:    account.CarPlate.String(),
-		IsPassenger: account.IsPassenger,
-		IsDriver:    account.IsDriver,
+		AccountType: account.AccountType.String(),
 	}, nil
 }

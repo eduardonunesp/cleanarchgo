@@ -9,6 +9,18 @@ func BuildSegment(from Coord, to Coord) Segment {
 	return Segment{from: from, to: to}
 }
 
+func BuildSegmentFromCoords(fromLat, fromLong, toLat, toLong string) (Segment, error) {
+	from, err := BuildCoord(fromLat, fromLong)
+	if err != nil {
+		return Segment{}, err
+	}
+	to, err := BuildCoord(toLat, toLong)
+	if err != nil {
+		return Segment{}, err
+	}
+	return BuildSegment(from, to), nil
+}
+
 func (s Segment) From() Coord {
 	return s.from
 }

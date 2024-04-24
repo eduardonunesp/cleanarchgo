@@ -8,14 +8,13 @@ import (
 )
 
 func mapDBAccountToDomainAccount(account *db.Account) (*domain.Account, error) {
-	domainAcc, err := domain.BuildAccount(
-		domain.AccountWithID(fromPgTypeUUIDToString(account.ID)),
-		domain.AccountWithName(account.Name),
-		domain.AccountWithEmail(account.Email),
-		domain.AccountWithCPF(account.Cpf),
-		domain.AccountWithCarPlate(account.CarPlate.String, account.IsDriver),
-		domain.AccountSetDriver(account.IsDriver),
-		domain.AccountSetPassenger(account.IsPassenger),
+	domainAcc, err := domain.RestoreAccount(
+		fromPgTypeUUIDToString(account.ID),
+		account.Name,
+		account.Email,
+		account.Cpf,
+		account.CarPlate.String,
+		string(account.AccountType.AccountType),
 	)
 	if err != nil {
 		return nil, err
@@ -31,13 +30,16 @@ func mapDomainAccountToSaveAccountParams(account *domain.Account) (*db.SaveAccou
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse account uuid")
 	}
+	var accountType db.NullAccountType
+	if err := accountType.Scan(account.AccountType); err != nil {
+		return nil, fmt.Errorf("failed to parse account type")
+	}
 	return &db.SaveAccountParams{
 		ID:          pgTypeUUID,
 		Name:        account.Name.String(),
 		Email:       account.Email.String(),
 		Cpf:         account.CPF.String(),
 		CarPlate:    fromStringToPgTypeText(account.CarPlate.String()),
-		IsPassenger: account.IsPassenger,
-		IsDriver:    account.IsDriver,
+		AccountType: accountType,
 	}, nil
 }

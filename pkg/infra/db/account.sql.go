@@ -13,7 +13,7 @@ import (
 
 const getAccount = `-- name: GetAccount :one
 SELECT 
-    id, name, email, cpf, car_plate, is_passenger, is_driver
+    id, name, email, cpf, car_plate, account_type
 FROM 
     account
 WHERE 
@@ -29,8 +29,7 @@ func (q *Queries) GetAccount(ctx context.Context, id pgtype.UUID) (Account, erro
 		&i.Email,
 		&i.Cpf,
 		&i.CarPlate,
-		&i.IsPassenger,
-		&i.IsDriver,
+		&i.AccountType,
 	)
 	return i, err
 }
@@ -76,10 +75,9 @@ INSERT INTO account (
     email,
     cpf,
     car_plate,
-    is_passenger,
-    is_driver
+    account_type
 ) VALUES (
-    $1, $2, $3, $4, $5, $6, $7
+    $1, $2, $3, $4, $5, $6
 )
 `
 
@@ -89,8 +87,7 @@ type SaveAccountParams struct {
 	Email       string
 	Cpf         string
 	CarPlate    pgtype.Text
-	IsPassenger bool
-	IsDriver    bool
+	AccountType NullAccountType
 }
 
 func (q *Queries) SaveAccount(ctx context.Context, arg SaveAccountParams) error {
@@ -100,8 +97,7 @@ func (q *Queries) SaveAccount(ctx context.Context, arg SaveAccountParams) error 
 		arg.Email,
 		arg.Cpf,
 		arg.CarPlate,
-		arg.IsPassenger,
-		arg.IsDriver,
+		arg.AccountType,
 	)
 	return err
 }

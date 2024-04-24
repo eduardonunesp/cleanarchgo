@@ -42,7 +42,7 @@ func (r *RequestRide) Execute(params *RequestRideParams) (*RequestRideResult, er
 	if account == nil {
 		return nil, RaiseServiceError(errRequestRideNotFound)
 	}
-	if !account.IsPassenger {
+	if !account.IsPassenger() {
 		return nil, RaiseServiceError(errRequestRideNotPassenger)
 	}
 	hasActiveRide, err := r.rideRepo.HasActiveRideByPassengerID(params.PassengerID)
@@ -52,12 +52,11 @@ func (r *RequestRide) Execute(params *RequestRideParams) (*RequestRideResult, er
 	if hasActiveRide {
 		return nil, RaiseServiceError(errRequestRideActiveFound)
 	}
-	ride, err := domain.BuildRide(
-		domain.RideWithPassengerID(params.PassengerID),
-		domain.RideWithFromLatLongToLatLong(
-			params.FromLat, params.FromLong,
-			params.ToLat, params.ToLong,
-		),
+	ride, err := domain.CreateRide(
+		params.PassengerID,
+		"10.00",
+		params.FromLat, params.FromLong,
+		params.ToLat, params.ToLong,
 	)
 	if err != nil {
 		return nil, err

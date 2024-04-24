@@ -32,8 +32,7 @@ INSERT INTO account (
     email,
     cpf,
     car_plate,
-    is_passenger,
-    is_driver
+    account_type
 ) VALUES (
-    $1, $2, $3, $4, $5, $6, $7
+    $1, $2, $3, $4, $5, $6
 );

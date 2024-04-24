@@ -13,5 +13,5 @@ func RaiseServiceError(err error) *ServiceError {
 }
 
 func (r *ServiceError) Error() string {
-	return fmt.Sprintf("%v", r.Err.Error())
+	return fmt.Sprintf("service error: %s", r.Err.Error())
 }

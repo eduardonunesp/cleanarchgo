@@ -1,8 +1,6 @@
 package domain
 
 import (
-	"fmt"
-
 	"github.com/eduardonunesp/cleanarchgo/pkg/domain/valueobject"
 )
 
@@ -15,62 +13,38 @@ type Position struct {
 	Date       valueobject.Date
 }
 
-func WithPositionID(positionID string) PositionOption {
-	return func(position *Position) error {
-		var err error
-		if position.PositionID, err = valueobject.UUIDFromString(positionID); err != nil {
-			return err
-		}
-		return nil
+func buildPosition(positionID, rideID, lat, long string, date int64) (*Position, error) {
+	var (
+		newPosition Position
+		err         error
+	)
+	if newPosition.PositionID, err = valueobject.UUIDFromString(positionID); err != nil {
+		newPosition.PositionID = valueobject.MustUUID()
 	}
-}
-
-func WithRideID(rideID string) PositionOption {
-	return func(position *Position) error {
-		var err error
-		if position.RideID, err = valueobject.UUIDFromString(rideID); err != nil {
-			return err
-		}
-		return nil
+	if newPosition.RideID, err = valueobject.UUIDFromString(rideID); err != nil {
+		return nil, err
 	}
-}
-
-func WithLatLong(lat, long string) PositionOption {
-	return func(position *Position) error {
-		var err error
-		if position.Coord, err = valueobject.BuildCoord(lat, long); err != nil {
-			return err
-		}
-		return nil
+	if newPosition.Coord, err = valueobject.BuildCoord(lat, long); err != nil {
+		return nil, err
 	}
-}
-
-func WithDate(date int64) PositionOption {
-	return func(position *Position) error {
-		position.Date = valueobject.DateFromInt64(date)
-		return nil
+	if newPosition.Date, err = valueobject.DateFromUnix(date); err != nil {
+		newPosition.Date = valueobject.DateFromNow()
 	}
-}
-
-func BuildPosition(posOpts ...PositionOption) (*Position, error) {
-	var newPosition Position
-	for _, opt := range posOpts {
-		if opt == nil {
-			continue
-		}
-		if err := opt(&newPosition); err != nil {
-			return nil, RaiseDomainError(fmt.Errorf("failed to build Position: %w", err))
-		}
-	}
-	positionApplyDefaultParams(&newPosition)
 	return &newPosition, nil
 }
 
-func positionApplyDefaultParams(newPosition *Position) {
-	if newPosition.PositionID.String() == "" {
-		newPosition.PositionID = valueobject.MustUUID()
+func CreatePosition(rideID, lat, long string) (*Position, error) {
+	newPosition, err := buildPosition("", rideID, lat, long, 0)
+	if err != nil {
+		return nil, RaiseDomainError(err)
 	}
-	if newPosition.Date.IsZero() {
-		newPosition.Date = valueobject.DateFromNow()
+	return newPosition, nil
+}
+
+func RestorePosition(positionID, rideID, lat, long string, date int64) (*Position, error) {
+	newPosition, err := buildPosition(positionID, rideID, lat, long, date)
+	if err != nil {
+		return nil, RaiseDomainError(err)
 	}
+	return newPosition, nil
 }

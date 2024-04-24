@@ -5,12 +5,21 @@ import (
 	"time"
 )
 
+var (
+	ErrInvalidDate = fmt.Errorf("invalid date")
+)
+
 type Date struct {
 	value int64
 }
 
-func DateFromInt64(date int64) Date {
-	return Date{date}
+func DateFromUnix(date int64) (Date, error) {
+	var newDate Date
+	if date <= 0 {
+		return newDate, ErrInvalidDate
+	}
+	newDate.value = date
+	return newDate, nil
 }
 
 func DateFromNow() Date {

@@ -1,5 +1,7 @@
 package domain
 
+import "fmt"
+
 type Error struct {
 	Err error
 }
@@ -9,5 +11,5 @@ func RaiseDomainError(err error) *Error {
 }
 
 func (r Error) Error() string {
-	return r.Err.Error()
+	return fmt.Sprintf("domain error: %s", r.Err.Error())
 }

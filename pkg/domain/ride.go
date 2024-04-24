@@ -1,12 +1,8 @@
 package domain
 
 import (
-	"fmt"
-
 	"github.com/eduardonunesp/cleanarchgo/pkg/domain/valueobject"
 )
-
-type RideOption func(ride *Ride) error
 
 type Ride struct {
 	ID          valueobject.UUID
@@ -18,107 +14,60 @@ type Ride struct {
 	Date        valueobject.Date
 }
 
-func RideWithID(id string) RideOption {
-	return func(ride *Ride) error {
-		var err error
-		if ride.ID, err = valueobject.UUIDFromString(id); err != nil {
-			return err
-		}
-		return nil
+func CreateRide(
+	passengerID, fare,
+	fromLat, fromLong, toLat, toLong string,
+) (*Ride, error) {
+	var (
+		newRide Ride
+		err     error
+	)
+	newRide.ID = valueobject.MustUUID()
+	if newRide.PassengerID, err = valueobject.UUIDFromString(passengerID); err != nil {
+		return nil, err
 	}
-}
-
-func RideWithPassengerID(passengerID string) RideOption {
-	return func(ride *Ride) error {
-		var err error
-		if ride.PassengerID, err = valueobject.UUIDFromString(passengerID); err != nil {
-			return err
-		}
-		return nil
+	newRide.Status, _ = valueobject.BuildRideStatus(valueobject.RideStatusRequested{}.String())
+	newRide.Fare = fare
+	if newRide.Segment, err = valueobject.BuildSegmentFromCoords(
+		fromLat, fromLong, toLat, toLong,
+	); err != nil {
+		return nil, err
 	}
-}
-
-func RideWithDriverID(driverID string) RideOption {
-	return func(ride *Ride) error {
-		var err error
-		if ride.DriverID, err = valueobject.UUIDFromString(driverID); err != nil {
-			return err
-		}
-		return nil
-	}
-}
-
-func RideWithFare(fare string) RideOption {
-	return func(ride *Ride) error {
-		ride.Fare = fare
-		return nil
-	}
-}
-
-func RideWithFromLatLongToLatLong(fLat, fLong, tLat, tLong string) RideOption {
-	return func(ride *Ride) error {
-		var err error
-		var fCoord, tCoord valueobject.Coord
-		if fCoord, err = valueobject.BuildCoord(fLat, fLong); err != nil {
-			return err
-		}
-		if tCoord, err = valueobject.BuildCoord(tLat, tLong); err != nil {
-			return err
-		}
-		ride.Segment = valueobject.BuildSegment(fCoord, tCoord)
-		return nil
-	}
-}
-
-func RideWithStatus(rideStatus string) RideOption {
-	return func(ride *Ride) error {
-		var err error
-		if ride.Status, err = valueobject.BuildRideStatus(rideStatus); err != nil {
-			return err
-		}
-		return nil
-	}
-}
-
-func RideWithDate(timeNow int64) RideOption {
-	return func(ride *Ride) error {
-		ride.Date = valueobject.DateFromInt64(timeNow)
-		return nil
-	}
-}
-
-func BuildRide(rideOpts ...RideOption) (*Ride, error) {
-	var newRide Ride
-	for _, opt := range rideOpts {
-		if opt == nil {
-			continue
-		}
-		if err := opt(&newRide); err != nil {
-			return nil, RaiseDomainError(fmt.Errorf("failed to build account: %w", err))
-		}
-	}
-	rideApplyDefaultParams(&newRide)
+	newRide.Date = valueobject.DateFromNow()
 	return &newRide, nil
 }
 
-func MustBuildRide(rideOpts ...RideOption) *Ride {
-	ride, err := BuildRide(rideOpts...)
-	if err != nil {
-		panic(err)
+func RestoreRide(
+	id, passengerID, driverID, fare,
+	fromLat, fromLong, toLat, toLong, status string,
+	date int64,
+) (*Ride, error) {
+	var (
+		newRide Ride
+		err     error
+	)
+	if newRide.ID, err = valueobject.UUIDFromString(id); err != nil {
+		return nil, err
 	}
-	return ride
-}
-
-func rideApplyDefaultParams(newRide *Ride) {
-	if newRide.ID.String() == "" {
-		newRide.ID = valueobject.MustUUID()
+	if newRide.PassengerID, err = valueobject.UUIDFromString(passengerID); err != nil {
+		return nil, err
 	}
-	if newRide.Status == nil {
-		newRide.Status, _ = valueobject.BuildRideStatus("requested")
+	if newRide.DriverID, err = valueobject.UUIDFromString(driverID); err != nil {
+		return nil, err
 	}
-	if newRide.Date.IsZero() {
-		newRide.Date = valueobject.DateFromNow()
+	if newRide.Status, err = valueobject.BuildRideStatus(status); err != nil {
+		return nil, err
 	}
+	newRide.Fare = fare
+	if newRide.Segment, err = valueobject.BuildSegmentFromCoords(
+		fromLat, fromLong, toLat, toLong,
+	); err != nil {
+		return nil, err
+	}
+	if newRide.Date, err = valueobject.DateFromUnix(date); err != nil {
+		return nil, err
+	}
+	return &newRide, nil
 }
 
 func (r *Ride) Accept(driverID valueobject.UUID) error {

@@ -4,7 +4,6 @@ package repository
 
 import (
 	"testing"
-	"time"
 
 	"github.com/eduardonunesp/cleanarchgo/pkg/domain"
 	"github.com/google/uuid"
@@ -31,41 +30,38 @@ func (s *testRideRepoPgSuite) SetupTest() {
 }
 
 func (s *testRideRepoPgSuite) TestCreateRideWithSuccess() {
-	domainRide, _ := domain.BuildRide(
-		domain.RideWithID(s.uuid),
-		domain.RideWithPassengerID(s.passengerUUID),
-		domain.RideWithDriverID(s.driverUUID),
-		domain.RideWithFare("10.00"),
+	domainRide, _ := domain.CreateRide(
+		s.passengerUUID,
+		"10.001",
+		"-48.669239",
+		"-27.594870",
+		"-48.548222",
+		"-27.642040",
 	)
 	err := s.rideDB.SaveRide(domainRide)
 	s.NoError(err)
 }
 
 func (s *testRideRepoPgSuite) TestGetRideWithSuccess() {
-	tNow := time.Now().UTC()
-	domainRide, _ := domain.BuildRide(
-		domain.RideWithID(s.uuid),
-		domain.RideWithPassengerID(s.passengerUUID),
-		domain.RideWithDriverID(s.driverUUID),
-		domain.RideWithFare("10.001"),
-		domain.RideWithDate(tNow),
-		domain.RideWithDistance("500.00"),
-		domain.RideWithFromLatLong("-27.594870", "-48.548222"),
-		domain.RideWithToLatLong("-27.642040", "-48.669239"),
+	domainRide, err := domain.CreateRide(
+		s.passengerUUID,
+		"10.001",
+		"-27.594870",
+		"-48.548222",
+		"-27.642040",
+		"-48.669239",
 	)
-	err := s.rideDB.SaveRide(domainRide)
+	s.NoError(err)
+	err = s.rideDB.SaveRide(domainRide)
 	s.NoError(err)
 
-	ride, err := s.rideDB.GetRideByID(s.uuid)
+	ride, err := s.rideDB.GetRideByID(domainRide.ID.String())
 	s.NoError(err)
-	s.Equal(s.uuid, ride.ID)
-	s.Equal(s.passengerUUID, ride.PassengerID)
-	s.Equal(s.driverUUID, ride.DriverID)
+	s.Equal(domainRide.PassengerID, ride.PassengerID)
+	s.Equal(domainRide.DriverID, ride.DriverID)
 	s.Equal("10.001", ride.Fare)
-	s.Equal("500.00", ride.Distance)
-	s.Equal("-27.594870", ride.FromLat)
-	s.Equal("-48.548222", ride.FromLong)
-	s.Equal("-27.642040", ride.ToLat)
-	s.Equal("-48.669239", ride.ToLong)
-	s.Equal(tNow, ride.Date.UTC())
+	s.Equal("-27.594870", ride.Segment.From().Lat())
+	s.Equal("-48.548222", ride.Segment.From().Long())
+	s.Equal("-27.642040", ride.Segment.To().Lat())
+	s.Equal("-48.669239", ride.Segment.To().Long())
 }

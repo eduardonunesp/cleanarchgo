@@ -9,6 +9,13 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
+func mustBuildDomain[T any](v T, err error) T {
+	if err != nil {
+		panic(err)
+	}
+	return v
+}
+
 func TestGetAccount(t *testing.T) {
 	suite.Run(t, new(testGetAccountSuite))
 }
@@ -25,26 +32,27 @@ func (s *testGetAccountSuite) SetupTest() {
 }
 
 func (s *testGetAccountSuite) TestGetAccountSuccess() {
-	s.accountRepo.EXPECT().GetAccountByID("1").Return(domain.MustBuildAccount(
-		domain.AccountWithID("1"),
-		domain.AccountWithName("Foo Bar"),
-		domain.AccountWithEmail("foo@bar.com.br"),
-		domain.AccountWithCPF("11144477735"),
-		domain.AccountIsDriver(),
-		domain.AccountWithCarPlate("AAA9999", true),
-	), nil)
+	s.accountRepo.EXPECT().GetAccountByID("1").Return(
+		mustBuildDomain(domain.RestoreAccount(
+			"1",
+			"Foo Bar",
+			"foo@bar.com.br",
+			"11144477735",
+			"AAA9999",
+			"driver",
+		)), nil)
 	result, err := s.useCase.Execute(&GetAccountInput{
 		ID: "1",
 	})
 	s.NoError(err)
 	s.NotNil(result)
 	s.Equal(&GetAccountOuput{
-		ID:       "1",
-		Name:     "Foo Bar",
-		Email:    "foo@bar.com.br",
-		CPF:      "11144477735",
-		CarPlate: "AAA9999",
-		IsDriver: true,
+		ID:          "1",
+		Name:        "Foo Bar",
+		Email:       "foo@bar.com.br",
+		CPF:         "11144477735",
+		CarPlate:    "AAA9999",
+		AccountType: "driver",
 	}, result)
 }
 
