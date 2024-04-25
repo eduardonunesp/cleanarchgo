@@ -57,8 +57,8 @@ func (s *testRideRepoPgSuite) TestGetRideWithSuccess() {
 
 	ride, err := s.rideDB.GetRideByID(domainRide.ID().String())
 	s.NoError(err)
-	s.Equal(domainRide.PassengerID, ride.PassengerID)
-	s.Equal("10.001", ride.Fare)
+	s.Equal(domainRide.PassengerID(), ride.PassengerID())
+	s.Equal("10.001", ride.Fare())
 	s.Equal("-27.594870", ride.Segment().From().Lat())
 	s.Equal("-48.548222", ride.Segment().From().Long())
 	s.Equal("-27.642040", ride.Segment().To().Lat())
@@ -92,9 +92,9 @@ func (s *testRideRepoPgSuite) TestUpdateRideWithSuccess() {
 
 	ride, err := s.rideDB.GetRideByID(domainRide.ID().String())
 	s.NoError(err)
-	s.Equal(domainRide.PassengerID, ride.PassengerID)
-	s.Equal(domainRide.DriverID, ride.DriverID)
-	s.Equal("10.001", ride.Fare)
+	s.Equal(domainRide.PassengerID(), ride.PassengerID())
+	s.Equal(domainRide.DriverID(), ride.DriverID())
+	s.Equal("10.001", ride.Fare())
 	s.Equal(domainRide.Status().String(), "accepted")
 	s.Equal("-27.594870", ride.Segment().From().Lat())
 	s.Equal("-48.548222", ride.Segment().From().Long())

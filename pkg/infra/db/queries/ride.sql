@@ -1,10 +1,11 @@
 -- name: GetRide :one
 SELECT
-    *
+	*
 FROM
-    ride
+	ride
 WHERE
-    id = $1 LIMIT 1;
+	id = $1
+LIMIT 1;
 
 -- name: HasActiveRideByPassengerID :one
 SELECT
@@ -38,20 +39,20 @@ LIMIT 1;
 
 -- name: SaveRide :exec
 INSERT INTO ride (
-    id,
-    passenger_id,
-    driver_id,
-    fare,
-    distance,
-    from_lat,
-    from_long,
-    to_lat,
-    to_long,
-    status,
-    date
+	id,
+	passenger_id,
+	driver_id,
+	fare,
+	distance,
+	from_lat,
+	from_long,
+	to_lat,
+	to_long,
+	status,
+	date
 )
 VALUES (
-    $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11
+	$1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11
 );
 
 -- name: UpdateRide :exec

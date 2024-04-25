@@ -7,10 +7,10 @@ import (
 type PositionOption func(position *Position) error
 
 type Position struct {
-	PositionID valueobject.UUID
-	RideID     valueobject.UUID
-	Coord      valueobject.Coord
-	Date       valueobject.Date
+	id     valueobject.UUID
+	rideID valueobject.UUID
+	coord  valueobject.Coord
+	date   valueobject.Date
 }
 
 func CreatePosition(rideID, lat, long string) (*Position, error) {
@@ -18,14 +18,14 @@ func CreatePosition(rideID, lat, long string) (*Position, error) {
 		newPosition Position
 		err         error
 	)
-	newPosition.PositionID = valueobject.MustUUID()
-	if newPosition.RideID, err = valueobject.UUIDFromString(rideID); err != nil {
+	newPosition.id = valueobject.MustUUID()
+	if newPosition.rideID, err = valueobject.UUIDFromString(rideID); err != nil {
 		return nil, err
 	}
-	if newPosition.Coord, err = valueobject.BuildCoord(lat, long); err != nil {
+	if newPosition.coord, err = valueobject.BuildCoord(lat, long); err != nil {
 		return nil, err
 	}
-	newPosition.Date = valueobject.DateFromNow()
+	newPosition.date = valueobject.DateFromNow()
 	return &newPosition, nil
 }
 
@@ -34,17 +34,33 @@ func RestorePosition(positionID, rideID, lat, long string, date int64) (*Positio
 		newPosition Position
 		err         error
 	)
-	if newPosition.PositionID, err = valueobject.UUIDFromString(positionID); err != nil {
+	if newPosition.id, err = valueobject.UUIDFromString(positionID); err != nil {
 		return nil, err
 	}
-	if newPosition.RideID, err = valueobject.UUIDFromString(rideID); err != nil {
+	if newPosition.rideID, err = valueobject.UUIDFromString(rideID); err != nil {
 		return nil, err
 	}
-	if newPosition.Coord, err = valueobject.BuildCoord(lat, long); err != nil {
+	if newPosition.coord, err = valueobject.BuildCoord(lat, long); err != nil {
 		return nil, err
 	}
-	if newPosition.Date, err = valueobject.DateFromUnix(date); err != nil {
+	if newPosition.date, err = valueobject.DateFromUnix(date); err != nil {
 		return nil, err
 	}
 	return &newPosition, nil
+}
+
+func (p Position) ID() valueobject.UUID {
+	return p.id
+}
+
+func (p Position) RideID() valueobject.UUID {
+	return p.rideID
+}
+
+func (p Position) Coord() valueobject.Coord {
+	return p.coord
+}
+
+func (p Position) Date() valueobject.Date {
+	return p.date
 }

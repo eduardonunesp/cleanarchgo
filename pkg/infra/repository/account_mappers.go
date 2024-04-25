@@ -31,8 +31,8 @@ func mapDomainAccountToSaveAccountParams(account *domain.Account) (*db.SaveAccou
 		return nil, fmt.Errorf("failed to parse account uuid")
 	}
 	var accountType db.NullAccountType
-	if err := accountType.Scan(account.AccountType); err != nil {
-		return nil, fmt.Errorf("failed to parse account type")
+	if err := accountType.Scan(account.AccountType().String()); err != nil {
+		return nil, fmt.Errorf("failed to parse account type: %w", err)
 	}
 	return &db.SaveAccountParams{
 		ID:          pgTypeUUID,

@@ -1,1 +1,2 @@
 DROP TABLE IF EXISTS ride;
+DROP TYPE IF EXISTS status_type;
