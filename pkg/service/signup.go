@@ -45,11 +45,15 @@ func (s Signup) Execute(input *SignupParams) (*SignupResult, error) {
 		domain.AccountWithName(input.Name),
 		domain.AccountWithEmail(input.Email),
 		domain.AccountWithCpf(input.CPF),
-		domain.AccountWithCarPlate(input.CarPlate),
 		domain.AccountWithAccountType(input.AccountType),
 	)
 	if err != nil {
 		return nil, err
+	}
+	if domainAccount.IsDriver() {
+		if err := domainAccount.SetCarPlateOnce(input.CarPlate); err != nil {
+			return nil, err
+		}
 	}
 	if err := s.accountRepo.SaveAccount(domainAccount); err != nil {
 		return nil, err

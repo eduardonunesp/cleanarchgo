@@ -32,8 +32,18 @@ func (s *testFinishRideSuite) TestFinishRideSuccess() {
 		"1", "2", "3", "", "123", "321", "789", "987", "in_progress", tNow,
 	)), nil)
 	s.posRepo.EXPECT().GetPositionsByRideID("1").Return([]*domain.Position{
-		domain.MustBuild(domain.RestorePosition("3", "1", "123", "321", tNow)),
-		domain.MustBuild(domain.RestorePosition("4", "1", "789", "987", tNow)),
+		domain.MustBuild(domain.BuildPosition(
+			domain.PositionWithID("3"),
+			domain.PositionWithRideID("1"),
+			domain.PositionWithCoord("123", "321"),
+			domain.PositionWithDate(tNow),
+		)),
+		domain.MustBuild(domain.BuildPosition(
+			domain.PositionWithID("4"),
+			domain.PositionWithRideID("1"),
+			domain.PositionWithCoord("789", "987"),
+			domain.PositionWithDate(tNow),
+		)),
 	}, nil)
 	s.rideRepo.EXPECT().SaveRide(domain.MustBuild(domain.RestoreRide(
 		"1", "2", "3", "10.00", "123", "321", "789", "987", "completed", tNow,

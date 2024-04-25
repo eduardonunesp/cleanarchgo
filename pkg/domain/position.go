@@ -13,42 +13,6 @@ type Position struct {
 	date   valueobject.Date
 }
 
-func CreatePosition(rideID, lat, long string) (*Position, error) {
-	var (
-		newPosition Position
-		err         error
-	)
-	newPosition.id = valueobject.MustUUID()
-	if newPosition.rideID, err = valueobject.UUIDFromString(rideID); err != nil {
-		return nil, err
-	}
-	if newPosition.coord, err = valueobject.BuildCoord(lat, long); err != nil {
-		return nil, err
-	}
-	newPosition.date = valueobject.DateFromNow()
-	return &newPosition, nil
-}
-
-func RestorePosition(positionID, rideID, lat, long string, date int64) (*Position, error) {
-	var (
-		newPosition Position
-		err         error
-	)
-	if newPosition.id, err = valueobject.UUIDFromString(positionID); err != nil {
-		return nil, err
-	}
-	if newPosition.rideID, err = valueobject.UUIDFromString(rideID); err != nil {
-		return nil, err
-	}
-	if newPosition.coord, err = valueobject.BuildCoord(lat, long); err != nil {
-		return nil, err
-	}
-	if newPosition.date, err = valueobject.DateFromUnix(date); err != nil {
-		return nil, err
-	}
-	return &newPosition, nil
-}
-
 func (p Position) ID() valueobject.UUID {
 	return p.id
 }
@@ -63,4 +27,49 @@ func (p Position) Coord() valueobject.Coord {
 
 func (p Position) Date() valueobject.Date {
 	return p.date
+}
+
+func PositionWithID(id string) PositionOption {
+	return func(p *Position) error {
+		var err error
+		p.id, err = valueobject.UUIDFromString(id)
+		return err
+	}
+}
+
+func PositionWithRideID(rideID string) PositionOption {
+	return func(p *Position) error {
+		var err error
+		p.rideID, err = valueobject.UUIDFromString(rideID)
+		return err
+	}
+}
+
+func PositionWithCoord(lat, long string) PositionOption {
+	return func(p *Position) error {
+		var err error
+		p.coord, err = valueobject.BuildCoord(lat, long)
+		return err
+	}
+}
+
+func PositionWithDate(date int64) PositionOption {
+	return func(p *Position) error {
+		var err error
+		p.date, err = valueobject.DateFromUnix(date)
+		return err
+	}
+}
+
+func BuildPosition(opts ...PositionOption) (*Position, error) {
+	newPosition := Position{
+		id:   valueobject.MustUUID(),
+		date: valueobject.DateFromNow(),
+	}
+	for _, opt := range opts {
+		if err := opt(&newPosition); err != nil {
+			return nil, err
+		}
+	}
+	return &newPosition, nil
 }

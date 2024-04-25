@@ -65,10 +65,4 @@ func (s *testAccountSuite) TestBuildAccountFailedInvalidCarPlate() {
 	domainErr := new(Error)
 	s.ErrorAs(err, &domainErr)
 	s.ErrorIs(domainErr.Err, valueobject.ErrInvalidCarPlate)
-
-	_, err = BuildAccount(
-		AccountWithAccountType("driver"),
-	)
-	s.ErrorAs(err, &domainErr)
-	s.ErrorIs(domainErr.Err, valueobject.ErrInvalidCarPlate)
 }

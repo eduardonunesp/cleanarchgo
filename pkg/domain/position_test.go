@@ -18,7 +18,12 @@ type positionTestSuite struct {
 
 func (s *positionTestSuite) TestBuildPosition() {
 	testTime := time.Now().Unix()
-	position, err := RestorePosition("1", "2", "3", "4", testTime)
+	position, err := BuildPosition(
+		PositionWithID("1"),
+		PositionWithRideID("2"),
+		PositionWithCoord("3", "4"),
+		PositionWithDate(testTime),
+	)
 	s.NoError(err)
 	s.Equal("1", position.ID().String())
 	s.Equal("2", position.RideID().String())

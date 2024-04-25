@@ -42,7 +42,7 @@ func (s *testGetAccountSuite) TestGetAccountSuccess() {
 	s.Equal(&GetAccountOuput{
 		ID:          "1",
 		Name:        "Foo Bar",
-		Email:       "foo@bar.com.br",
+		Email:       "foo@bar.com",
 		CPF:         "11144477735",
 		CarPlate:    "AAA9999",
 		AccountType: "driver",
