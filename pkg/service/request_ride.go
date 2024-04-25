@@ -33,7 +33,7 @@ func NewRequestRide(rideRepo repository.RideRepository, accRepo repository.Accou
 	return &RequestRide{rideRepo, accRepo}
 }
 
-func (r *RequestRide) Execute(params *RequestRideParams) (*RequestRideResult, error) {
+func (r *RequestRide) Execute(params RequestRideParams) (*RequestRideResult, error) {
 	passengerAcc, err := r.accRepo.GetAccountByID(params.PassengerID)
 	if err != nil {
 		return nil, err
@@ -48,11 +48,14 @@ func (r *RequestRide) Execute(params *RequestRideParams) (*RequestRideResult, er
 	if hasActiveRide {
 		return nil, RaiseServiceError(errRequestRideActiveFound)
 	}
-	ride, err := domain.CreateRide(
-		params.PassengerID,
-		"10.00",
-		params.FromLat, params.FromLong,
-		params.ToLat, params.ToLong,
+	ride, err := domain.BuildRide(
+		domain.RideWithPassengerID(params.PassengerID),
+		domain.RideWithSegment(
+			params.FromLat,
+			params.FromLong,
+			params.ToLat,
+			params.ToLong,
+		),
 	)
 	if err != nil {
 		return nil, err

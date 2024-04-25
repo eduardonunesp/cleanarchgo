@@ -26,7 +26,7 @@ func (s *testGetAccountSuite) SetupTest() {
 
 func (s *testGetAccountSuite) TestGetAccountSuccess() {
 	s.accountRepo.EXPECT().GetAccountByID("1").Return(
-		domain.MustBuild(domain.BuildAccount(
+		domain.Must(domain.BuildAccount(
 			domain.AccountWithID("1"),
 			domain.AccountWithName("Foo Bar"),
 			domain.AccountWithEmail("foo@bar.com"),
@@ -34,7 +34,7 @@ func (s *testGetAccountSuite) TestGetAccountSuccess() {
 			domain.AccountWithCarPlate("AAA9999"),
 			domain.AccountWithAccountType("driver"),
 		)), nil)
-	result, err := s.useCase.Execute(&GetAccountInput{
+	result, err := s.useCase.Execute(GetAccountInput{
 		ID: "1",
 	})
 	s.NoError(err)
@@ -51,7 +51,7 @@ func (s *testGetAccountSuite) TestGetAccountSuccess() {
 
 func (s *testGetAccountSuite) TestGetAccountFailedUserNotFound() {
 	s.accountRepo.EXPECT().GetAccountByID("2").Return(nil, nil)
-	result, err := s.useCase.Execute(&GetAccountInput{
+	result, err := s.useCase.Execute(GetAccountInput{
 		ID: "2",
 	})
 	s.Error(err)

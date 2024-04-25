@@ -32,7 +32,7 @@ func (s apiServer) GetRide(e *echo.Echo) {
 				raiseWebserverError(errors.New("accountID cannot be empty")),
 			)
 		}
-		result, err := s.getRide.Execute(&service.GetRideParams{
+		result, err := s.getRide.Execute(service.GetRideParams{
 			RideID: rideID,
 		})
 		serviceErr := new(service.ServiceError)

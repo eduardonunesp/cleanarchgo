@@ -35,7 +35,7 @@ func NewGetRide(ridePepo repository.RideRepository, accountRepo repository.Accou
 	return &GetRide{ridePepo, accountRepo}
 }
 
-func (g GetRide) Execute(input *GetRideParams) (*GetRideResult, error) {
+func (g GetRide) Execute(input GetRideParams) (*GetRideResult, error) {
 	ride, err := g.rideRepo.GetRideByID(input.RideID)
 	if err != nil {
 		return nil, err

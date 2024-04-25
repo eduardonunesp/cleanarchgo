@@ -20,7 +20,7 @@ func NewProcessPayment(rideRepo repository.RideRepository, ccGateway gateway.Cre
 	return &ProcessPayment{rideRepo, ccGateway}
 }
 
-func (s ProcessPayment) Execute(input *ProcessPaymentParams) error {
+func (s ProcessPayment) Execute(input ProcessPaymentParams) error {
 	ride, err := s.rideRepo.GetRideByID(input.RideID)
 	if err != nil {
 		return err

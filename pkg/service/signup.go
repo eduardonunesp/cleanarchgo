@@ -33,7 +33,7 @@ func NewSignup(accountRepo repository.AccountRepository, mailerGW gateway.Mailer
 	return &Signup{accountRepo, mailerGW}
 }
 
-func (s Signup) Execute(input *SignupParams) (*SignupResult, error) {
+func (s Signup) Execute(input SignupParams) (*SignupResult, error) {
 	accountExists, err := s.accountRepo.HasAccountByEmail(input.Email)
 	if err != nil {
 		return nil, err

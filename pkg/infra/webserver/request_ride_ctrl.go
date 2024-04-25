@@ -33,7 +33,7 @@ func (s apiServer) RequestRide(e *echo.Echo) {
 				raiseWebserverError(errors.New("invalid input, malformed json")),
 			)
 		}
-		result, err := s.reqRide.Execute(&service.RequestRideParams{
+		result, err := s.reqRide.Execute(service.RequestRideParams{
 			PassengerID: reqBody.PassengerID,
 			FromLat:     reqBody.FromLat,
 			FromLong:    reqBody.FromLong,

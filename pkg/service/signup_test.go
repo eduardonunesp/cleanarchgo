@@ -43,7 +43,7 @@ func (s *testSignupSuite) TestSignupPassengerSuccess() {
 		}
 		return true
 	})).Return(nil)
-	result, err := s.useCase.Execute(&SignupParams{
+	result, err := s.useCase.Execute(SignupParams{
 		Name:        "Foo Bar",
 		Email:       "foobar@gmail.com",
 		CPF:         "11144477735",
@@ -73,7 +73,7 @@ func (s *testSignupSuite) TestSignupDriverSuccess() {
 		}
 		return true
 	})).Return(nil)
-	result, err := s.useCase.Execute(&SignupParams{
+	result, err := s.useCase.Execute(SignupParams{
 		Name:        "Foo Bar",
 		Email:       "foobar@gmail.com",
 		CPF:         "11144477735",
@@ -86,7 +86,7 @@ func (s *testSignupSuite) TestSignupDriverSuccess() {
 
 func (s *testSignupSuite) TestSignupFailedAccountExists() {
 	s.accountRepo.EXPECT().HasAccountByEmail("foobar@gmail.com").Return(true, nil)
-	result, err := s.useCase.Execute(&SignupParams{
+	result, err := s.useCase.Execute(SignupParams{
 		Name:        "Foo Bar",
 		Email:       "foobar@gmail.com",
 		CPF:         "11144477735",

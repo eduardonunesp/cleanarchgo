@@ -27,7 +27,7 @@ func NewFinishRide(
 	return &FinishRide{rideRepo, posRepo}
 }
 
-func (s FinishRide) Execute(input *FinishRideParams) error {
+func (s FinishRide) Execute(input FinishRideParams) error {
 	ride, err := s.rideRepo.GetRideByID(input.RideID)
 	if err != nil {
 		return err

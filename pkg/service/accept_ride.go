@@ -24,7 +24,7 @@ func NewAcceptRide(rideRepo repository.RideRepository, accRepo repository.Accoun
 	return &AcceptRide{rideRepo, accRepo}
 }
 
-func (s AcceptRide) Execute(input *AcceptRideParams) error {
+func (s AcceptRide) Execute(input AcceptRideParams) error {
 	ride, err := s.rideRepo.GetRideByID(input.RideID)
 	if err != nil {
 		return err

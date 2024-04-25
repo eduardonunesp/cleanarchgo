@@ -27,7 +27,7 @@ func (s *testRequestRideSuite) SetupTest() {
 }
 
 func (s *testRequestRideSuite) TestRequestRideSuccess() {
-	s.accRepo.EXPECT().GetAccountByID("123").Return(domain.MustBuild(domain.BuildAccount(
+	s.accRepo.EXPECT().GetAccountByID("123").Return(domain.Must(domain.BuildAccount(
 		domain.AccountWithID("123"),
 		domain.AccountWithName("Foo Bar"),
 		domain.AccountWithEmail("foobar@gmail.com"),
@@ -37,7 +37,7 @@ func (s *testRequestRideSuite) TestRequestRideSuccess() {
 	s.rideRepo.EXPECT().HasActiveRideByPassengerID("123").Return(false, nil)
 	s.rideRepo.EXPECT().SaveRide(mock.Anything).Return(nil)
 
-	result, err := s.useCase.Execute(&RequestRideParams{
+	result, err := s.useCase.Execute(RequestRideParams{
 		PassengerID: "123",
 		FromLat:     "123",
 		FromLong:    "321",

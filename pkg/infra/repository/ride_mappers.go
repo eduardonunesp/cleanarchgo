@@ -12,17 +12,19 @@ func mapDBRideToDomainRide(ride *db.Ride) (*domain.Ride, error) {
 	if ride == nil {
 		return nil, errors.New("db ride cannot be nil")
 	}
-	return domain.RestoreRide(
-		fromPgTypeUUIDToString(ride.ID),
-		fromPgTypeUUIDToString(ride.PassengerID),
-		fromPgTypeUUIDToString(ride.DriverID),
-		fromPgTypeNumericToString(ride.Fare),
-		fromPgTypeNumericToString(ride.FromLat),
-		fromPgTypeNumericToString(ride.FromLong),
-		fromPgTypeNumericToString(ride.ToLat),
-		fromPgTypeNumericToString(ride.ToLong),
-		ride.Status,
-		ride.Date.Time.Unix(),
+	return domain.BuildRide(
+		domain.RideWithID(fromPgTypeUUIDToString(ride.ID)),
+		domain.RideWithPassengerID(fromPgTypeUUIDToString(ride.PassengerID)),
+		domain.RideWithDriverID(fromPgTypeUUIDToString(ride.DriverID)),
+		domain.RideWithFare(fromPgTypeNumericToString(ride.Fare)),
+		domain.RideWithSegment(
+			fromPgTypeNumericToString(ride.FromLat),
+			fromPgTypeNumericToString(ride.FromLong),
+			fromPgTypeNumericToString(ride.ToLat),
+			fromPgTypeNumericToString(ride.ToLong),
+		),
+		domain.RideWithStatus(ride.Status),
+		domain.RideWithDate(ride.Date.Time.Unix()),
 	)
 }
 

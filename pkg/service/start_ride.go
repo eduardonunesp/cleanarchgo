@@ -20,7 +20,7 @@ func NewStartRide(rideRepo repository.RideRepository, accountRepo repository.Acc
 	return &StartRide{rideRepo, accountRepo}
 }
 
-func (s StartRide) Execute(params *StartRideParams) error {
+func (s StartRide) Execute(params StartRideParams) error {
 	driverAcc, err := s.accoutRepo.GetAccountByID(params.DriverID)
 	if err != nil {
 		return err

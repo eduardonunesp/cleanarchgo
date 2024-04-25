@@ -30,29 +30,32 @@ func (s *testRideRepoPgSuite) SetupTest() {
 }
 
 func (s *testRideRepoPgSuite) TestCreateRideWithSuccess() {
-	domainRide, _ := domain.CreateRide(
-		s.passengerUUID,
-		"10.001",
-		"-48.669239",
-		"-27.594870",
-		"-48.548222",
-		"-27.642040",
-	)
+	domainRide := domain.Must(domain.BuildRide(
+		domain.RideWithPassengerID(s.passengerUUID),
+		domain.RideWithFare("10.001"),
+		domain.RideWithSegment(
+			"-27.594870",
+			"-48.548222",
+			"-27.642040",
+			"-48.669239",
+		),
+	))
 	err := s.rideDB.SaveRide(domainRide)
 	s.NoError(err)
 }
 
 func (s *testRideRepoPgSuite) TestGetRideWithSuccess() {
-	domainRide, err := domain.CreateRide(
-		s.passengerUUID,
-		"10.001",
-		"-27.594870",
-		"-48.548222",
-		"-27.642040",
-		"-48.669239",
-	)
-	s.NoError(err)
-	err = s.rideDB.SaveRide(domainRide)
+	domainRide := domain.Must(domain.BuildRide(
+		domain.RideWithPassengerID(s.passengerUUID),
+		domain.RideWithFare("10.001"),
+		domain.RideWithSegment(
+			"-27.594870",
+			"-48.548222",
+			"-27.642040",
+			"-48.669239",
+		),
+	))
+	err := s.rideDB.SaveRide(domainRide)
 	s.NoError(err)
 
 	ride, err := s.rideDB.GetRideByID(domainRide.ID().String())
@@ -66,23 +69,24 @@ func (s *testRideRepoPgSuite) TestGetRideWithSuccess() {
 }
 
 func (s *testRideRepoPgSuite) TestUpdateRideWithSuccess() {
-	domainAccount := domain.MustBuild(domain.BuildAccount(
+	domainAccount := domain.Must(domain.BuildAccount(
 		domain.AccountWithAccountType("driver"),
 		domain.AccountWithEmail("foobar@gmail.com"),
 		domain.AccountWithCpf("11144477735"),
 		domain.AccountWithCarPlate("AAA9999"),
 	))
 
-	domainRide, err := domain.CreateRide(
-		s.passengerUUID,
-		"10.001",
-		"-27.594870",
-		"-48.548222",
-		"-27.642040",
-		"-48.669239",
-	)
-	s.NoError(err)
-	err = s.rideDB.SaveRide(domainRide)
+	domainRide := domain.Must(domain.BuildRide(
+		domain.RideWithPassengerID(s.passengerUUID),
+		domain.RideWithFare("10.001"),
+		domain.RideWithSegment(
+			"-27.594870",
+			"-48.548222",
+			"-27.642040",
+			"-48.669239",
+		),
+	))
+	err := s.rideDB.SaveRide(domainRide)
 	s.NoError(err)
 
 	s.NoError(domainRide.Accept((domainAccount.ID())))

@@ -4,7 +4,7 @@ import (
 	"github.com/eduardonunesp/cleanarchgo/pkg/domain/valueobject"
 )
 
-type PositionOption func(position *Position) error
+type PositionOption func(*Position) error
 
 type Position struct {
 	id     valueobject.UUID

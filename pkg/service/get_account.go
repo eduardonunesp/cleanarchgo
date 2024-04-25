@@ -31,7 +31,7 @@ func NewGetAccount(accountRepo repository.AccountRepository) *GetAccount {
 	return &GetAccount{accountRepo}
 }
 
-func (g GetAccount) Execute(input *GetAccountInput) (*GetAccountOuput, error) {
+func (g GetAccount) Execute(input GetAccountInput) (*GetAccountOuput, error) {
 	account, err := g.accountRepo.GetAccountByID(input.ID)
 	if err != nil {
 		return nil, err

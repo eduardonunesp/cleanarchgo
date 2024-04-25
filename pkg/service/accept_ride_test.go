@@ -29,8 +29,19 @@ func (s *acceptRideTestSuite) SetupTest() {
 
 func (s *acceptRideTestSuite) TestAcceptRide() {
 	tNow := time.Now().Unix()
-	s.rideRepo.EXPECT().GetRideByID("1").Return(domain.MustBuild(domain.RestoreRide(
-		"1", "2", "3", "", "123", "321", "789", "987", "requested", tNow,
+	s.rideRepo.EXPECT().GetRideByID("1").Return(domain.Must(domain.BuildRide(
+		domain.RideWithID("1"),
+		domain.RideWithPassengerID("2"),
+		domain.RideWithDriverID("3"),
+		domain.RideWithFare("10.001"),
+		domain.RideWithSegment(
+			"-27.594870",
+			"-48.548222",
+			"-27.642040",
+			"-48.669239",
+		),
+		domain.RideWithStatus("requested"),
+		domain.RideWithDate(tNow),
 	)), nil)
 	s.accRepo.EXPECT().GetAccountByID("3").Return(domain.MustBuildAccount(
 		domain.AccountWithID("3"),
@@ -41,7 +52,7 @@ func (s *acceptRideTestSuite) TestAcceptRide() {
 		domain.AccountWithAccountType("driver"),
 	), nil)
 	s.rideRepo.EXPECT().UpdateRide(mock.Anything).Return(nil)
-	err := s.useCase.Execute(&AcceptRideParams{
+	err := s.useCase.Execute(AcceptRideParams{
 		RideID:   "1",
 		DriverID: "3",
 	})

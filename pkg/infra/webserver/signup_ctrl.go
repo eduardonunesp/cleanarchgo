@@ -34,7 +34,7 @@ func (s apiServer) Signup(e *echo.Echo) {
 				raiseWebserverError(errors.New("invalid input, malformed json")),
 			)
 		}
-		result, err := s.signup.Execute(&service.SignupParams{
+		result, err := s.signup.Execute(service.SignupParams{
 			Name:        reqBody.Name,
 			Email:       reqBody.Email,
 			CPF:         reqBody.CPF,

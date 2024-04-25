@@ -4,6 +4,8 @@ import (
 	"github.com/eduardonunesp/cleanarchgo/pkg/domain/valueobject"
 )
 
+type rideOption func(*Ride) error
+
 type Ride struct {
 	id          valueobject.UUID
 	passengerID valueobject.UUID
@@ -12,62 +14,6 @@ type Ride struct {
 	fare        string
 	segment     valueobject.Segment
 	date        valueobject.Date
-}
-
-func CreateRide(
-	passengerID, fare,
-	fromLat, fromLong, toLat, toLong string,
-) (*Ride, error) {
-	var (
-		newRide Ride
-		err     error
-	)
-	newRide.id = valueobject.MustUUID()
-	if newRide.passengerID, err = valueobject.UUIDFromString(passengerID); err != nil {
-		return nil, err
-	}
-	newRide.status, _ = valueobject.BuildRideStatus(valueobject.RideStatusRequested{}.String())
-	newRide.fare = fare
-	if newRide.segment, err = valueobject.BuildSegmentFromCoords(
-		fromLat, fromLong, toLat, toLong,
-	); err != nil {
-		return nil, err
-	}
-	newRide.date = valueobject.DateFromNow()
-	return &newRide, nil
-}
-
-func RestoreRide(
-	id, passengerID, driverID, fare,
-	fromLat, fromLong, toLat, toLong, status string,
-	date int64,
-) (*Ride, error) {
-	var (
-		newRide Ride
-		err     error
-	)
-	if newRide.id, err = valueobject.UUIDFromString(id); err != nil {
-		return nil, err
-	}
-	if newRide.passengerID, err = valueobject.UUIDFromString(passengerID); err != nil {
-		return nil, err
-	}
-	if newRide.driverID, err = valueobject.UUIDFromString(driverID); err != nil {
-		return nil, err
-	}
-	if newRide.status, err = valueobject.BuildRideStatus(status); err != nil {
-		return nil, err
-	}
-	newRide.fare = fare
-	if newRide.segment, err = valueobject.BuildSegmentFromCoords(
-		fromLat, fromLong, toLat, toLong,
-	); err != nil {
-		return nil, err
-	}
-	if newRide.date, err = valueobject.DateFromUnix(date); err != nil {
-		return nil, err
-	}
-	return &newRide, nil
 }
 
 func (r Ride) ID() valueobject.UUID {
@@ -120,4 +66,74 @@ func (r *Ride) Accept(driverID valueobject.UUID) error {
 	r.driverID = driverID
 	r.status = newStatus
 	return nil
+}
+
+func RideWithID(id string) rideOption {
+	return func(r *Ride) error {
+		var err error
+		r.id, err = valueobject.UUIDFromString(id)
+		return err
+	}
+}
+
+func RideWithPassengerID(passengerID string) rideOption {
+	return func(r *Ride) error {
+		var err error
+		r.passengerID, err = valueobject.UUIDFromString(passengerID)
+		return err
+	}
+}
+
+func RideWithDriverID(driverID string) rideOption {
+	return func(r *Ride) error {
+		var err error
+		r.driverID, err = valueobject.UUIDFromString(driverID)
+		return err
+	}
+}
+
+func RideWithStatus(status string) rideOption {
+	return func(r *Ride) error {
+		var err error
+		r.status, err = valueobject.BuildRideStatus(status)
+		return err
+	}
+}
+
+func RideWithFare(fare string) rideOption {
+	return func(r *Ride) error {
+		r.fare = fare
+		return nil
+	}
+}
+
+func RideWithSegment(fromLat, fromLong, toLat, ToLong string) rideOption {
+	return func(r *Ride) error {
+		var err error
+		r.segment, err = valueobject.BuildSegmentFromCoords(fromLat, fromLong, toLat, ToLong)
+		return err
+	}
+}
+
+func RideWithDate(date int64) rideOption {
+	return func(r *Ride) error {
+		var err error
+		r.date, err = valueobject.DateFromUnix(date)
+		return err
+	}
+}
+
+func BuildRide(opts ...rideOption) (*Ride, error) {
+	r := &Ride{
+		id:     valueobject.MustUUID(),
+		date:   valueobject.DateFromNow(),
+		status: valueobject.RideStatusRequested{},
+	}
+	for _, opt := range opts {
+		err := opt(r)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return r, nil
 }

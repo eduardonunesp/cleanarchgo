@@ -28,7 +28,7 @@ func (s *testAccountRepoDBSuite) SetupTest() {
 }
 
 func (s *testAccountRepoDBSuite) TestCreateAccountWithSuccess() {
-	domainAcc := domain.MustBuild(domain.BuildAccount(
+	domainAcc := domain.Must(domain.BuildAccount(
 		domain.AccountWithName("Foo Bar"),
 		domain.AccountWithAccountType("passenger"),
 		domain.AccountWithEmail(fmt.Sprintf("foo%s@gmail.com", s.uuid)),
@@ -39,7 +39,7 @@ func (s *testAccountRepoDBSuite) TestCreateAccountWithSuccess() {
 }
 
 func (s *testAccountRepoDBSuite) TestGetAccountWithSuccess() {
-	domainAcc := domain.MustBuild(domain.BuildAccount(
+	domainAcc := domain.Must(domain.BuildAccount(
 		domain.AccountWithName("Foo Bar"),
 		domain.AccountWithAccountType("passenger"),
 		domain.AccountWithEmail(fmt.Sprintf("foo%s@gmail.com", s.uuid)),
@@ -55,7 +55,7 @@ func (s *testAccountRepoDBSuite) TestGetAccountWithSuccess() {
 
 func (s *testAccountRepoDBSuite) TestCreateAccountFailedDuplicatedEmail() {
 	email := fmt.Sprintf("foobar%s@gmail.com", s.uuid)
-	domainAcc := domain.MustBuild(domain.BuildAccount(
+	domainAcc := domain.Must(domain.BuildAccount(
 		domain.AccountWithName("Foo Bar"),
 		domain.AccountWithAccountType("passenger"),
 		domain.AccountWithEmail(email),

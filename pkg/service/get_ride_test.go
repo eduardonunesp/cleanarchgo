@@ -28,14 +28,21 @@ func (s *testRideSuite) SetupTest() {
 
 func (s *testRideSuite) TestGetRide() {
 	tNow := time.Now().Unix()
-	s.rideRepo.EXPECT().GetRideByID("1").Return(domain.MustBuild(domain.RestoreRide(
-		"1",
-		"2",
-		"3",
-		"10.00",
-		"123", "321", "789", "987", "requested", tNow,
+	s.rideRepo.EXPECT().GetRideByID("1").Return(domain.Must(domain.BuildRide(
+		domain.RideWithID("1"),
+		domain.RideWithPassengerID("2"),
+		domain.RideWithDriverID("3"),
+		domain.RideWithFare("10.00"),
+		domain.RideWithSegment(
+			"123",
+			"321",
+			"789",
+			"987",
+		),
+		domain.RideWithStatus("requested"),
+		domain.RideWithDate(tNow),
 	)), nil)
-	s.accRepo.EXPECT().GetAccountByID("2").Return(domain.MustBuild(domain.BuildAccount(
+	s.accRepo.EXPECT().GetAccountByID("2").Return(domain.Must(domain.BuildAccount(
 		domain.AccountWithID("2"),
 		domain.AccountWithName("Foo Bar"),
 		domain.AccountWithEmail("foobar@gmail.com"),
@@ -43,7 +50,7 @@ func (s *testRideSuite) TestGetRide() {
 		domain.AccountWithCarPlate("AAA9999"),
 		domain.AccountWithAccountType("passenger"),
 	)), nil)
-	result, err := s.useCase.Execute(&GetRideParams{
+	result, err := s.useCase.Execute(GetRideParams{
 		RideID: "1",
 	})
 	s.NoError(err)
