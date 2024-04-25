@@ -48,6 +48,7 @@ func (s *testSignupSuite) TestSignupPassengerSuccess() {
 		Email:       "foobar@gmail.com",
 		CPF:         "11144477735",
 		AccountType: "passenger",
+		Password:    "123456",
 	})
 	s.NoError(err)
 	s.NotNil(result)
@@ -79,6 +80,7 @@ func (s *testSignupSuite) TestSignupDriverSuccess() {
 		CPF:         "11144477735",
 		CarPlate:    "ABC1234",
 		AccountType: "driver",
+		Password:    "123456",
 	})
 	s.NoError(err)
 	s.NotNil(result)
@@ -91,6 +93,7 @@ func (s *testSignupSuite) TestSignupFailedAccountExists() {
 		Email:       "foobar@gmail.com",
 		CPF:         "11144477735",
 		AccountType: "passenger",
+		Password:    "123456",
 	})
 	serviceErr := new(ServiceError)
 	s.ErrorAs(err, &serviceErr)

@@ -14,6 +14,7 @@ type Account struct {
 	email       valueobject.Email
 	cpf         valueobject.Cpf
 	carPlate    valueobject.CarPlate
+	hash        valueobject.Hash
 	accountType valueobject.AccountType
 }
 
@@ -31,6 +32,10 @@ func (a Account) Email() valueobject.Email {
 
 func (a Account) Cpf() valueobject.Cpf {
 	return a.cpf
+}
+
+func (a Account) Hash() valueobject.Hash {
+	return a.hash
 }
 
 func (a Account) CarPlate() valueobject.CarPlate {
@@ -99,6 +104,21 @@ func AccountWithCarPlate(carPlate string) accountOption {
 	}
 }
 
+func AccountWithHash(hash string) accountOption {
+	return func(opt *Account) error {
+		opt.hash = valueobject.LoadHashFromString(hash)
+		return nil
+	}
+}
+
+func AccountWithPassword(password string) accountOption {
+	return func(opt *Account) error {
+		var err error
+		opt.hash, err = valueobject.BuildHashFromString(password, nil)
+		return err
+	}
+}
+
 func AccountWithAccountType(accountType string) accountOption {
 	return func(opt *Account) error {
 		var err error
@@ -117,12 +137,4 @@ func BuildAccount(options ...accountOption) (*Account, error) {
 		}
 	}
 	return &newAcc, nil
-}
-
-func MustBuildAccount(options ...accountOption) *Account {
-	acc, err := BuildAccount(options...)
-	if err != nil {
-		panic(err)
-	}
-	return acc
 }

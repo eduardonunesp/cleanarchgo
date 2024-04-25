@@ -31,7 +31,7 @@ func createService() *cli.Command {
 			&cli.BoolFlag{
 				Name:    "noreturn",
 				Aliases: []string{"r"},
-				Value:   true,
+				Value:   false,
 			},
 		},
 		Action: func(c *cli.Context) error {

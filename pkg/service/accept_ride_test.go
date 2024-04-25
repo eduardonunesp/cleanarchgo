@@ -43,14 +43,14 @@ func (s *acceptRideTestSuite) TestAcceptRide() {
 		domain.RideWithStatus("requested"),
 		domain.RideWithDate(tNow),
 	)), nil)
-	s.accRepo.EXPECT().GetAccountByID("3").Return(domain.MustBuildAccount(
+	s.accRepo.EXPECT().GetAccountByID("3").Return(domain.Must(domain.BuildAccount(
 		domain.AccountWithID("3"),
 		domain.AccountWithName("John Doe"),
 		domain.AccountWithEmail("foo@bar.com"),
 		domain.AccountWithCpf("11144477735"),
 		domain.AccountWithCarPlate("ABC1234"),
 		domain.AccountWithAccountType("driver"),
-	), nil)
+	)), nil)
 	s.rideRepo.EXPECT().UpdateRide(mock.Anything).Return(nil)
 	err := s.useCase.Execute(AcceptRideParams{
 		RideID:   "1",
