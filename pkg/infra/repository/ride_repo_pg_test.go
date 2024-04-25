@@ -66,13 +66,13 @@ func (s *testRideRepoPgSuite) TestGetRideWithSuccess() {
 }
 
 func (s *testRideRepoPgSuite) TestUpdateRideWithSuccess() {
-	domainAccount, _ := domain.CreateAccount(
-		"John Doe",
-		"foobar@gmail.com",
-		"11144477735",
-		"AAA9999",
-		"driver",
-	)
+	domainAccount := domain.MustBuild(domain.BuildAccount(
+		domain.AccountWithAccountType("driver"),
+		domain.AccountWithEmail("foobar@gmail.com"),
+		domain.AccountWithCpf("11144477735"),
+		domain.AccountWithCarPlate("AAA9999"),
+	))
+
 	domainRide, err := domain.CreateRide(
 		s.passengerUUID,
 		"10.001",

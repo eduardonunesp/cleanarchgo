@@ -23,6 +23,10 @@ func fromStringToPgTypeText(str string) pgtype.Text {
 	return pgtype.Text{String: str, Valid: true}
 }
 
+func fromPgTypeTextToString(text pgtype.Text) string {
+	return text.String
+}
+
 func fromPgTypeNumericToString(numeric pgtype.Numeric) string {
 	if !numeric.Valid {
 		return ""

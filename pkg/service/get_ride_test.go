@@ -35,13 +35,13 @@ func (s *testRideSuite) TestGetRide() {
 		"10.00",
 		"123", "321", "789", "987", "requested", tNow,
 	)), nil)
-	s.accRepo.EXPECT().GetAccountByID("2").Return(domain.MustBuild(domain.RestoreAccount(
-		"2",
-		"Foo Bar",
-		"foobar@gmail.com",
-		"11144477735",
-		"AAA9999",
-		"passenger",
+	s.accRepo.EXPECT().GetAccountByID("2").Return(domain.MustBuild(domain.BuildAccount(
+		domain.AccountWithID("2"),
+		domain.AccountWithName("Foo Bar"),
+		domain.AccountWithEmail("foobar@gmail.com"),
+		domain.AccountWithCpf("11144477735"),
+		domain.AccountWithCarPlate("AAA9999"),
+		domain.AccountWithAccountType("passenger"),
 	)), nil)
 	result, err := s.useCase.Execute(&GetRideParams{
 		RideID: "1",

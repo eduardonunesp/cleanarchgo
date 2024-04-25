@@ -8,13 +8,13 @@ import (
 )
 
 func mapDBAccountToDomainAccount(account *db.Account) (*domain.Account, error) {
-	domainAcc, err := domain.RestoreAccount(
-		fromPgTypeUUIDToString(account.ID),
-		account.Name,
-		account.Email,
-		account.Cpf,
-		account.CarPlate.String,
-		string(account.AccountType.AccountType),
+	domainAcc, err := domain.BuildAccount(
+		domain.AccountWithID(fromPgTypeUUIDToString(account.ID)),
+		domain.AccountWithName(account.Name),
+		domain.AccountWithEmail(account.Email),
+		domain.AccountWithCpf(account.Cpf),
+		domain.AccountWithCarPlate(fromPgTypeTextToString(account.CarPlate)),
+		domain.AccountWithAccountType(string(account.AccountType.AccountType)),
 	)
 	if err != nil {
 		return nil, err

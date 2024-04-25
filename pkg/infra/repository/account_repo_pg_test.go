@@ -28,25 +28,23 @@ func (s *testAccountRepoDBSuite) SetupTest() {
 }
 
 func (s *testAccountRepoDBSuite) TestCreateAccountWithSuccess() {
-	domainAcc, _ := domain.CreateAccount(
-		"Foo Bar",
-		fmt.Sprintf("foo%s@gmail.com", s.uuid),
-		"11144477735",
-		"",
-		"passenger",
-	)
+	domainAcc := domain.MustBuild(domain.BuildAccount(
+		domain.AccountWithName("Foo Bar"),
+		domain.AccountWithAccountType("passenger"),
+		domain.AccountWithEmail(fmt.Sprintf("foo%s@gmail.com", s.uuid)),
+		domain.AccountWithCpf("11144477735"),
+	))
 	err := s.accDB.SaveAccount(domainAcc)
 	s.NoError(err)
 }
 
 func (s *testAccountRepoDBSuite) TestGetAccountWithSuccess() {
-	domainAcc, _ := domain.CreateAccount(
-		"Foo Bar",
-		fmt.Sprintf("foo%s@gmail.com", s.uuid),
-		"11144477735",
-		"",
-		"passenger",
-	)
+	domainAcc := domain.MustBuild(domain.BuildAccount(
+		domain.AccountWithName("Foo Bar"),
+		domain.AccountWithAccountType("passenger"),
+		domain.AccountWithEmail(fmt.Sprintf("foo%s@gmail.com", s.uuid)),
+		domain.AccountWithCpf("11144477735"),
+	))
 	err := s.accDB.SaveAccount(domainAcc)
 	s.NoError(err)
 
@@ -57,13 +55,12 @@ func (s *testAccountRepoDBSuite) TestGetAccountWithSuccess() {
 
 func (s *testAccountRepoDBSuite) TestCreateAccountFailedDuplicatedEmail() {
 	email := fmt.Sprintf("foobar%s@gmail.com", s.uuid)
-	domainAcc, _ := domain.CreateAccount(
-		"Foo Bar",
-		email,
-		"11144477735",
-		"",
-		"passenger",
-	)
+	domainAcc := domain.MustBuild(domain.BuildAccount(
+		domain.AccountWithName("Foo Bar"),
+		domain.AccountWithAccountType("passenger"),
+		domain.AccountWithEmail(email),
+		domain.AccountWithCpf("11144477735"),
+	))
 	err := s.accDB.SaveAccount(domainAcc)
 	s.NoError(err)
 

@@ -41,12 +41,12 @@ func (s Signup) Execute(input *SignupParams) (*SignupResult, error) {
 	if accountExists {
 		return nil, RaiseServiceError(errSignupAccountExists)
 	}
-	domainAccount, err := domain.CreateAccount(
-		input.Name,
-		input.Email,
-		input.CPF,
-		input.CarPlate,
-		input.AccountType,
+	domainAccount, err := domain.BuildAccount(
+		domain.AccountWithName(input.Name),
+		domain.AccountWithEmail(input.Email),
+		domain.AccountWithCpf(input.CPF),
+		domain.AccountWithCarPlate(input.CarPlate),
+		domain.AccountWithAccountType(input.AccountType),
 	)
 	if err != nil {
 		return nil, err

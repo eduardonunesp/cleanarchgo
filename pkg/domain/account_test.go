@@ -16,42 +16,59 @@ type testAccountSuite struct {
 }
 
 func (s *testAccountSuite) TestBuildAccountWithSuccess() {
-	acc, err := RestoreAccount("1", "Foo Bar", "foo@bar.com", "11144477735", "", valueobject.AccountTypePassenger.String())
+	acc, err := BuildAccount(
+		AccountWithID("1"),
+		AccountWithName("Foo Bar"),
+		AccountWithEmail("foo@bar.com"),
+		AccountWithCpf("11144477735"),
+		AccountWithAccountType("passenger"),
+	)
 	s.NoError(err)
-	s.Equal(MustBuild(RestoreAccount(
-		"1",
-		"Foo Bar",
-		"foo@bar.com",
-		"11144477735",
-		"",
-		valueobject.AccountTypePassenger.String(),
-	)), acc)
+	s.Equal(acc.ID().String(), "1")
+	s.Equal(acc.Name().String(), "Foo Bar")
+	s.Equal(acc.Email().String(), "foo@bar.com")
+	s.Equal(acc.Cpf().String(), "11144477735")
+	s.Equal(acc.AccountType().String(), "passenger")
 }
 
 func (s *testAccountSuite) TestBuildAccountFailedInvalidName() {
-	_, err := RestoreAccount("1", "", "foo@bar.com", "11144477735", "", valueobject.AccountTypeDriver.String())
+	_, err := BuildAccount(
+		AccountWithName(""),
+	)
 	domainErr := new(Error)
 	s.ErrorAs(err, &domainErr)
 	s.ErrorIs(domainErr.Err, valueobject.ErrInvalidName)
 }
 
 func (s *testAccountSuite) TestBuildAccountFailedInvalidEmail() {
-	_, err := RestoreAccount("1", "Foo Bar", "foocom", "11144477735", "", valueobject.AccountTypeDriver.String())
+	_, err := BuildAccount(
+		AccountWithEmail(""),
+	)
 	domainErr := new(Error)
 	s.ErrorAs(err, &domainErr)
 	s.ErrorIs(domainErr.Err, valueobject.ErrInvalidEmail)
 }
 
 func (s *testAccountSuite) TestBuildAccountFailedInvalidCPF() {
-	_, err := RestoreAccount("1", "Foo Bar", "foo@bar.com", "11177735", "", valueobject.AccountTypeDriver.String())
+	_, err := BuildAccount(
+		AccountWithCpf(""),
+	)
 	domainErr := new(Error)
 	s.ErrorAs(err, &domainErr)
 	s.ErrorIs(domainErr.Err, valueobject.ErrInvalidCPF)
 }
 
 func (s *testAccountSuite) TestBuildAccountFailedInvalidCarPlate() {
-	_, err := RestoreAccount("1", "Foo Bar", "foo@bar.com", "11144477735", "AAA", valueobject.AccountTypeDriver.String())
+	_, err := BuildAccount(
+		AccountWithCarPlate(""),
+	)
 	domainErr := new(Error)
+	s.ErrorAs(err, &domainErr)
+	s.ErrorIs(domainErr.Err, valueobject.ErrInvalidCarPlate)
+
+	_, err = BuildAccount(
+		AccountWithAccountType("driver"),
+	)
 	s.ErrorAs(err, &domainErr)
 	s.ErrorIs(domainErr.Err, valueobject.ErrInvalidCarPlate)
 }

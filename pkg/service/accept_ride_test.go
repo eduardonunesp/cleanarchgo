@@ -32,11 +32,16 @@ func (s *acceptRideTestSuite) TestAcceptRide() {
 	s.rideRepo.EXPECT().GetRideByID("1").Return(domain.MustBuild(domain.RestoreRide(
 		"1", "2", "3", "", "123", "321", "789", "987", "requested", tNow,
 	)), nil)
-	s.accRepo.EXPECT().GetAccountByID("3").Return(domain.MustBuild(domain.RestoreAccount(
-		"3", "Foo Bar", "foo@bar.com", "11144477735", "AAA9999", "driver",
-	)), nil)
+	s.accRepo.EXPECT().GetAccountByID("3").Return(domain.MustBuildAccount(
+		domain.AccountWithID("3"),
+		domain.AccountWithName("John Doe"),
+		domain.AccountWithEmail("foo@bar.com"),
+		domain.AccountWithCpf("11144477735"),
+		domain.AccountWithCarPlate("ABC1234"),
+		domain.AccountWithAccountType("driver"),
+	), nil)
 	s.rideRepo.EXPECT().UpdateRide(mock.Anything).Return(nil)
-	err := s.useCase.Execute(&AcceptRideRequest{
+	err := s.useCase.Execute(&AcceptRideParams{
 		RideID:   "1",
 		DriverID: "3",
 	})
