@@ -24,19 +24,19 @@ func NewAcceptRide(rideRepo repository.RideRepository, accRepo repository.Accoun
 	return &AcceptRide{rideRepo, accRepo}
 }
 
-func (s AcceptRide) Execute(req AcceptRideRequest) error {
+func (s AcceptRide) Execute(req *AcceptRideRequest) error {
 	ride, err := s.rideRepo.GetRideByID(req.RideID)
 	if err != nil {
 		return err
 	}
-	account, err := s.accRepo.GetAccountByID(ride.DriverID().String())
+	driverAcc, err := s.accRepo.GetAccountByID(ride.DriverID().String())
 	if err != nil {
 		return err
 	}
-	if !account.IsDriver() {
+	if !driverAcc.IsDriver() {
 		return RaiseServiceError(ErrAcceptRideIsNotDriver)
 	}
-	if err := ride.Accept(account.ID()); err != nil {
+	if err := ride.Accept(driverAcc.ID()); err != nil {
 		return err
 	}
 	return s.rideRepo.UpdateRide(ride)
