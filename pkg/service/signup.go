@@ -48,7 +48,7 @@ func (s Signup) Execute(input SignupParams) (*SignupResult, error) {
 		domain.AccountWithEmail(input.Email),
 		domain.AccountWithCpf(input.CPF),
 		domain.AccountWithAccountType(input.AccountType),
-		domain.AccountWithPassword(input.Password),
+		domain.AccountWithEncodedHash(input.Password),
 	)
 	if err != nil {
 		return nil, err

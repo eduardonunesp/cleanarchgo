@@ -57,8 +57,8 @@ type Hash struct {
 }
 
 // LoadHashFromString loads hash from the given encoded hash
-func LoadHashFromString(encodedValue string) Hash {
-	return Hash{encodedValue, DefaultParams}
+func LoadHashFromString(encodedValue string) (Hash, error) {
+	return Hash{encodedValue, DefaultParams}, nil
 }
 
 // BuildHashFromString generates a new hash from the given password string using

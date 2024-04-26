@@ -4,8 +4,6 @@ import (
 	"github.com/eduardonunesp/cleanarchgo/pkg/domain/valueobject"
 )
 
-type rideOption func(*Ride) error
-
 type Ride struct {
 	id          valueobject.UUID
 	passengerID valueobject.UUID

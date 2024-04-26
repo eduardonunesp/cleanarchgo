@@ -16,7 +16,7 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-var mapOptionFields = map[string]string{
+var mapWithFuncParam = map[string]string{
 	"valueobject.UUID":        "string",
 	"valueobject.Name":        "string",
 	"valueobject.Email":       "string",
@@ -25,32 +25,62 @@ var mapOptionFields = map[string]string{
 	"valueobject.Hash":        "string",
 	"valueobject.AccountType": "string",
 	"valueobject.Date":        "int64",
+	"valueobject.Coord":       "string",
 }
 
-var mapOptionBuilders = map[string]string{
-	"valueobject.UUID":        "valueobject.UUIDFromString(id)",
-	"valueobject.Name":        "valueobject.NameFromString(name)",
-	"valueobject.Email":       "valueobject.EmailFromString(email)",
-	"valueobject.Cpf":         "valueobject.CpfFromString(cpf)",
-	"valueobject.CarPlate":    "valueobject.CarPlateFromString(carPlate)",
-	"valueobject.Hash":        "valueobject.LoadHashFromString(hash)",
-	"valueobject.AccountType": "valueobject.AccountTypeFromString(accountType)",
-	"valueobject.Date":        "valueobject.DateFromUnix(date)",
+var mapWithFuncFieldBuilder = map[string]string{
+	"valueobject.UUID":        "valueobject.UUIDFromString",
+	"valueobject.Name":        "valueobject.NameFromString",
+	"valueobject.Email":       "valueobject.EmailFromString",
+	"valueobject.Cpf":         "valueobject.CpfFromString",
+	"valueobject.CarPlate":    "valueobject.CarPlateFromString",
+	"valueobject.Hash":        "valueobject.LoadHashFromString",
+	"valueobject.AccountType": "valueobject.AccountTypeFromString",
+	"valueobject.Date":        "valueobject.DateFromUnix",
+	"valueobject.Coord":       "valueobject.BuildCoord",
 }
 
 const (
 	entityBuilderTemplate = "assets/entity_builder.tmpl"
 )
 
-var buildFuncTempl = `
+var buildGeneralFuncTempl = `
 func {{.EntityName}}With{{.PCFieldName}}({{.CCParamName}} {{.ParamType}}) {{.CCEntityName}}Option {
 	return func(opt *{{.EntityName}}) error {
 		var err error
-		opt.{{.FieldName}}, err = {{.FieldBuilder}}
+		opt.{{.FieldName}}, err = {{.FieldBuilder}}({{.CCParamName}})
+		return err
+	}
+}
+`
+
+var buildIDFuncTempl = `
+func {{.EntityName}}WithNew{{.PCFieldName}}() {{.CCEntityName}}Option {
+	return func(opt *{{.EntityName}}) error {
+		opt.{{.FieldName}} = valueobject.MustUUID()	
 		return nil
 	}
 }
+`
 
+var buildRawHashFuncTempl = `
+func {{.EntityName}}WithEncoded{{.PCFieldName}}({{.CCParamName}} string) {{.CCEntityName}}Option {
+	return func(opt *{{.EntityName}}) error {
+		var err error
+		opt.hash, err = valueobject.BuildHashFromString({{.CCParamName}}, nil)
+		return err
+	}
+}
+`
+
+var buildCoordFuncTempl = `
+func {{.EntityName}}With{{.PCFieldName}}(x, y string) {{.CCEntityName}}Option {
+	return func(p *{{.EntityName}}) error {
+		var err error
+		p.{{.FieldName}}, err = valueobject.BuildCoord(x, y)
+		return err
+	}
+}
 `
 
 type EntityBuilderParams struct {
@@ -128,7 +158,7 @@ func CreateBuildFuncFromEntity(buf *bytes.Buffer, path string, entityName string
 		if err != nil {
 			return err
 		}
-		obj := pkg.Scope().Lookup("Account")
+		obj := pkg.Scope().Lookup(entityName)
 		if obj == nil {
 			return fmt.Errorf("object not found")
 		}
@@ -143,51 +173,73 @@ func CreateBuildFuncFromEntity(buf *bytes.Buffer, path string, entityName string
 		numFields := iface.NumFields()
 		fieldNames := make([]string, numFields)
 		fieldTypes := make([]string, numFields)
-		fieldBuilders := make([]string, numFields)
 		for i := 0; i < numFields; i++ {
 			field := iface.Field(i)
 			fieldNames[i] = field.Name()
-			fieldTypes[i] = getPackagePath(field.Type().String())
-			fieldBuilders[i] = getFieldBuilders(field.Type().String())
+			fieldTypes[i] = field.Type().String()
 		}
 
-		result := getWithFuncName(entityName, fieldNames, fieldTypes, fieldBuilders)
+		result := getWithFuncName(entityName, fieldNames, fieldTypes)
 		buf.Write([]byte(result))
 	}
 	return nil
 }
 
-func getPackagePath(pkgName string) string {
-	s := strings.Split(pkgName, "/")
-	f, ok := mapOptionFields[s[len(s)-1]]
+func getPackageName(path string) string {
+	s := strings.Split(path, "/")
+	return s[len(s)-1]
+}
+
+func getWithFuncParam(pkgName string) string {
+	s := getPackageName(pkgName)
+	f, ok := mapWithFuncParam[s]
 	if !ok {
-		panic("package not found")
+		panic(fmt.Sprintf("package not found func param %s", s))
 	}
 	return f
 }
 
-func getFieldBuilders(pkgName string) string {
-	s := strings.Split(pkgName, "/")
-	f, ok := mapOptionBuilders[s[len(s)-1]]
+func getWithFuncFieldBuilder(pkgName string) string {
+	s := getPackageName(pkgName)
+	f, ok := mapWithFuncFieldBuilder[s]
 	if !ok {
-		panic("package not found")
+		panic(fmt.Sprintf("package not found at field builder %s", s))
 	}
 	return f
 }
 
-func getWithFuncName(entityName string, fieldNames, fieldTypes, fieldBuilders []string) string {
-	tmpl := template.Must(template.New("buildFunc").Parse(buildFuncTempl))
+func getWithFuncName(entityName string, fieldNames, fieldTypes []string) string {
+	generalWithFuncTmpl := template.Must(template.New("generalBuildFunc").Parse(buildGeneralFuncTempl))
+	IdWithFuncTmpl := template.Must(template.New("iDBuildFunc").Parse(buildIDFuncTempl))
+	EncodeHashWithFuncTmpl := template.Must(template.New("encodeHashBuildFunc").Parse(buildRawHashFuncTempl))
+	CoordWithFuncTmpl := template.Must(template.New("coordBuildFunc").Parse(buildCoordFuncTempl))
 	buf := bytes.NewBuffer(nil)
 	for i := 0; i < len(fieldNames); i++ {
-		tmpl.Execute(buf, EntityBuilderFuncParams{
+		shortPackageName := getPackageName(fieldTypes[i])
+		entityBuilderParams := EntityBuilderFuncParams{
 			EntityName:   entityName,
 			PCFieldName:  strcase.ToGoPascal(fieldNames[i]),
 			CCParamName:  strcase.ToCamel(fieldNames[i]),
-			ParamType:    fieldTypes[i],
+			ParamType:    getWithFuncParam(fieldTypes[i]),
 			CCEntityName: strcase.ToCamel(entityName),
 			FieldName:    fieldNames[i],
-			FieldBuilder: fieldBuilders[i],
-		})
+			FieldBuilder: getWithFuncFieldBuilder(fieldTypes[i]),
+		}
+		var err error
+		if shortPackageName != "valueobject.Coord" {
+			err = generalWithFuncTmpl.Execute(buf, entityBuilderParams)
+		}
+		switch shortPackageName {
+		case "valueobject.UUID":
+			err = IdWithFuncTmpl.Execute(buf, entityBuilderParams)
+		case "valueobject.Hash":
+			err = EncodeHashWithFuncTmpl.Execute(buf, entityBuilderParams)
+		case "valueobject.Coord":
+			err = CoordWithFuncTmpl.Execute(buf, entityBuilderParams)
+		}
+		if err != nil {
+			panic(err)
+		}
 	}
 	return buf.String()
 }

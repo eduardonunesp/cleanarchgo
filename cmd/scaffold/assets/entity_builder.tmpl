@@ -7,13 +7,12 @@ import "github.com/eduardonunesp/cleanarchgo/pkg/domain/valueobject"
 type {{.CCEntityName}}Option func(*{{.EntityName}}) error
 
 func Build{{.EntityName}}(options ...{{.CCEntityName}}Option) (*{{.EntityName}}, error) {
-	new{{.CCEntityName}} := {{.EntityName}}{}
+	new{{.EntityName}} := {{.EntityName}}{}
 	for _, opt := range options {
-		if err := opt(&new{{.CCEntityName}}); err != nil {
+		if err := opt(&new{{.EntityName}}); err != nil {
 			return nil, RaiseDomainError(err)
 		}
 	}
-	return &new{{.CCEntityName}}, nil
+	return &new{{.EntityName}}, nil
 }
-
 {{.Funcs}}

@@ -12,10 +12,11 @@ import (
 
 func main() {
 	var connStr string
-	if str, ok := os.LookupEnv("PG_CONN_STR"); !ok {
+	if str, ok := os.LookupEnv("PG_CONN_STR"); ok {
 		connStr = str
 	}
 	connStr = fmt.Sprintf("postgres://%s", connStr)
+	fmt.Println(connStr)
 	accountRepo := repository.NewAccountRepositoryPG(connStr)
 	rideRepo := repository.NewRideRepositoryPG(connStr)
 	mailerGW := gateway.NewMailerGatewayMemory()
