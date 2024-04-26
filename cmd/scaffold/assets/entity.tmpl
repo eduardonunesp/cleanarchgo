@@ -8,19 +8,6 @@ type {{.EntityName}} struct {
 	ID string
 }
 
-func Create{{.EntityName}}() (*{{.EntityName}}, error) {
-	var newEnt {{.EntityName}}
-	newEnt.ID = valueobject.MustUUID()
-	return acc, nil
-}
-
-func Restore{{.EntityName}}(id string) (*{{.EntityName}}, error) {
-	var (
-		newEnt {{.EntityName}}
-		err    error
-	)
-	if newEnt.ID, err = valueobject.UUIDFromString(id); err != nil {
-		return nil, RaiseDomainError(err)
-	}
-	return &newEnt, nil
+func (e *{{.EntityName}}) ID() valueobject.ID {
+	return valueobject.ID()
 }
