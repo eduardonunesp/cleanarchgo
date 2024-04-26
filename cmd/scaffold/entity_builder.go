@@ -9,6 +9,7 @@ import (
 	"go/token"
 	"go/types"
 	"os"
+	"slices"
 	"strings"
 	"text/template"
 
@@ -26,6 +27,9 @@ var mapWithFuncParam = map[string]string{
 	"valueobject.AccountType": "string",
 	"valueobject.Date":        "int64",
 	"valueobject.Coord":       "string",
+	"valueobject.RideStatus":  "string",
+	"string":                  "string",
+	"valueobject.Segment":     "string",
 }
 
 var mapWithFuncFieldBuilder = map[string]string{
@@ -38,11 +42,23 @@ var mapWithFuncFieldBuilder = map[string]string{
 	"valueobject.AccountType": "valueobject.AccountTypeFromString",
 	"valueobject.Date":        "valueobject.DateFromUnix",
 	"valueobject.Coord":       "valueobject.BuildCoord",
+	"valueobject.RideStatus":  "valueobject.BuildRideStatus",
+	"string":                  "string",
+	"valueobject.Segment":     "valueobject.BuildSegmentFromCoords",
 }
 
 const (
 	entityBuilderTemplate = "assets/entity_builder.tmpl"
 )
+
+var buildPrimitiveFuncTempl = `
+func {{.EntityName}}With{{.PCFieldName}}({{.CCParamName}} {{.ParamType}}) {{.CCEntityName}}Option {
+	return func(opt *{{.EntityName}}) error {
+		opt.{{.FieldName}} = {{.CCParamName}}
+		return nil
+	}
+}
+`
 
 var buildGeneralFuncTempl = `
 func {{.EntityName}}With{{.PCFieldName}}({{.CCParamName}} {{.ParamType}}) {{.CCEntityName}}Option {
@@ -78,6 +94,16 @@ func {{.EntityName}}With{{.PCFieldName}}(x, y string) {{.CCEntityName}}Option {
 	return func(p *{{.EntityName}}) error {
 		var err error
 		p.{{.FieldName}}, err = valueobject.BuildCoord(x, y)
+		return err
+	}
+}
+`
+
+var buildSegmentFuncTempl = `
+func {{.EntityName}}With{{.PCFieldName}}(fx, fy, tx, ty string) {{.CCEntityName}}Option {
+	return func(p *{{.EntityName}}) error {
+		var err error
+		p.{{.FieldName}}, err = valueobject.BuildSegmentFromCoords(fx, fy, tx, ty)
 		return err
 	}
 }
@@ -213,6 +239,8 @@ func getWithFuncName(entityName string, fieldNames, fieldTypes []string) string 
 	IdWithFuncTmpl := template.Must(template.New("iDBuildFunc").Parse(buildIDFuncTempl))
 	EncodeHashWithFuncTmpl := template.Must(template.New("encodeHashBuildFunc").Parse(buildRawHashFuncTempl))
 	CoordWithFuncTmpl := template.Must(template.New("coordBuildFunc").Parse(buildCoordFuncTempl))
+	SegmentWithFuncTmpl := template.Must(template.New("segmentBuildFunc").Parse(buildSegmentFuncTempl))
+	PrimitiveWithFuncTmpl := template.Must(template.New("primitiveBuildFunc").Parse(buildPrimitiveFuncTempl))
 	buf := bytes.NewBuffer(nil)
 	for i := 0; i < len(fieldNames); i++ {
 		shortPackageName := getPackageName(fieldTypes[i])
@@ -226,16 +254,24 @@ func getWithFuncName(entityName string, fieldNames, fieldTypes []string) string 
 			FieldBuilder: getWithFuncFieldBuilder(fieldTypes[i]),
 		}
 		var err error
-		if shortPackageName != "valueobject.Coord" {
+		if !slices.Contains([]string{
+			"string",
+			"valueobject.Coord",
+			"valueobject.Segment",
+		}, shortPackageName) {
 			err = generalWithFuncTmpl.Execute(buf, entityBuilderParams)
 		}
 		switch shortPackageName {
+		case "string":
+			err = PrimitiveWithFuncTmpl.Execute(buf, entityBuilderParams)
 		case "valueobject.UUID":
 			err = IdWithFuncTmpl.Execute(buf, entityBuilderParams)
 		case "valueobject.Hash":
 			err = EncodeHashWithFuncTmpl.Execute(buf, entityBuilderParams)
 		case "valueobject.Coord":
 			err = CoordWithFuncTmpl.Execute(buf, entityBuilderParams)
+		case "valueobject.Segment":
+			err = SegmentWithFuncTmpl.Execute(buf, entityBuilderParams)
 		}
 		if err != nil {
 			panic(err)
