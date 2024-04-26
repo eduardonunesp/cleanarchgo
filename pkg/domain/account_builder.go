@@ -2,6 +2,8 @@ package domain
 
 import "github.com/eduardonunesp/cleanarchgo/pkg/domain/valueobject"
 
+type accountOption func(*Account) error
+
 func BuildAccount(options ...accountOption) (*Account, error) {
 	newAcc := Account{}
 	for _, opt := range options {

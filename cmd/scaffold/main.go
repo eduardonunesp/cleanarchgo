@@ -30,6 +30,13 @@ func main() {
 					createGateway(),
 				},
 			},
+			{
+				Name:        "augment",
+				Description: "Augment an existing service, entity, or repository",
+				Subcommands: []*cli.Command{
+					createEntityBuilder(),
+				},
+			},
 		},
 	}
 	if err := app.Run(os.Args); err != nil {

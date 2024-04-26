@@ -4,8 +4,6 @@ import (
 	"github.com/eduardonunesp/cleanarchgo/pkg/domain/valueobject"
 )
 
-type accountOption func(*Account) error
-
 type Account struct {
 	id          valueobject.UUID
 	name        valueobject.Name
