@@ -1,8 +1,6 @@
 package domain
 
 import (
-	"fmt"
-
 	"github.com/eduardonunesp/cleanarchgo/pkg/domain/valueobject"
 )
 
@@ -16,6 +14,9 @@ type Account struct {
 	carPlate    valueobject.CarPlate
 	hash        valueobject.Hash
 	accountType valueobject.AccountType
+	confirmedAt valueobject.Date
+	createdAt   valueobject.Date
+	updatedAt   valueobject.Date
 }
 
 func (a Account) ID() valueobject.UUID {
@@ -46,6 +47,18 @@ func (a Account) AccountType() valueobject.AccountType {
 	return a.accountType
 }
 
+func (a Account) IsConfirmed() bool {
+	return !a.confirmedAt.IsZero()
+}
+
+func (a Account) CreatedAt() valueobject.Date {
+	return a.createdAt
+}
+
+func (a Account) UpdatedAt() valueobject.Date {
+	return a.updatedAt
+}
+
 func (a Account) IsPassenger() bool {
 	return a.accountType == valueobject.AccountTypePassenger
 }
@@ -54,87 +67,15 @@ func (a Account) IsDriver() bool {
 	return a.accountType == valueobject.AccountTypeDriver
 }
 
-func (a *Account) SetCarPlateOnce(carPlate string) error {
+func (a *Account) SetCarPlate(carPlate string) error {
 	var err error
 	a.carPlate, err = valueobject.CarPlateFromString(carPlate)
 	if err != nil {
-		fmt.Println("err", err)
 		return RaiseDomainError(err)
 	}
 	return nil
 }
 
-func AccountWithID(id string) accountOption {
-	return func(opt *Account) error {
-		var err error
-		opt.id, err = valueobject.UUIDFromString(id)
-		return err
-	}
-}
-
-func AccountWithName(name string) accountOption {
-	return func(opt *Account) error {
-		var err error
-		opt.name, err = valueobject.NameFromString(name)
-		return err
-	}
-}
-
-func AccountWithEmail(email string) accountOption {
-	return func(opt *Account) error {
-		var err error
-		opt.email, err = valueobject.EmailFromString(email)
-		return err
-	}
-}
-
-func AccountWithCpf(cpf string) accountOption {
-	return func(opt *Account) error {
-		var err error
-		opt.cpf, err = valueobject.CpfFromString(cpf)
-		return err
-	}
-}
-
-func AccountWithCarPlate(carPlate string) accountOption {
-	return func(opt *Account) error {
-		var err error
-		opt.carPlate, err = valueobject.CarPlateFromString(carPlate)
-		return err
-	}
-}
-
-func AccountWithHash(hash string) accountOption {
-	return func(opt *Account) error {
-		opt.hash = valueobject.LoadHashFromString(hash)
-		return nil
-	}
-}
-
-func AccountWithPassword(password string) accountOption {
-	return func(opt *Account) error {
-		var err error
-		opt.hash, err = valueobject.BuildHashFromString(password, nil)
-		return err
-	}
-}
-
-func AccountWithAccountType(accountType string) accountOption {
-	return func(opt *Account) error {
-		var err error
-		opt.accountType, err = valueobject.AccountTypeFromString(accountType)
-		return err
-	}
-}
-
-func BuildAccount(options ...accountOption) (*Account, error) {
-	newAcc := Account{
-		id: valueobject.MustUUID(),
-	}
-	for _, opt := range options {
-		if err := opt(&newAcc); err != nil {
-			return nil, RaiseDomainError(err)
-		}
-	}
-	return &newAcc, nil
+func (a *Account) Confirm() {
+	a.confirmedAt = valueobject.DateFromNow()
 }

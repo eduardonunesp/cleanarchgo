@@ -43,6 +43,7 @@ func (s Signup) Execute(input SignupParams) (*SignupResult, error) {
 		return nil, RaiseServiceError(errSignupAccountExists)
 	}
 	domainAccount, err := domain.BuildAccount(
+		domain.AccountWithNewID(),
 		domain.AccountWithName(input.Name),
 		domain.AccountWithEmail(input.Email),
 		domain.AccountWithCpf(input.CPF),
@@ -53,7 +54,7 @@ func (s Signup) Execute(input SignupParams) (*SignupResult, error) {
 		return nil, err
 	}
 	if domainAccount.IsDriver() {
-		if err := domainAccount.SetCarPlateOnce(input.CarPlate); err != nil {
+		if err := domainAccount.SetCarPlate(input.CarPlate); err != nil {
 			return nil, err
 		}
 	}
