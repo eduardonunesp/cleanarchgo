@@ -73,7 +73,7 @@ func {{.EntityName}}With{{.PCFieldName}}({{.CCParamName}} {{.ParamType}}) {{.CCE
 var buildIDFuncTempl = `
 func {{.EntityName}}WithNew{{.PCFieldName}}() {{.CCEntityName}}Option {
 	return func(opt *{{.EntityName}}) error {
-		opt.{{.FieldName}} = valueobject.MustUUID()	
+		opt.{{.FieldName}} = valueobject.MustUUID()
 		return nil
 	}
 }
