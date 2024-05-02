@@ -12,12 +12,13 @@ import (
 )
 
 const getAccount = `-- name: GetAccount :one
-SELECT 
-    id, name, email, cpf, car_plate, account_type
-FROM 
-    account
-WHERE 
-    id = $1 LIMIT 1
+SELECT
+	id, name, email, cpf, car_plate, hashpw, account_type, confirmedat, createdat, updatedat
+FROM
+	account
+WHERE
+	id = $1
+LIMIT 1
 `
 
 func (q *Queries) GetAccount(ctx context.Context, id pgtype.UUID) (Account, error) {
@@ -29,36 +30,25 @@ func (q *Queries) GetAccount(ctx context.Context, id pgtype.UUID) (Account, erro
 		&i.Email,
 		&i.Cpf,
 		&i.CarPlate,
+		&i.Hashpw,
 		&i.AccountType,
+		&i.Confirmedat,
+		&i.Createdat,
+		&i.Updatedat,
 	)
 	return i, err
 }
 
-const getAccountByEmail = `-- name: GetAccountByEmail :one
-SELECT
-    email
-FROM 
-    account
-WHERE 
-    email = $1
-LIMIT 1
-`
-
-func (q *Queries) GetAccountByEmail(ctx context.Context, email string) (string, error) {
-	row := q.db.QueryRow(ctx, getAccountByEmail, email)
-	err := row.Scan(&email)
-	return email, err
-}
-
 const hasAccountByEmail = `-- name: HasAccountByEmail :one
-SELECT 
-    CASE 
-        WHEN count(id) > 0 THEN TRUE
-        ELSE FALSE
-    END
+SELECT
+	CASE
+		WHEN count(id) > 0 THEN TRUE
+		ELSE FALSE
+	END
 FROM account
-WHERE 
-    email = $1
+WHERE
+	email = $1
+LIMIT 1
 `
 
 func (q *Queries) HasAccountByEmail(ctx context.Context, email string) (bool, error) {
@@ -70,14 +60,15 @@ func (q *Queries) HasAccountByEmail(ctx context.Context, email string) (bool, er
 
 const saveAccount = `-- name: SaveAccount :exec
 INSERT INTO account (
-    id,
-    name,
-    email,
-    cpf,
-    car_plate,
-    account_type
+	id,
+	name,
+	email,
+	cpf,
+	car_plate,
+	account_type,
+	hashpw
 ) VALUES (
-    $1, $2, $3, $4, $5, $6
+	$1, $2, $3, $4, $5, $6, $7
 )
 `
 
@@ -88,6 +79,7 @@ type SaveAccountParams struct {
 	Cpf         string
 	CarPlate    pgtype.Text
 	AccountType NullAccountType
+	Hashpw      string
 }
 
 func (q *Queries) SaveAccount(ctx context.Context, arg SaveAccountParams) error {
@@ -98,6 +90,7 @@ func (q *Queries) SaveAccount(ctx context.Context, arg SaveAccountParams) error 
 		arg.Cpf,
 		arg.CarPlate,
 		arg.AccountType,
+		arg.Hashpw,
 	)
 	return err
 }

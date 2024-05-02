@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/eduardonunesp/cleanarchgo/pkg/domain"
 	"github.com/eduardonunesp/cleanarchgo/pkg/infra/gateway"
@@ -42,14 +43,14 @@ func (s Signup) Execute(input SignupParams) (*SignupResult, error) {
 	if accountExists {
 		return nil, RaiseServiceError(errSignupAccountExists)
 	}
-	domainAccount, err := domain.BuildAccount(
-		domain.AccountWithNewID(),
-		domain.AccountWithName(input.Name),
-		domain.AccountWithEmail(input.Email),
-		domain.AccountWithCpf(input.CPF),
-		domain.AccountWithAccountType(input.AccountType),
-		domain.AccountWithEncodedHash(input.Password),
-	)
+	domainAccount, err := domain.AccountCreate(domain.AccountCreateParams{
+		Name:        input.Name,
+		Email:       input.Email,
+		CPF:         input.CPF,
+		AccountType: input.AccountType,
+		Password:    input.Password,
+		CarPlate:    input.CarPlate,
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -61,7 +62,10 @@ func (s Signup) Execute(input SignupParams) (*SignupResult, error) {
 	if err := s.accountRepo.SaveAccount(domainAccount); err != nil {
 		return nil, err
 	}
-	s.mailerGW.Send(input.Email, "Welcome!", "")
+	err = s.mailerGW.Send(input.Email, "Welcome!", "")
+	if err != nil {
+		fmt.Println("error sending email")
+	}
 	return &SignupResult{
 		domainAccount.ID().String(),
 	}, nil

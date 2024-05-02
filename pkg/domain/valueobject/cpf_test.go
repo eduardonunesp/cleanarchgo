@@ -82,12 +82,12 @@ func (s *testCPFSuite) TestCalculateDigit() {
 	}{
 		"should be remainder of 3 on factor first digit": {
 			input:    "11144477705",
-			factor:   factor_first_digit,
+			factor:   FactorFirstDigit,
 			expected: "3",
 		},
 		"should be remainder of 5 on factor second digit": {
 			input:    "11144477705",
-			factor:   factor_second_digit,
+			factor:   FactorSecondDigit,
 			expected: "0",
 		},
 	}

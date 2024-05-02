@@ -18,6 +18,7 @@ type (
 		CPF         string `json:"cpf"`
 		CarPlate    string `json:"carPlate"`
 		AccountType string `json:"accountType"`
+		Password    string `json:"password"`
 	}
 
 	signupResponse struct {
@@ -25,7 +26,7 @@ type (
 	}
 )
 
-func (s apiServer) Signup(e *echo.Echo) {
+func (s APIServer) Signup(e *echo.Echo) {
 	e.POST("/signup", func(c echo.Context) error {
 		reqBody := new(signupRequest)
 		if err := c.Bind(reqBody); err != nil {
@@ -40,8 +41,9 @@ func (s apiServer) Signup(e *echo.Echo) {
 			CPF:         reqBody.CPF,
 			CarPlate:    reqBody.CarPlate,
 			AccountType: reqBody.AccountType,
+			Password:    reqBody.Password,
 		})
-		signupErr := new(service.ServiceError)
+		signupErr := new(service.Error)
 		if errors.As(err, &signupErr) {
 			return c.JSON(
 				http.StatusBadRequest,

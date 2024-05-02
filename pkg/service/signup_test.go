@@ -95,7 +95,7 @@ func (s *testSignupSuite) TestSignupFailedAccountExists() {
 		AccountType: "passenger",
 		Password:    "123456",
 	})
-	serviceErr := new(ServiceError)
+	serviceErr := new(Error)
 	s.ErrorAs(err, &serviceErr)
 	s.Nil(result)
 }

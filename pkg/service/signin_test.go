@@ -13,7 +13,6 @@ func TestSignin(t *testing.T) {
 type testSigninSuite struct {
 	suite.Suite
 	// Mocks goes here
-	useCase *Signin
 }
 
 func (s *testSigninSuite) SetupTest() {

@@ -28,28 +28,26 @@ func (s *testRideSuite) SetupTest() {
 
 func (s *testRideSuite) TestGetRide() {
 	tNow := time.Now().Unix()
-	s.rideRepo.EXPECT().GetRideByID("1").Return(domain.Must(domain.BuildRide(
-		domain.RideWithID("1"),
-		domain.RideWithPassengerID("2"),
-		domain.RideWithDriverID("3"),
-		domain.RideWithFare("10.00"),
-		domain.RideWithSegment(
-			"123",
-			"321",
-			"789",
-			"987",
-		),
-		domain.RideWithStatus("requested"),
-		domain.RideWithDate(tNow),
-	)), nil)
-	s.accRepo.EXPECT().GetAccountByID("2").Return(domain.Must(domain.BuildAccount(
-		domain.AccountWithID("2"),
-		domain.AccountWithName("Foo Bar"),
-		domain.AccountWithEmail("foobar@gmail.com"),
-		domain.AccountWithCpf("11144477735"),
-		domain.AccountWithCarPlate("AAA9999"),
-		domain.AccountWithAccountType("passenger"),
-	)), nil)
+	s.rideRepo.EXPECT().GetRideByID("1").Return(domain.Must(domain.RideRestore(domain.RideRestoreParams{
+		ID:          "1",
+		PassengerID: "2",
+		DriverID:    "3",
+		Fare:        "10.00",
+		InitialX:    "123",
+		InitialY:    "321",
+		FinalX:      "789",
+		FinalY:      "987",
+		Status:      "requested",
+		Date:        tNow,
+	})), nil)
+	s.accRepo.EXPECT().GetAccountByID("2").Return(domain.Must(domain.AccountRestore(domain.AccountRestoreParams{
+		ID:          "2",
+		Name:        "Foo Bar",
+		Email:       "foobar@gmail.com",
+		Cpf:         "11144477735",
+		CarPlate:    "AAA9999",
+		AccountType: "passenger",
+	})), nil)
 	result, err := s.useCase.Execute(GetRideParams{
 		RideID: "1",
 	})

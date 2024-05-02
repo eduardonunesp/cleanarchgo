@@ -6,6 +6,7 @@ import "github.com/eduardonunesp/cleanarchgo/pkg/domain"
 type AccountRepositoryRO interface {
 	HasAccountByEmail(email string) (bool, error)
 	GetAccountByID(id string) (*domain.Account, error)
+	ConfirmHashAndPassword(email, hash string) (bool, error)
 }
 
 //go:generate mockery

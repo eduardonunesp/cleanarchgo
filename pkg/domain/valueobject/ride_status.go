@@ -35,16 +35,14 @@ func BuildRideStatus(status string) (RideStatus, error) {
 	return r, nil
 }
 
-func RideStatusAs(status RideStatus, target any) bool {
+func RideStatusAs(status, target RideStatus) bool {
 	if target == nil {
 		return false
 	}
-	_, ok := target.(RideStatus)
-	if !ok {
+	if status == nil {
 		return false
 	}
-	target = status
-	return true
+	return status.String() == target.String()
 }
 
 type RideStatusRequested struct{}

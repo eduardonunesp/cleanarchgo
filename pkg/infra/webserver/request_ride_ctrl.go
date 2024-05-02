@@ -24,7 +24,7 @@ type (
 	}
 )
 
-func (s apiServer) RequestRide(e *echo.Echo) {
+func (s APIServer) RequestRide(e *echo.Echo) {
 	e.GET("/rides/:rideID", func(c echo.Context) error {
 		reqBody := new(requestRideRequest)
 		if err := c.Bind(reqBody); err != nil {
@@ -40,7 +40,7 @@ func (s apiServer) RequestRide(e *echo.Echo) {
 			ToLat:       reqBody.ToLat,
 			ToLong:      reqBody.ToLong,
 		})
-		serviceErr := new(service.ServiceError)
+		serviceErr := new(service.Error)
 		if errors.As(err, &serviceErr) {
 			return c.JSON(
 				http.StatusBadRequest,

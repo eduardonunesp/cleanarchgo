@@ -1,8 +1,8 @@
 package valueobject
 
 type Coord struct {
-	lat  string
-	long string
+	x string
+	y string
 }
 
 func BuildCoord(lat, long string) (Coord, error) {
@@ -10,17 +10,17 @@ func BuildCoord(lat, long string) (Coord, error) {
 }
 
 func (c Coord) Lat() string {
-	return c.lat
+	return c.x
 }
 
 func (c Coord) Long() string {
-	return c.long
+	return c.y
 }
 
-func (c Coord) Distance(other Coord) float64 {
+func (c Coord) Distance(_ Coord) float64 {
 	return 0
 }
 
 func (c *Coord) String() string {
-	return c.lat + ", " + c.long
+	return c.x + ", " + c.y
 }

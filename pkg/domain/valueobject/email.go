@@ -24,5 +24,5 @@ func EmailFromString(s string) (Email, error) {
 }
 
 func (e Email) String() string {
-	return string(e.value)
+	return e.value
 }

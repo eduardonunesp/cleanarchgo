@@ -68,6 +68,7 @@ func appendTemplateFile(filename string, tmpl *template.Template, params interfa
 	if err := tmpl.Execute(buf, params); err != nil {
 		return err
 	}
+	//nolint:gomnd // 0644 is the recommended permission for files
 	file, err := os.OpenFile(filename, os.O_APPEND|os.O_WRONLY, 0644)
 	if err != nil {
 		return err

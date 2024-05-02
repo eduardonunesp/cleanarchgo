@@ -1,13 +1,13 @@
 package repository
 
-type RepositoryError struct {
+type Error struct {
 	Err error
 }
 
-func RaiseRepositoryError(err error) *RepositoryError {
-	return &RepositoryError{err}
+func RaiseRepositoryError(err error) *Error {
+	return &Error{err}
 }
 
-func (r RepositoryError) Error() string {
+func (r Error) Error() string {
 	return r.Err.Error()
 }

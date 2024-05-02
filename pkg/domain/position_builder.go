@@ -2,60 +2,52 @@ package domain
 
 import "github.com/eduardonunesp/cleanarchgo/pkg/domain/valueobject"
 
-type positionOption func(*Position) error
-
-func BuildPosition(options ...positionOption) (*Position, error) {
-	newPosition := Position{}
-	for _, opt := range options {
-		if err := opt(&newPosition); err != nil {
-			return nil, RaiseDomainError(err)
-		}
-	}
-	return &newPosition, nil
+type PositionCreateParams struct {
+	RideID string
+	CoordX string
+	CoordY string
 }
 
-func PositionWithID(id string) positionOption {
-	return func(opt *Position) error {
-		var err error
-		opt.id, err = valueobject.UUIDFromString(id)
-		return err
-	}
+type PositionRestoreParams struct {
+	ID     string
+	RideID string
+	CoordX string
+	CoordY string
+	Date   int64
 }
 
-func PositionWithNewID() positionOption {
-	return func(opt *Position) error {
-		opt.id = valueobject.MustUUID()
-		return nil
+func PositionCreate(params PositionCreateParams) (*Position, error) {
+	var (
+		newPosition Position
+		err         error
+	)
+	newPosition.id = valueobject.MustUUID()
+	if newPosition.rideID, err = valueobject.UUIDFromString(params.RideID); err != nil {
+		return nil, RaiseDomainError(err)
 	}
+	if newPosition.coord, err = valueobject.BuildCoord(params.CoordX, params.CoordY); err != nil {
+		return nil, RaiseDomainError(err)
+	}
+	newPosition.date = valueobject.DateFromNow()
+	return &newPosition, err
 }
 
-func PositionWithRideID(rideId string) positionOption {
-	return func(opt *Position) error {
-		var err error
-		opt.rideID, err = valueobject.UUIDFromString(rideId)
-		return err
+func PositionRestore(params PositionRestoreParams) (*Position, error) {
+	var (
+		newPosition Position
+		err         error
+	)
+	if newPosition.id, err = valueobject.UUIDFromString(params.ID); err != nil {
+		return nil, RaiseDomainError(err)
 	}
-}
-
-func PositionWithNewRideID() positionOption {
-	return func(opt *Position) error {
-		opt.rideID = valueobject.MustUUID()
-		return nil
+	if newPosition.rideID, err = valueobject.UUIDFromString(params.RideID); err != nil {
+		return nil, RaiseDomainError(err)
 	}
-}
-
-func PositionWithCoord(x, y string) positionOption {
-	return func(p *Position) error {
-		var err error
-		p.coord, err = valueobject.BuildCoord(x, y)
-		return err
+	if newPosition.coord, err = valueobject.BuildCoord(params.CoordX, params.CoordY); err != nil {
+		return nil, RaiseDomainError(err)
 	}
-}
-
-func PositionWithDate(date int64) positionOption {
-	return func(opt *Position) error {
-		var err error
-		opt.date, err = valueobject.DateFromUnix(date)
-		return err
+	if newPosition.date, err = valueobject.DateFromUnix(params.Date); err != nil {
+		return nil, RaiseDomainError(err)
 	}
+	return &newPosition, err
 }

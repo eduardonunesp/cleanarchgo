@@ -29,32 +29,28 @@ func (s *testFinishRideSuite) SetupTest() {
 
 func (s *testFinishRideSuite) TestFinishRideSuccess() {
 	tNow := time.Now().Unix()
-	s.rideRepo.EXPECT().GetRideByID("1").Return(domain.Must(domain.BuildRide(
-		domain.RideWithID("1"),
-		domain.RideWithPassengerID("2"),
-		domain.RideWithDriverID("3"),
-		domain.RideWithSegment(
-			"123",
-			"321",
-			"789",
-			"987",
-		),
-		domain.RideWithStatus("in_progress"),
-		domain.RideWithDate(tNow),
-	)), nil)
+	s.rideRepo.EXPECT().GetRideByID("1").Return(domain.Must(domain.RideCreate(domain.RideCreateParams{
+		PassengerID: "2",
+		InitialX:    "123",
+		InitialY:    "321",
+		FinalX:      "789",
+		FinalY:      "987",
+	})), nil)
 	s.posRepo.EXPECT().GetPositionsByRideID("1").Return([]*domain.Position{
-		domain.Must(domain.BuildPosition(
-			domain.PositionWithID("3"),
-			domain.PositionWithRideID("1"),
-			domain.PositionWithCoord("123", "321"),
-			domain.PositionWithDate(tNow),
-		)),
-		domain.Must(domain.BuildPosition(
-			domain.PositionWithID("4"),
-			domain.PositionWithRideID("1"),
-			domain.PositionWithCoord("789", "987"),
-			domain.PositionWithDate(tNow),
-		)),
+		domain.Must(domain.PositionRestore(domain.PositionRestoreParams{
+			ID:     "1",
+			RideID: "1",
+			CoordX: "123",
+			CoordY: "321",
+			Date:   tNow,
+		})),
+		domain.Must(domain.PositionRestore(domain.PositionRestoreParams{
+			ID:     "4",
+			RideID: "1",
+			CoordX: "789",
+			CoordY: "987",
+			Date:   tNow,
+		})),
 	}, nil)
 	s.rideRepo.EXPECT().SaveRide(mock.Anything).Return(nil)
 	err := s.useCase.Execute(FinishRideParams{

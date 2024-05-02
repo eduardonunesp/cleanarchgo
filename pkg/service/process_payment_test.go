@@ -30,20 +30,18 @@ func (s *testProcessPaymentSuite) SetupTest() {
 
 func (s *testProcessPaymentSuite) TestProcessPaymentSuccess() {
 	tNow := time.Now().Unix()
-	s.rideRepo.EXPECT().GetRideByID("1").Return(domain.Must(domain.BuildRide(
-		domain.RideWithID("1"),
-		domain.RideWithPassengerID("2"),
-		domain.RideWithDriverID("3"),
-		domain.RideWithFare("10.00"),
-		domain.RideWithSegment(
-			"123",
-			"321",
-			"789",
-			"987",
-		),
-		domain.RideWithStatus("completed"),
-		domain.RideWithDate(tNow),
-	)), nil)
+	s.rideRepo.EXPECT().GetRideByID("1").Return(domain.Must(domain.RideRestore(domain.RideRestoreParams{
+		ID:          "1",
+		PassengerID: "2",
+		DriverID:    "3",
+		Fare:        "10.00",
+		Status:      "completed",
+		Date:        tNow,
+		InitialX:    "123",
+		InitialY:    "321",
+		FinalX:      "789",
+		FinalY:      "987",
+	})), nil)
 	s.ccGW.EXPECT().ProcessPayment("123", "10.00").Return(nil)
 	err := s.useCase.Execute(ProcessPaymentParams{
 		RideID:          "1",

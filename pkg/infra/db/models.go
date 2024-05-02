@@ -53,13 +53,61 @@ func (ns NullAccountType) Value() (driver.Value, error) {
 	return string(ns.AccountType), nil
 }
 
+type StatusType string
+
+const (
+	StatusTypeRequested  StatusType = "requested"
+	StatusTypeAccepted   StatusType = "accepted"
+	StatusTypeInProgress StatusType = "in_progress"
+	StatusTypeCompleted  StatusType = "completed"
+)
+
+func (e *StatusType) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = StatusType(s)
+	case string:
+		*e = StatusType(s)
+	default:
+		return fmt.Errorf("unsupported scan type for StatusType: %T", src)
+	}
+	return nil
+}
+
+type NullStatusType struct {
+	StatusType StatusType
+	Valid      bool // Valid is true if StatusType is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (ns *NullStatusType) Scan(value interface{}) error {
+	if value == nil {
+		ns.StatusType, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.StatusType.Scan(value)
+}
+
+// Value implements the driver Valuer interface.
+func (ns NullStatusType) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.StatusType), nil
+}
+
 type Account struct {
 	ID          pgtype.UUID
 	Name        string
 	Email       string
 	Cpf         string
 	CarPlate    pgtype.Text
+	Hashpw      string
 	AccountType NullAccountType
+	Confirmedat pgtype.Timestamp
+	Createdat   pgtype.Timestamp
+	Updatedat   pgtype.Timestamp
 }
 
 type Position struct {
@@ -74,7 +122,7 @@ type Ride struct {
 	ID          pgtype.UUID
 	PassengerID pgtype.UUID
 	DriverID    pgtype.UUID
-	Status      string
+	Status      NullStatusType
 	Fare        pgtype.Numeric
 	Distance    pgtype.Numeric
 	FromLat     pgtype.Numeric

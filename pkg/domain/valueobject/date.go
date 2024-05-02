@@ -27,7 +27,7 @@ func DateFromNow() Date {
 }
 
 func (d Date) Unix() int64 {
-	return int64(d.value)
+	return d.value
 }
 
 func (d Date) IsZero() bool {

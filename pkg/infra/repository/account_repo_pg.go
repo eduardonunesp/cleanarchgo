@@ -7,7 +7,6 @@ import (
 	"github.com/eduardonunesp/cleanarchgo/pkg/infra/db"
 
 	"github.com/jackc/pgx/v5"
-	_ "github.com/lib/pq"
 )
 
 type AccountRepositoryPG struct {
@@ -55,4 +54,8 @@ func (a AccountRepositoryPG) SaveAccount(account *domain.Account) error {
 		return RaiseRepositoryError(err)
 	}
 	return nil
+}
+
+func (AccountRepositoryPG) ConfirmHashAndPassword(_, _ string) (bool, error) {
+	panic("implement me")
 }

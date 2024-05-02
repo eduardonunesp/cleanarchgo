@@ -23,7 +23,7 @@ type (
 	}
 )
 
-func (s apiServer) GetRide(e *echo.Echo) {
+func (s APIServer) GetRide(e *echo.Echo) {
 	e.GET("/rides/:rideID", func(c echo.Context) error {
 		rideID := c.Param("rideID")
 		if rideID == "" {
@@ -35,7 +35,7 @@ func (s apiServer) GetRide(e *echo.Echo) {
 		result, err := s.getRide.Execute(service.GetRideParams{
 			RideID: rideID,
 		})
-		serviceErr := new(service.ServiceError)
+		serviceErr := new(service.Error)
 		if errors.As(err, &serviceErr) {
 			return c.NoContent(http.StatusInternalServerError)
 		}

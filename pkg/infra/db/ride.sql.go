@@ -13,11 +13,12 @@ import (
 
 const getRide = `-- name: GetRide :one
 SELECT
-    id, passenger_id, driver_id, status, fare, distance, from_lat, from_long, to_lat, to_long, date
+	id, passenger_id, driver_id, status, fare, distance, from_lat, from_long, to_lat, to_long, date
 FROM
-    ride
+	ride
 WHERE
-    id = $1 LIMIT 1
+	id = $1
+LIMIT 1
 `
 
 func (q *Queries) GetRide(ctx context.Context, id pgtype.UUID) (Ride, error) {
@@ -87,20 +88,20 @@ func (q *Queries) HasActiveRideByPassengerID(ctx context.Context, passengerID pg
 
 const saveRide = `-- name: SaveRide :exec
 INSERT INTO ride (
-    id,
-    passenger_id,
-    driver_id,
-    fare,
-    distance,
-    from_lat,
-    from_long,
-    to_lat,
-    to_long,
-    status,
-    date
+	id,
+	passenger_id,
+	driver_id,
+	fare,
+	distance,
+	from_lat,
+	from_long,
+	to_lat,
+	to_long,
+	status,
+	date
 )
 VALUES (
-    $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11
+	$1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11
 )
 `
 
@@ -114,7 +115,7 @@ type SaveRideParams struct {
 	FromLong    pgtype.Numeric
 	ToLat       pgtype.Numeric
 	ToLong      pgtype.Numeric
-	Status      string
+	Status      NullStatusType
 	Date        pgtype.Timestamp
 }
 
@@ -147,7 +148,7 @@ WHERE
 
 type UpdateRideParams struct {
 	ID       pgtype.UUID
-	Status   string
+	Status   NullStatusType
 	DriverID pgtype.UUID
 }
 

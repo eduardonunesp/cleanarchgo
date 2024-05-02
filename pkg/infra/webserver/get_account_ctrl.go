@@ -20,7 +20,7 @@ type (
 	}
 )
 
-func (s apiServer) GetAccount(e *echo.Echo) {
+func (s APIServer) GetAccount(e *echo.Echo) {
 	e.POST("/request_ride", func(c echo.Context) error {
 		accountID := c.Param("accountID")
 		if accountID == "" {
@@ -32,7 +32,7 @@ func (s apiServer) GetAccount(e *echo.Echo) {
 		result, err := s.getAccount.Execute(service.GetAccountInput{
 			ID: accountID,
 		})
-		serviceErr := new(service.ServiceError)
+		serviceErr := new(service.Error)
 		if errors.As(err, &serviceErr) {
 			return c.NoContent(http.StatusInternalServerError)
 		}

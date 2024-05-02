@@ -6,5 +6,9 @@ CREATE TABLE IF NOT EXISTS account (
 	email TEXT NOT NULL,
 	cpf TEXT NOT NULL,
 	car_plate TEXT NULL,
-	account_type ACCOUNT_TYPE
+	hashpw TEXT NOT NULL,
+	account_type ACCOUNT_TYPE,
+	confirmedAt TIMESTAMP,
+	createdAt TIMESTAMP NOT NULL DEFAULT NOW(),
+	updatedAt TIMESTAMP NOT NULL DEFAULT NOW()
 );

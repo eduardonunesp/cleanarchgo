@@ -16,15 +16,14 @@ type testAccountSuite struct {
 }
 
 func (s *testAccountSuite) TestBuildAccountWithSuccess() {
-	acc, err := BuildAccount(
-		AccountWithID("1"),
-		AccountWithName("Foo Bar"),
-		AccountWithEmail("foo@bar.com"),
-		AccountWithCpf("11144477735"),
-		AccountWithAccountType("passenger"),
-	)
+	acc, err := AccountCreate(AccountCreateParams{
+		Name:        "Foo Bar",
+		Email:       "foo@bar.com",
+		CPF:         "11144477735",
+		AccountType: "passenger",
+		Password:    "supersecret",
+	})
 	s.NoError(err)
-	s.Equal(acc.ID().String(), "1")
 	s.Equal(acc.Name().String(), "Foo Bar")
 	s.Equal(acc.Email().String(), "foo@bar.com")
 	s.Equal(acc.Cpf().String(), "11144477735")
@@ -32,37 +31,67 @@ func (s *testAccountSuite) TestBuildAccountWithSuccess() {
 }
 
 func (s *testAccountSuite) TestBuildAccountFailedInvalidName() {
-	_, err := BuildAccount(
-		AccountWithName(""),
-	)
-	domainErr := new(Error)
-	s.ErrorAs(err, &domainErr)
-	s.ErrorIs(domainErr.Err, valueobject.ErrInvalidName)
+	_, err := AccountCreate(AccountCreateParams{
+		Name: "",
+	})
+	s.True(ErrorIs(err, valueobject.ErrInvalidName), "Error should be invalid name")
 }
 
 func (s *testAccountSuite) TestBuildAccountFailedInvalidEmail() {
-	_, err := BuildAccount(
-		AccountWithEmail(""),
-	)
-	domainErr := new(Error)
-	s.ErrorAs(err, &domainErr)
-	s.ErrorIs(domainErr.Err, valueobject.ErrInvalidEmail)
+	_, err := AccountCreate(AccountCreateParams{
+		Name:  "Foo Bar",
+		Email: "foo@",
+	})
+	s.True(ErrorIs(err, valueobject.ErrInvalidEmail), "Error should be invalid email")
 }
 
 func (s *testAccountSuite) TestBuildAccountFailedInvalidCPF() {
-	_, err := BuildAccount(
-		AccountWithCpf(""),
-	)
-	domainErr := new(Error)
-	s.ErrorAs(err, &domainErr)
-	s.ErrorIs(domainErr.Err, valueobject.ErrInvalidCPF)
+	_, err := AccountCreate(AccountCreateParams{
+		Name:  "Foo Bar",
+		Email: "foo@bar.com",
+		CPF:   "11144477",
+	})
+	s.True(ErrorIs(err, valueobject.ErrInvalidCPF), "Error should be invalid cpf")
 }
 
 func (s *testAccountSuite) TestBuildAccountFailedInvalidCarPlate() {
-	_, err := BuildAccount(
-		AccountWithCarPlate(""),
-	)
-	domainErr := new(Error)
-	s.ErrorAs(err, &domainErr)
-	s.ErrorIs(domainErr.Err, valueobject.ErrInvalidCarPlate)
+	_, err := AccountCreate(AccountCreateParams{
+		Name:        "Foo Bar",
+		Email:       "foo@barcom.com",
+		CPF:         "11144477735",
+		AccountType: "driver",
+		Password:    "supersecret",
+		CarPlate:    "1234",
+	})
+	s.True(ErrorIs(err, valueobject.ErrInvalidCarPlate), "Error should be invalid car plate")
+}
+
+func (s *testAccountSuite) TestAccountCreatedAtAndUpdatedAt() {
+	acc, err := AccountCreate(AccountCreateParams{
+		Name:        "Foo Bar",
+		Email:       "foo@bar.com",
+		CPF:         "11144477735",
+		AccountType: "passenger",
+		Password:    "supersecret",
+	})
+	s.NoError(err)
+
+	createdAt := acc.CreatedAt()
+	updatedAt := acc.UpdatedAt()
+
+	s.NotZero(createdAt, "Created at should not be zero")
+	s.NotZero(updatedAt, "Updated at should not be zero")
+}
+
+func (s *testAccountSuite) TestAccountCreatedAt() {
+	acc, err := AccountCreate(AccountCreateParams{
+		Name:        "Foo Bar",
+		Email:       "foo@bar.com",
+		CPF:         "11144477735",
+		AccountType: "passenger",
+		Password:    "supersecret",
+	})
+	s.NoError(err)
+	createdAt := acc.CreatedAt()
+	s.NotZero(createdAt, "Created at should not be zero")
 }

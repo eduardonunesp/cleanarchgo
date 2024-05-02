@@ -1,91 +1,80 @@
 package domain
 
-import "github.com/eduardonunesp/cleanarchgo/pkg/domain/valueobject"
+import (
+	"github.com/eduardonunesp/cleanarchgo/pkg/domain/valueobject"
+)
 
-type rideOption func(*Ride) error
-
-func BuildRide(options ...rideOption) (*Ride, error) {
-	newRide := Ride{}
-	for _, opt := range options {
-		if err := opt(&newRide); err != nil {
-			return nil, RaiseDomainError(err)
-		}
-	}
-	return &newRide, nil
+type RideCreateParams struct {
+	PassengerID string
+	InitialX    string
+	InitialY    string
+	FinalX      string
+	FinalY      string
 }
 
-func RideWithID(id string) rideOption {
-	return func(opt *Ride) error {
-		var err error
-		opt.id, err = valueobject.UUIDFromString(id)
-		return err
-	}
+type RideRestoreParams struct {
+	ID          string
+	PassengerID string
+	DriverID    string
+	Status      string
+	InitialX    string
+	InitialY    string
+	FinalX      string
+	FinalY      string
+	Date        int64
+	Fare        string
 }
 
-func RideWithNewID() rideOption {
-	return func(opt *Ride) error {
-		opt.id = valueobject.MustUUID()
-		return nil
+func RideCreate(params RideCreateParams) (*Ride, error) {
+	var (
+		newRide Ride
+		err     error
+	)
+	newRide.id = valueobject.MustUUID()
+	if newRide.passengerID, err = valueobject.UUIDFromString(params.PassengerID); err != nil {
+		return nil, RaiseDomainErrorWith(err, "invalid passenger id")
 	}
+	if newRide.segment, err = valueobject.BuildSegmentFromCoords(
+		params.InitialX,
+		params.InitialY,
+		params.FinalX,
+		params.FinalY,
+	); err != nil {
+		return nil, RaiseDomainErrorWith(err, "invalid lat long coords")
+	}
+	newRide.status = valueobject.RideStatusRequested{}
+	newRide.date = valueobject.DateFromNow()
+	return &newRide, err
 }
 
-func RideWithPassengerID(passengerId string) rideOption {
-	return func(opt *Ride) error {
-		var err error
-		opt.passengerID, err = valueobject.UUIDFromString(passengerId)
-		return err
+func RideRestore(params RideRestoreParams) (*Ride, error) {
+	var (
+		newRide Ride
+		err     error
+	)
+	if newRide.id, err = valueobject.UUIDFromString(params.ID); err != nil {
+		return nil, RaiseDomainErrorWith(err, "invalid ride id")
 	}
-}
-
-func RideWithNewPassengerID() rideOption {
-	return func(opt *Ride) error {
-		opt.passengerID = valueobject.MustUUID()
-		return nil
+	if newRide.passengerID, err = valueobject.UUIDFromString(params.PassengerID); err != nil {
+		return nil, RaiseDomainErrorWith(err, "invalid passenger id")
 	}
-}
-
-func RideWithDriverID(driverId string) rideOption {
-	return func(opt *Ride) error {
-		var err error
-		opt.driverID, err = valueobject.UUIDFromString(driverId)
-		return err
+	if newRide.driverID, err = valueobject.UUIDFromString(params.DriverID); err != nil {
+		return nil, RaiseDomainErrorWith(err, "invalid driver id")
 	}
-}
-
-func RideWithNewDriverID() rideOption {
-	return func(opt *Ride) error {
-		opt.driverID = valueobject.MustUUID()
-		return nil
+	if newRide.segment, err = valueobject.BuildSegmentFromCoords(
+		params.InitialX,
+		params.InitialY,
+		params.FinalX,
+		params.FinalY,
+	); err != nil {
+		return nil, RaiseDomainErrorWith(err, "invalid lat long coords")
 	}
-}
-
-func RideWithStatus(status string) rideOption {
-	return func(opt *Ride) error {
-		var err error
-		opt.status, err = valueobject.BuildRideStatus(status)
-		return err
+	if newRide.status, err = valueobject.BuildRideStatus(params.Status); err != nil {
+		return nil, RaiseDomainErrorWith(err, "invalid ride status")
 	}
-}
-
-func RideWithFare(fare string) rideOption {
-	return func(opt *Ride) error {
-		opt.fare = fare
-		return nil
+	if newRide.date, err = valueobject.DateFromUnix(params.Date); err != nil {
+		return nil, RaiseDomainErrorWith(err, "invalid ride date")
 	}
-}
-
-func RideWithSegment(fx, fy, tx, ty string) rideOption {
-	return func(p *Ride) error {
-		var err error
-		p.segment, err = valueobject.BuildSegmentFromCoords(fx, fy, tx, ty)
-		return err
-	}
-}
-
-func RideWithDate(date int64) rideOption {
-	return func(opt *Ride) error {
-		var err error
-		opt.date, err = valueobject.DateFromUnix(date)
-		return err
-	}
+	newRide.fare = params.Fare
+	return &newRide, err
 }

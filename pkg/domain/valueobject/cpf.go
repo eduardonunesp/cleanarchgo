@@ -28,9 +28,10 @@ func (c Cpf) String() string {
 }
 
 const (
-	cpf_valid_length    = 11
-	factor_first_digit  = 10
-	factor_second_digit = 11
+	CpfValidLength    = 11
+	FactorFirstDigit  = 10
+	FactorSecondDigit = 11
+	RemainderValue    = 2
 )
 
 func validate(rawCPF string) bool {
@@ -44,9 +45,9 @@ func validate(rawCPF string) bool {
 	if !allDigitsEqual(cpf) {
 		return false
 	}
-	firstDigit := calculateDigit(cpf, factor_first_digit)
-	secondDigit := calculateDigit(cpf, factor_second_digit)
-	digitExtracted := string(cpf[9:])
+	firstDigit := calculateDigit(cpf, FactorFirstDigit)
+	secondDigit := calculateDigit(cpf, FactorSecondDigit)
+	digitExtracted := cpf[9:]
 	return digitExtracted == firstDigit+secondDigit
 }
 
@@ -57,7 +58,7 @@ func removeNonDigits(rawCPF string) string {
 }
 
 func isValidLength(cpf string) bool {
-	return len(cpf) == cpf_valid_length
+	return len(cpf) == CpfValidLength
 }
 
 func allDigitsEqual(cpf string) bool {
@@ -79,9 +80,9 @@ func calculateDigit(cpf string, factor int) string {
 			factor = factor - 1
 		}
 	}
-	remainder := total % 11
-	if remainder < 2 {
+	remainder := total % CpfValidLength
+	if remainder < RemainderValue {
 		return "0"
 	}
-	return strconv.Itoa(11 - remainder)
+	return strconv.Itoa(CpfValidLength - remainder)
 }

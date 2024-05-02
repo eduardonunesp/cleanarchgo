@@ -29,11 +29,14 @@ var (
 // The default parameters should generally be used for development/testing purposes
 // only. Custom parameters should be set for production applications depending on
 var DefaultParams = &HashParams{
+	//nolint:gomnd // These are the recommended values for password hashing
 	Memory:      64 * 1024,
 	Iterations:  1,
 	Parallelism: uint8(runtime.NumCPU()),
-	SaltLength:  16,
-	KeyLength:   32,
+	//nolint:gomnd // These are the recommended values for password hashing
+	SaltLength: 16,
+	//nolint:gomnd // These are the recommended values for password hashing
+	KeyLength: 32,
 }
 
 type HashParams struct {
@@ -125,6 +128,7 @@ func generateFromPassword(password string, p *HashParams) (string, error) {
 
 func decodeHash(encodedHash string) (p *HashParams, salt, hash []byte, err error) {
 	vals := strings.Split(encodedHash, "$")
+	//nolint:gomnd // The encoded hash should have 6 parts
 	if len(vals) != 6 {
 		return nil, nil, nil, ErrInvalidHash
 	}

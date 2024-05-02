@@ -1,110 +1,100 @@
 package domain
 
-import "github.com/eduardonunesp/cleanarchgo/pkg/domain/valueobject"
+import (
+	"github.com/eduardonunesp/cleanarchgo/pkg/domain/valueobject"
+)
 
-type accountOption func(*Account) error
+type AccountCreateParams struct {
+	Name        string
+	Email       string
+	CPF         string
+	Password    string
+	CarPlate    string
+	AccountType string
+}
 
-func BuildAccount(options ...accountOption) (*Account, error) {
-	newAccount := Account{}
-	for _, opt := range options {
-		if err := opt(&newAccount); err != nil {
-			return nil, RaiseDomainError(err)
+type AccountRestoreParams struct {
+	ID           string
+	Name         string
+	Email        string
+	Cpf          string
+	CarPlate     string
+	AccountType  string
+	PasswordHash string
+	ConfirmedAt  int64
+	CreatedAt    int64
+	UpdatedAt    int64
+}
+
+func AccountCreate(params AccountCreateParams) (*Account, error) {
+	var (
+		newAccount Account
+		err        error
+	)
+	newAccount.id = valueobject.MustUUID()
+	if newAccount.name, err = valueobject.NameFromString(params.Name); err != nil {
+		return nil, RaiseDomainErrorWith(err, "invalid name")
+	}
+	if newAccount.email, err = valueobject.EmailFromString(params.Email); err != nil {
+		return nil, RaiseDomainErrorWith(err, "invalid email")
+	}
+	if newAccount.cpf, err = valueobject.CpfFromString(params.CPF); err != nil {
+		return nil, RaiseDomainErrorWith(err, "invalid cpf")
+	}
+	if newAccount.hash, err = valueobject.BuildHashFromString(params.Password, nil); err != nil {
+		return nil, RaiseDomainErrorWith(err, "invalid password")
+	}
+	if newAccount.accountType, err = valueobject.AccountTypeFromString(params.AccountType); err != nil {
+		return nil, RaiseDomainErrorWith(err, "invalid account type")
+	}
+	if newAccount.accountType == valueobject.AccountTypeDriver {
+		if newAccount.carPlate, err = valueobject.CarPlateFromString(params.CarPlate); err != nil {
+			return nil, RaiseDomainErrorWith(err, "invalid car plate")
 		}
 	}
-	return &newAccount, nil
+	newAccount.createdAt = valueobject.DateFromNow()
+	newAccount.updatedAt = valueobject.DateFromNow()
+	return &newAccount, err
 }
 
-func AccountWithID(id string) accountOption {
-	return func(opt *Account) error {
-		var err error
-		opt.id, err = valueobject.UUIDFromString(id)
-		return err
+func AccountRestore(params AccountRestoreParams) (*Account, error) {
+	var (
+		account Account
+		err     error
+	)
+	if account.id, err = valueobject.UUIDFromString(params.ID); err != nil {
+		return nil, RaiseDomainErrorWith(err, "invalid id")
 	}
-}
-
-func AccountWithNewID() accountOption {
-	return func(opt *Account) error {
-		opt.id = valueobject.MustUUID()
-		return nil
+	if account.name, err = valueobject.NameFromString(params.Name); err != nil {
+		return nil, RaiseDomainErrorWith(err, "invalid name")
 	}
-}
-
-func AccountWithName(name string) accountOption {
-	return func(opt *Account) error {
-		var err error
-		opt.name, err = valueobject.NameFromString(name)
-		return err
+	if account.email, err = valueobject.EmailFromString(params.Email); err != nil {
+		return nil, RaiseDomainErrorWith(err, "invalid email")
 	}
-}
-
-func AccountWithEmail(email string) accountOption {
-	return func(opt *Account) error {
-		var err error
-		opt.email, err = valueobject.EmailFromString(email)
-		return err
+	if account.cpf, err = valueobject.CpfFromString(params.Cpf); err != nil {
+		return nil, RaiseDomainErrorWith(err, "invalid cpf")
 	}
-}
-
-func AccountWithCpf(cpf string) accountOption {
-	return func(opt *Account) error {
-		var err error
-		opt.cpf, err = valueobject.CpfFromString(cpf)
-		return err
+	if account.hash, err = valueobject.LoadHashFromString(params.PasswordHash); err != nil {
+		return nil, RaiseDomainErrorWith(err, "invalid password hash")
 	}
-}
-
-func AccountWithCarPlate(carPlate string) accountOption {
-	return func(opt *Account) error {
-		var err error
-		opt.carPlate, err = valueobject.CarPlateFromString(carPlate)
-		return err
+	if account.accountType, err = valueobject.AccountTypeFromString(params.AccountType); err != nil {
+		return nil, RaiseDomainErrorWith(err, "invalid account type")
 	}
-}
-
-func AccountWithHash(hash string) accountOption {
-	return func(opt *Account) error {
-		var err error
-		opt.hash, err = valueobject.LoadHashFromString(hash)
-		return err
+	if account.accountType == valueobject.AccountTypeDriver {
+		if account.carPlate, err = valueobject.CarPlateFromString(params.CarPlate); err != nil {
+			return nil, RaiseDomainErrorWith(err, "invalid car plate")
+		}
 	}
-}
-
-func AccountWithEncodedHash(hash string) accountOption {
-	return func(opt *Account) error {
-		var err error
-		opt.hash, err = valueobject.BuildHashFromString(hash, nil)
-		return err
+	if params.ConfirmedAt != 0 {
+		if account.confirmedAt, err = valueobject.DateFromUnix(params.ConfirmedAt); err != nil {
+			return nil, RaiseDomainErrorWith(err, "invalid confirmed at")
+		}
 	}
-}
-
-func AccountWithAccountType(accountType string) accountOption {
-	return func(opt *Account) error {
-		var err error
-		opt.accountType, err = valueobject.AccountTypeFromString(accountType)
-		return err
+	if account.createdAt, err = valueobject.DateFromUnix(params.CreatedAt); err != nil {
+		return nil, RaiseDomainErrorWith(err, "invalid created at")
 	}
-}
-
-func AccountWithConfirmedAt(confirmedAt int64) accountOption {
-	return func(opt *Account) error {
-		var err error
-		opt.confirmedAt, err = valueobject.DateFromUnix(confirmedAt)
-		return err
+	if account.updatedAt, err = valueobject.DateFromUnix(params.UpdatedAt); err != nil {
+		return nil, RaiseDomainErrorWith(err, "invalid updated at")
 	}
-}
-
-func AccountWithCreatedAt(createdAt int64) accountOption {
-	return func(opt *Account) error {
-		var err error
-		opt.createdAt, err = valueobject.DateFromUnix(createdAt)
-		return err
-	}
-}
-
-func AccountWithUpdatedAt(updatedAt int64) accountOption {
-	return func(opt *Account) error {
-		var err error
-		opt.updatedAt, err = valueobject.DateFromUnix(updatedAt)
-		return err
-	}
+	return &account, err
 }

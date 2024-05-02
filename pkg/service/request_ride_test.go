@@ -27,13 +27,16 @@ func (s *testRequestRideSuite) SetupTest() {
 }
 
 func (s *testRequestRideSuite) TestRequestRideSuccess() {
-	s.accRepo.EXPECT().GetAccountByID("123").Return(domain.Must(domain.BuildAccount(
-		domain.AccountWithID("123"),
-		domain.AccountWithName("Foo Bar"),
-		domain.AccountWithEmail("foobar@gmail.com"),
-		domain.AccountWithCpf("11144477735"),
-		domain.AccountWithAccountType("passenger"),
-	)), nil)
+	s.accRepo.EXPECT().GetAccountByID("123").Return(domain.Must(domain.AccountRestore(domain.AccountRestoreParams{
+		ID:           "123",
+		Name:         "Foo Bar",
+		Email:        "foobar@gmail.com",
+		Cpf:          "11144477735",
+		AccountType:  "passenger",
+		PasswordHash: "123",
+		CreatedAt:    1,
+		UpdatedAt:    1,
+	})), nil)
 	s.rideRepo.EXPECT().HasActiveRideByPassengerID("123").Return(false, nil)
 	s.rideRepo.EXPECT().SaveRide(mock.Anything).Return(nil)
 

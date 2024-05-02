@@ -8,18 +8,18 @@ import (
 )
 
 func mapDBAccountToDomainAccount(account *db.Account) (*domain.Account, error) {
-	domainAcc, err := domain.BuildAccount(
-		domain.AccountWithID(fromPgTypeUUIDToString(account.ID)),
-		domain.AccountWithName(account.Name),
-		domain.AccountWithEmail(account.Email),
-		domain.AccountWithCpf(account.Cpf),
-		domain.AccountWithCarPlate(fromPgTypeTextToString(account.CarPlate)),
-		domain.AccountWithAccountType(string(account.AccountType.AccountType)),
-	)
-	if err != nil {
-		return nil, err
-	}
-	return domainAcc, nil
+	return domain.AccountRestore(domain.AccountRestoreParams{
+		ID:           fromPgTypeUUIDToString(account.ID),
+		Name:         account.Name,
+		Email:        account.Email,
+		Cpf:          account.Cpf,
+		CarPlate:     fromPgTypeTextToString(account.CarPlate),
+		AccountType:  string(account.AccountType.AccountType),
+		PasswordHash: account.Hashpw,
+		ConfirmedAt:  account.Confirmedat.Time.Unix(),
+		CreatedAt:    account.Confirmedat.Time.Unix(),
+		UpdatedAt:    account.Confirmedat.Time.Unix(),
+	})
 }
 
 func mapDomainAccountToSaveAccountParams(account *domain.Account) (*db.SaveAccountParams, error) {

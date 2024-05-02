@@ -20,10 +20,11 @@ func NewUpdatePosition(posRepo repository.PositionRepository) *UpdatePosition {
 }
 
 func (s UpdatePosition) Execute(input UpdatePositionParams) error {
-	position, err := domain.BuildPosition(
-		domain.PositionWithRideID(input.RideID),
-		domain.PositionWithCoord(input.Lat, input.Long),
-	)
+	position, err := domain.PositionCreate(domain.PositionCreateParams{
+		RideID: input.RideID,
+		CoordX: input.Lat,
+		CoordY: input.Long,
+	})
 	if err != nil {
 		return err
 	}

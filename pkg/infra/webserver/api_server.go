@@ -8,7 +8,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type apiServer struct {
+type APIServer struct {
 	getAccount *service.GetAccount
 	getRide    *service.GetRide
 	reqRide    *service.RequestRide
@@ -20,16 +20,18 @@ func NewAPIServer(
 	signup *service.Signup,
 	getRide *service.GetRide,
 	reqRide *service.RequestRide,
-) *apiServer {
-	return &apiServer{getAccount, getRide, reqRide, signup}
+) *APIServer {
+	return &APIServer{getAccount, getRide, reqRide, signup}
 }
 
-func (s apiServer) Listen(host string) {
+func (s APIServer) Listen(host string) {
 	e := echo.New()
 	s.Signup(e)
 	s.GetAccount(e)
 	s.RequestRide(e)
 	s.GetRide(e)
 	log.Printf("Server listen at %s", host)
-	e.Start(host)
+	if err := e.Start(host); err != nil {
+		log.Fatal(err)
+	}
 }

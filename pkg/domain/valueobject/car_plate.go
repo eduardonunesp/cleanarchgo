@@ -24,5 +24,5 @@ func CarPlateFromString(s string) (CarPlate, error) {
 }
 
 func (c CarPlate) String() string {
-	return string(c.value)
+	return c.value
 }

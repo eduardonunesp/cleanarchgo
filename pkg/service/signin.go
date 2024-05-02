@@ -15,6 +15,6 @@ type Signin struct {
 func NewSignin() *Signin {
 	return &Signin{}
 }
-func (s Signin) Execute(input *SigninParams) (*SigninResult, error) {
+func (s Signin) Execute(_ *SigninParams) (*SigninResult, error) {
 	return nil, nil
 }

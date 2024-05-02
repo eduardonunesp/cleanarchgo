@@ -236,7 +236,7 @@ func getWithFuncFieldBuilder(pkgName string) string {
 
 func getWithFuncName(entityName string, fieldNames, fieldTypes []string) string {
 	generalWithFuncTmpl := template.Must(template.New("generalBuildFunc").Parse(buildGeneralFuncTempl))
-	IdWithFuncTmpl := template.Must(template.New("iDBuildFunc").Parse(buildIDFuncTempl))
+	IDWithFuncTmpl := template.Must(template.New("iDBuildFunc").Parse(buildIDFuncTempl))
 	EncodeHashWithFuncTmpl := template.Must(template.New("encodeHashBuildFunc").Parse(buildRawHashFuncTempl))
 	CoordWithFuncTmpl := template.Must(template.New("coordBuildFunc").Parse(buildCoordFuncTempl))
 	SegmentWithFuncTmpl := template.Must(template.New("segmentBuildFunc").Parse(buildSegmentFuncTempl))
@@ -265,7 +265,7 @@ func getWithFuncName(entityName string, fieldNames, fieldTypes []string) string 
 		case "string":
 			err = PrimitiveWithFuncTmpl.Execute(buf, entityBuilderParams)
 		case "valueobject.UUID":
-			err = IdWithFuncTmpl.Execute(buf, entityBuilderParams)
+			err = IDWithFuncTmpl.Execute(buf, entityBuilderParams)
 		case "valueobject.Hash":
 			err = EncodeHashWithFuncTmpl.Execute(buf, entityBuilderParams)
 		case "valueobject.Coord":

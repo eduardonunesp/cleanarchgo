@@ -6,24 +6,24 @@ import (
 	"io"
 )
 
-type responseError struct {
+type ResponseError struct {
 	Message string `json:"error"`
 }
 
-func raiseWebserverError(err error) *responseError {
-	return &responseError{err.Error()}
+func raiseWebserverError(err error) *ResponseError {
+	return &ResponseError{err.Error()}
 }
 
-func ReponseErrorFromJSON(input []byte) (*responseError, error) {
-	var resErr responseError
+func ReponseErrorFromJSON(input []byte) (*ResponseError, error) {
+	var resErr ResponseError
 	if err := json.Unmarshal(input, &resErr); err != nil {
 		return nil, errors.New("failed to build response from json input")
 	}
 	return &resErr, nil
 }
 
-func ResponseErrorFromJSONStream(r io.Reader) (*responseError, error) {
-	var resErr responseError
+func ResponseErrorFromJSONStream(r io.Reader) (*ResponseError, error) {
+	var resErr ResponseError
 	if err := json.NewDecoder(r).Decode(&resErr); err != nil {
 		return nil, errors.New("failed to build response from json input stream")
 	}

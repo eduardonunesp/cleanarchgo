@@ -48,15 +48,13 @@ func (r *RequestRide) Execute(params RequestRideParams) (*RequestRideResult, err
 	if hasActiveRide {
 		return nil, RaiseServiceError(errRequestRideActiveFound)
 	}
-	ride, err := domain.BuildRide(
-		domain.RideWithPassengerID(params.PassengerID),
-		domain.RideWithSegment(
-			params.FromLat,
-			params.FromLong,
-			params.ToLat,
-			params.ToLong,
-		),
-	)
+	ride, err := domain.RideCreate(domain.RideCreateParams{
+		PassengerID: params.PassengerID,
+		InitialX:    params.FromLat,
+		InitialY:    params.FromLong,
+		FinalX:      params.ToLat,
+		FinalY:      params.ToLong,
+	})
 	if err != nil {
 		return nil, err
 	}

@@ -20,6 +20,63 @@ func (_m *MockAccountRepository) EXPECT() *MockAccountRepository_Expecter {
 	return &MockAccountRepository_Expecter{mock: &_m.Mock}
 }
 
+// ConfirmHashAndPassword provides a mock function with given fields: email, hash
+func (_m *MockAccountRepository) ConfirmHashAndPassword(email string, hash string) (bool, error) {
+	ret := _m.Called(email, hash)
+
+	if len(ret) == 0 {
+		panic("no return value specified for ConfirmHashAndPassword")
+	}
+
+	var r0 bool
+	var r1 error
+	if rf, ok := ret.Get(0).(func(string, string) (bool, error)); ok {
+		return rf(email, hash)
+	}
+	if rf, ok := ret.Get(0).(func(string, string) bool); ok {
+		r0 = rf(email, hash)
+	} else {
+		r0 = ret.Get(0).(bool)
+	}
+
+	if rf, ok := ret.Get(1).(func(string, string) error); ok {
+		r1 = rf(email, hash)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// MockAccountRepository_ConfirmHashAndPassword_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'ConfirmHashAndPassword'
+type MockAccountRepository_ConfirmHashAndPassword_Call struct {
+	*mock.Call
+}
+
+// ConfirmHashAndPassword is a helper method to define mock.On call
+//   - email string
+//   - hash string
+func (_e *MockAccountRepository_Expecter) ConfirmHashAndPassword(email interface{}, hash interface{}) *MockAccountRepository_ConfirmHashAndPassword_Call {
+	return &MockAccountRepository_ConfirmHashAndPassword_Call{Call: _e.mock.On("ConfirmHashAndPassword", email, hash)}
+}
+
+func (_c *MockAccountRepository_ConfirmHashAndPassword_Call) Run(run func(email string, hash string)) *MockAccountRepository_ConfirmHashAndPassword_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(string), args[1].(string))
+	})
+	return _c
+}
+
+func (_c *MockAccountRepository_ConfirmHashAndPassword_Call) Return(_a0 bool, _a1 error) *MockAccountRepository_ConfirmHashAndPassword_Call {
+	_c.Call.Return(_a0, _a1)
+	return _c
+}
+
+func (_c *MockAccountRepository_ConfirmHashAndPassword_Call) RunAndReturn(run func(string, string) (bool, error)) *MockAccountRepository_ConfirmHashAndPassword_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // GetAccountByID provides a mock function with given fields: id
 func (_m *MockAccountRepository) GetAccountByID(id string) (*domain.Account, error) {
 	ret := _m.Called(id)
