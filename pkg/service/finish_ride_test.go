@@ -29,26 +29,31 @@ func (s *testFinishRideSuite) SetupTest() {
 
 func (s *testFinishRideSuite) TestFinishRideSuccess() {
 	tNow := time.Now().Unix()
-	s.rideRepo.EXPECT().GetRideByID("1").Return(domain.Must(domain.RideCreate(domain.RideCreateParams{
+	s.rideRepo.EXPECT().GetRideByID("1").Return(domain.Must(domain.RideRestore(domain.RideRestoreParams{
+		ID:          "1",
+		DriverID:    "3",
 		PassengerID: "2",
-		InitialX:    "123",
-		InitialY:    "321",
-		FinalX:      "789",
-		FinalY:      "987",
+		Fare:        "10.001",
+		InitialX:    "-27.594870",
+		InitialY:    "-48.548222",
+		FinalX:      "-27.642040",
+		FinalY:      "-48.669239",
+		Status:      "in_progress",
+		Date:        tNow,
 	})), nil)
 	s.posRepo.EXPECT().GetPositionsByRideID("1").Return([]*domain.Position{
 		domain.Must(domain.PositionRestore(domain.PositionRestoreParams{
 			ID:     "1",
 			RideID: "1",
-			CoordX: "123",
-			CoordY: "321",
+			CoordX: "-27.594870",
+			CoordY: "-48.548222",
 			Date:   tNow,
 		})),
 		domain.Must(domain.PositionRestore(domain.PositionRestoreParams{
 			ID:     "4",
 			RideID: "1",
-			CoordX: "789",
-			CoordY: "987",
+			CoordX: "-27.642040",
+			CoordY: "-48.669239",
 			Date:   tNow,
 		})),
 	}, nil)

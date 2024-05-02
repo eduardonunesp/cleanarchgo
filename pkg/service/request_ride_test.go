@@ -42,10 +42,10 @@ func (s *testRequestRideSuite) TestRequestRideSuccess() {
 
 	result, err := s.useCase.Execute(RequestRideParams{
 		PassengerID: "123",
-		FromLat:     "123",
-		FromLong:    "321",
-		ToLat:       "789",
-		ToLong:      "987",
+		FromLat:     "-27.594870",
+		FromLong:    "-48.548222",
+		ToLat:       "-27.642040",
+		ToLong:      "-48.669239",
 	})
 	s.NoError(err)
 	s.NotNil(result)

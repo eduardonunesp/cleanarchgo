@@ -37,10 +37,10 @@ func (s *testProcessPaymentSuite) TestProcessPaymentSuccess() {
 		Fare:        "10.00",
 		Status:      "completed",
 		Date:        tNow,
-		InitialX:    "123",
-		InitialY:    "321",
-		FinalX:      "789",
-		FinalY:      "987",
+		InitialX:    "-27.594870",
+		InitialY:    "-48.548222",
+		FinalX:      "-27.642040",
+		FinalY:      "-48.669239",
 	})), nil)
 	s.ccGW.EXPECT().ProcessPayment("123", "10.00").Return(nil)
 	err := s.useCase.Execute(ProcessPaymentParams{

@@ -33,23 +33,23 @@ func AccountCreate(params AccountCreateParams) (*Account, error) {
 	)
 	newAccount.id = valueobject.MustUUID()
 	if newAccount.name, err = valueobject.NameFromString(params.Name); err != nil {
-		return nil, RaiseDomainErrorWith(err, "invalid name")
+		return nil, RaiseDomainError(err)
 	}
 	if newAccount.email, err = valueobject.EmailFromString(params.Email); err != nil {
-		return nil, RaiseDomainErrorWith(err, "invalid email")
+		return nil, RaiseDomainError(err)
 	}
 	if newAccount.cpf, err = valueobject.CpfFromString(params.CPF); err != nil {
-		return nil, RaiseDomainErrorWith(err, "invalid cpf")
+		return nil, RaiseDomainError(err)
 	}
 	if newAccount.hash, err = valueobject.BuildHashFromString(params.Password, nil); err != nil {
 		return nil, RaiseDomainErrorWith(err, "invalid password")
 	}
 	if newAccount.accountType, err = valueobject.AccountTypeFromString(params.AccountType); err != nil {
-		return nil, RaiseDomainErrorWith(err, "invalid account type")
+		return nil, RaiseDomainError(err)
 	}
 	if newAccount.accountType == valueobject.AccountTypeDriver {
 		if newAccount.carPlate, err = valueobject.CarPlateFromString(params.CarPlate); err != nil {
-			return nil, RaiseDomainErrorWith(err, "invalid car plate")
+			return nil, RaiseDomainError(err)
 		}
 	}
 	newAccount.createdAt = valueobject.DateFromNow()
@@ -66,23 +66,23 @@ func AccountRestore(params AccountRestoreParams) (*Account, error) {
 		return nil, RaiseDomainErrorWith(err, "invalid id")
 	}
 	if account.name, err = valueobject.NameFromString(params.Name); err != nil {
-		return nil, RaiseDomainErrorWith(err, "invalid name")
+		return nil, RaiseDomainError(err)
 	}
 	if account.email, err = valueobject.EmailFromString(params.Email); err != nil {
-		return nil, RaiseDomainErrorWith(err, "invalid email")
+		return nil, RaiseDomainError(err)
 	}
 	if account.cpf, err = valueobject.CpfFromString(params.Cpf); err != nil {
-		return nil, RaiseDomainErrorWith(err, "invalid cpf")
+		return nil, RaiseDomainError(err)
 	}
 	if account.hash, err = valueobject.LoadHashFromString(params.PasswordHash); err != nil {
 		return nil, RaiseDomainErrorWith(err, "invalid password hash")
 	}
 	if account.accountType, err = valueobject.AccountTypeFromString(params.AccountType); err != nil {
-		return nil, RaiseDomainErrorWith(err, "invalid account type")
+		return nil, RaiseDomainError(err)
 	}
 	if account.accountType == valueobject.AccountTypeDriver {
 		if account.carPlate, err = valueobject.CarPlateFromString(params.CarPlate); err != nil {
-			return nil, RaiseDomainErrorWith(err, "invalid car plate")
+			return nil, RaiseDomainError(err)
 		}
 	}
 	if params.ConfirmedAt != 0 {

@@ -35,7 +35,6 @@ func (s *testRideSuite) TestBuildRideFailedInvalidID() {
 	ride, err := RideRestore(RideRestoreParams{
 		PassengerID: "1",
 	})
-	s.NoError(err)
 	s.Error(err)
 	s.Nil(ride)
 }
