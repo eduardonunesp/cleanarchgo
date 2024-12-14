@@ -156,7 +156,7 @@ func createEntityBuilder() *cli.Command {
 }
 
 func CreateBuildFuncFromEntity(buf *bytes.Buffer, path string, entityName string) error {
-	path = path + "/pkg/domain"
+	path = path + "/internal/domain"
 	fset := token.NewFileSet()
 	pkgs, err := parser.ParseDir(fset, path, nil, parser.AllErrors)
 	if err != nil {

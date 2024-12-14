@@ -10,7 +10,7 @@ import (
 const (
 	entityTemplate     = "assets/entity.tmpl"
 	entityTestTemplate = "assets/entity_test.tmpl"
-	domainPath         = "pkg/domain"
+	domainPath         = "internal/domain"
 )
 
 type entityParams struct {

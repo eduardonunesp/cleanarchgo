@@ -4,19 +4,14 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/eduardonunesp/cleanarchgo/pkg/infra/gateway"
-	"github.com/eduardonunesp/cleanarchgo/pkg/infra/repository"
-	"github.com/eduardonunesp/cleanarchgo/pkg/infra/webserver"
-	"github.com/eduardonunesp/cleanarchgo/pkg/service"
+	"github.com/eduardonunesp/cleanarchgo/internal/infra/gateway"
+	"github.com/eduardonunesp/cleanarchgo/internal/infra/repository"
+	"github.com/eduardonunesp/cleanarchgo/internal/infra/webserver"
+	"github.com/eduardonunesp/cleanarchgo/internal/service"
 )
 
 func main() {
-	var connStr string
-	if str, ok := os.LookupEnv("PG_CONN_STR"); ok {
-		connStr = str
-	}
-	connStr = fmt.Sprintf("postgres://%s", connStr)
-	fmt.Println(connStr)
+	connStr := fmt.Sprintf("postgres://%s", os.Getenv("PG_CONN_STR"))
 	accountRepo := repository.NewAccountRepositoryPG(connStr)
 	rideRepo := repository.NewRideRepositoryPG(connStr)
 	mailerGW := gateway.NewMailerGatewayMemory()

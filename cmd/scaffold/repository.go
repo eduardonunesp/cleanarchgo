@@ -11,7 +11,7 @@ const (
 	repositoryTemplate          = "assets/repository.tmpl"
 	repositoryTestTemplate      = "assets/repository_test.tmpl"
 	repositoryInterfaceTemplate = "assets/repository_interface.tmpl"
-	repositoryPath              = "pkg/infra/repository"
+	repositoryPath              = "internal/infra/repository"
 	repositoryTypePath          = "types.go"
 )
 

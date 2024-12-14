@@ -73,5 +73,5 @@ install_tools:
 .PHONY: build_scaffold
 build_scaffold:
 	@go build -o bin/scaffold cmd/scaffold/*.go
-	@echo "Scaffold tool builded at ./scaffold"
+	@echo "Scaffold tool built at ./scaffold"
 	@echo "Don't forget to add GOPATH/bin env var to PATH"

@@ -9,7 +9,7 @@ import (
 
 const (
 	gatewayTemplate = "assets/gateway.tmpl"
-	gatewayPath     = "pkg/infra/gateway"
+	gatewayPath     = "internal/infra/gateway"
 )
 
 type GatewayParams struct {
@@ -19,7 +19,7 @@ type GatewayParams struct {
 func createGateway() *cli.Command {
 	return &cli.Command{
 		Name:  "gateway",
-		Usage: "Create a new gateway at pkg/infra/gateway",
+		Usage: "Create a new gateway at internal/infra/gateway",
 		Flags: []cli.Flag{
 			&cli.StringFlag{
 				Name:     "name",

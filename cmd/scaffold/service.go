@@ -10,7 +10,7 @@ import (
 const (
 	serviceTemplate     = "assets/service.tmpl"
 	serviceTestTemplate = "assets/service_test.tmpl"
-	servicePath         = "pkg/service"
+	servicePath         = "internal/service"
 )
 
 type ServiceParams struct {
